@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model meetingmember {
+  MeetingMemberID Int       @id @default(autoincrement())
+  MeetingID       Int
+  StaffID         Int
+  IsPresent       Boolean?  @default(false)
+  Remarks         String?   @db.VarChar(500)
+  Created         DateTime? @default(now()) @db.DateTime(0)
+  Modified        DateTime? @default(now()) @db.DateTime(0)
+  meetings        meetings  @relation(fields: [MeetingID], references: [MeetingID], onDelete: Cascade, map: "fk_mm_meeting")
+  staff           staff     @relation(fields: [StaffID], references: [StaffID], onDelete: Cascade, map: "fk_mm_staff")
+
+  @@index([MeetingID], map: "fk_mm_meeting")
+  @@index([StaffID], map: "fk_mm_staff")
+}
+
+model meetings {
+  MeetingID            Int             @id @default(autoincrement())
+  MeetingDate          DateTime        @db.DateTime(0)
+  MeetingTypeID        Int
+  MeetingDescription   String?         @db.VarChar(500)
+  DocumentPath         String?         @db.VarChar(500)
+  Created              DateTime?       @default(now()) @db.DateTime(0)
+  Modified             DateTime?       @default(now()) @db.DateTime(0)
+  IsCancelled          Boolean?        @default(false)
+  CancellationDateTime DateTime?       @db.DateTime(0)
+  CancellationReason   String?         @db.VarChar(500)
+  meetingmember        meetingmember[]
+  meetingtype          meetingtype     @relation(fields: [MeetingTypeID], references: [MeetingTypeID], map: "fk_meeting_type")
+
+  @@index([MeetingTypeID], map: "fk_meeting_type")
+}
+
+model meetingtype {
+  MeetingTypeID   Int        @id @default(autoincrement())
+  MeetingTypeName String     @db.VarChar(255)
+  Remarks         String?    @db.VarChar(500)
+  Created         DateTime?  @default(now()) @db.DateTime(0)
+  Modified        DateTime?  @default(now()) @db.DateTime(0)
+  meetings        meetings[]
+}
+
+model staff {
+  StaffID       Int             @id @default(autoincrement())
+  StaffName     String          @db.VarChar(255)
+  MobileNo      String?         @db.VarChar(20)
+  EmailAddress  String?         @db.VarChar(255)
+  Remarks       String?         @db.VarChar(500)
+  Created       DateTime?       @default(now()) @db.DateTime(0)
+  Modified      DateTime?       @default(now()) @db.DateTime(0)
+  meetingmember meetingmember[]
+}
+
+model user {
+  id           String     @id @db.VarChar(36)
+  fullName     String     @db.VarChar(100)
+  email        String     @unique(map: "email") @db.VarChar(150)
+  phone        String?    @db.VarChar(20)
+  organization String?    @db.VarChar(100)
+  password     String     @db.VarChar(255)
+  role         user_role? @default(STAFF)
+  createdAt    DateTime?  @default(now()) @db.DateTime(0)
+  updatedAt    DateTime?  @default(now()) @db.DateTime(0)
+}
+
+enum user_role {
+  ADMIN
+  CONVENER
+  STAFF
+}
