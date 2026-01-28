@@ -1,10 +1,30 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider        = "prisma-client-js"
+  output          = "../lib/generated/prisma"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
   provider = "mysql"
+}
+
+model department {
+  DepartmentID   Int       @id @default(autoincrement())
+  DepartmentName String    @db.VarChar(255)
+  DepartmentCode String?   @db.VarChar(50)
+  Created        DateTime? @default(now()) @db.DateTime(0)
+  Modified       DateTime? @default(now()) @db.DateTime(0)
+  staff          staff[]
+}
+
+model venue {
+  VenueID   Int        @id @default(autoincrement())
+  VenueName String     @db.VarChar(255)
+  Location  String?    @db.VarChar(500)
+  Capacity  Int?
+  Created   DateTime?  @default(now()) @db.DateTime(0)
+  Modified  DateTime?  @default(now()) @db.DateTime(0)
+  meetings  meetings[]
 }
 
 model meetingmember {
@@ -26,6 +46,7 @@ model meetings {
   MeetingID            Int             @id @default(autoincrement())
   MeetingDate          DateTime        @db.DateTime(0)
   MeetingTypeID        Int
+  VenueID              Int?
   MeetingDescription   String?         @db.VarChar(500)
   DocumentPath         String?         @db.VarChar(500)
   Created              DateTime?       @default(now()) @db.DateTime(0)
@@ -35,8 +56,10 @@ model meetings {
   CancellationReason   String?         @db.VarChar(500)
   meetingmember        meetingmember[]
   meetingtype          meetingtype     @relation(fields: [MeetingTypeID], references: [MeetingTypeID], map: "fk_meeting_type")
+  venue                venue?          @relation(fields: [VenueID], references: [VenueID], map: "fk_meeting_venue")
 
   @@index([MeetingTypeID], map: "fk_meeting_type")
+  @@index([VenueID], map: "fk_meeting_venue")
 }
 
 model meetingtype {
@@ -53,14 +76,18 @@ model staff {
   StaffName     String          @db.VarChar(255)
   MobileNo      String?         @db.VarChar(20)
   EmailAddress  String?         @db.VarChar(255)
+  DepartmentID  Int?
   Remarks       String?         @db.VarChar(500)
   Created       DateTime?       @default(now()) @db.DateTime(0)
   Modified      DateTime?       @default(now()) @db.DateTime(0)
+  department    department?     @relation(fields: [DepartmentID], references: [DepartmentID], map: "fk_staff_dept")
   meetingmember meetingmember[]
+
+  @@index([DepartmentID], map: "fk_staff_dept")
 }
 
 model user {
-  id           String     @id @db.VarChar(36)
+  id           String     @id @default(uuid()) @db.VarChar(36)
   fullName     String     @db.VarChar(100)
   email        String     @unique(map: "email") @db.VarChar(150)
   phone        String?    @db.VarChar(20)

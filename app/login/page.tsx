@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Lock, User, ArrowRight, Shield, Router } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Shield } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { loginUser } from "../actions/login";
 
 function Loginpage() {
   const router = useRouter();
@@ -11,15 +12,29 @@ function Loginpage() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("admin");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
-    setTimeout(() => {
-      console.log({ email, password, role });
+    try {
+      const result = await loginUser({ email, password, role });
+
+      if (result.success) {
+        // Redirect based on role
+        const redirectPath = `/${role}`;
+        router.push(redirectPath);
+      } else {
+        setError(result.message || "Login failed");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred");
+      console.error("Login error:", err);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const roleIcons: { [key: string]: any } = {
@@ -163,11 +178,10 @@ function Loginpage() {
                   return (
                     <label
                       key={r}
-                      className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all hover:scale-105 ${
-                        role === r
+                      className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all hover:scale-105 ${role === r
                           ? "border-indigo-500 bg-indigo-50 shadow-md"
                           : "border-slate-200 bg-white hover:border-slate-300"
-                      }`}
+                        }`}
                     >
                       <input
                         type="radio"
@@ -178,14 +192,12 @@ function Loginpage() {
                         className="hidden"
                       />
                       <Icon
-                        className={`w-6 h-6 mx-auto mb-2 ${
-                          role === r ? "text-indigo-600" : "text-slate-400"
-                        }`}
+                        className={`w-6 h-6 mx-auto mb-2 ${role === r ? "text-indigo-600" : "text-slate-400"
+                          }`}
                       />
                       <span
-                        className={`text-sm font-semibold capitalize block ${
-                          role === r ? "text-indigo-600" : "text-slate-700"
-                        }`}
+                        className={`text-sm font-semibold capitalize block ${role === r ? "text-indigo-600" : "text-slate-700"
+                          }`}
                       >
                         {r}
                       </span>
@@ -194,6 +206,11 @@ function Loginpage() {
                 })}
               </div>
             </div>
+{error && (
+              <div className="p-4 rounded-lg bg-red-50 border border-red-200">
+                <p className="text-sm text-red-600 font-medium">{error}</p>
+              </div>
+            )}
 
             <button
               onClick={handleSubmit}

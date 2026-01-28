@@ -12,6 +12,10 @@ import {
   Phone,
 } from "lucide-react";
 
+import { registerUser } from "@/app/actions/register";
+
+// ... (imports remain the same)
+
 export default function RegisterPage() {
   const router = useRouter();
 
@@ -27,7 +31,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!agreedToTerms) {
       alert("Please agree to the terms and conditions");
       return;
@@ -40,10 +44,22 @@ export default function RegisterPage() {
 
     setIsLoading(true);
 
-    setTimeout(() => {
-      console.log(formData);
+    try {
+      // Call Server Action directly
+      const result = await registerUser(formData);
+
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+
+      // Success
+      alert("Account created successfully!");
+      router.push("/login");
+    } catch (error: any) {
+      alert(error.message || "Failed to register. Please try again.");
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -291,11 +307,10 @@ export default function RegisterPage() {
                   return (
                     <label
                       key={r}
-                      className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all hover:scale-105 ${
-                        formData.role === r
-                          ? "border-indigo-500 bg-indigo-50 shadow-md"
-                          : "border-slate-200 bg-white hover:border-slate-300"
-                      }`}
+                      className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all hover:scale-105 ${formData.role === r
+                        ? "border-indigo-500 bg-indigo-50 shadow-md"
+                        : "border-slate-200 bg-white hover:border-slate-300"
+                        }`}
                     >
                       <input
                         type="radio"
@@ -306,18 +321,16 @@ export default function RegisterPage() {
                         className="hidden"
                       />
                       <Icon
-                        className={`w-6 h-6 mx-auto mb-2 ${
-                          formData.role === r
-                            ? "text-indigo-600"
-                            : "text-slate-400"
-                        }`}
+                        className={`w-6 h-6 mx-auto mb-2 ${formData.role === r
+                          ? "text-indigo-600"
+                          : "text-slate-400"
+                          }`}
                       />
                       <span
-                        className={`text-sm font-semibold capitalize block ${
-                          formData.role === r
-                            ? "text-indigo-600"
-                            : "text-slate-700"
-                        }`}
+                        className={`text-sm font-semibold capitalize block ${formData.role === r
+                          ? "text-indigo-600"
+                          : "text-slate-700"
+                          }`}
                       >
                         {r}
                       </span>
