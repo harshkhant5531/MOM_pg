@@ -63,14 +63,12 @@ export default function Sidebar({ items, user }: SidebarProps) {
                 <div className="flex h-16 items-center justify-between px-4">
                     {isSidebarOpen ? (
                         <div className="flex items-center gap-2">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
-                                <Video className="h-5 w-5 text-white" />
-                            </div>
+                            <img src="/websiteLogo.png" alt="MOM Logo" className="h-8 w-8 object-contain rounded-lg" />
                             <span className="text-lg font-bold tracking-tight">MOM System</span>
                         </div>
                     ) : (
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 mx-auto">
-                            <Video className="h-5 w-5 text-white" />
+                        <div className="flex h-8 w-8 items-center justify-center mx-auto">
+                            <img src="/websiteLogo.png" alt="MOM Logo" className="h-8 w-8 object-contain rounded-lg" />
                         </div>
                     )}
                     <button
