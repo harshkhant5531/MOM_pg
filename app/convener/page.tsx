@@ -14,7 +14,12 @@ import {
 
 export default function ConvenerDashboard() {
   return (
-    <div className="p-8">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="p-8"
+    >
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Convener Dashboard</h1>
@@ -250,6 +255,6 @@ export default function ConvenerDashboard() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -128,36 +128,21 @@ export default function StaffDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      <header className="border-b border-gray-200 bg-white/50 backdrop-blur-sm sticky top-0 z-50 dark:border-gray-800 dark:bg-gray-900/50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                Staff Dashboard
-              </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Welcome back, Staff Member
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon">
-              <Bell className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
+    <div className="max-w-7xl mx-auto">
+      <header className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Staff Dashboard
+        </h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Welcome back, Staff Member
+        </p>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <div>
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
         >
           {stats.map((stat, index) => (
@@ -246,13 +231,12 @@ export default function StaffDashboard() {
                       </p>
                     </div>
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        task.priority === "High"
-                          ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                          : task.priority === "Medium"
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${task.priority === "High"
+                        ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                        : task.priority === "Medium"
                           ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                           : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
-                      }`}
+                        }`}
                     >
                       {task.priority}
                     </span>
@@ -262,7 +246,7 @@ export default function StaffDashboard() {
             </Card>
           </motion.div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
   output          = "../lib/generated/prisma"
-  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -17,6 +16,7 @@ model department {
   staff          staff[]
 }
 
+
 model venue {
   VenueID   Int        @id @default(autoincrement())
   VenueName String     @db.VarChar(255)
@@ -26,6 +26,7 @@ model venue {
   Modified  DateTime?  @default(now()) @db.DateTime(0)
   meetings  meetings[]
 }
+
 
 model meetingmember {
   MeetingMemberID Int       @id @default(autoincrement())
@@ -41,6 +42,7 @@ model meetingmember {
   @@index([MeetingID], map: "fk_mm_meeting")
   @@index([StaffID], map: "fk_mm_staff")
 }
+
 
 model meetings {
   MeetingID            Int             @id @default(autoincrement())
@@ -62,6 +64,7 @@ model meetings {
   @@index([VenueID], map: "fk_meeting_venue")
 }
 
+
 model meetingtype {
   MeetingTypeID   Int        @id @default(autoincrement())
   MeetingTypeName String     @db.VarChar(255)
@@ -70,6 +73,7 @@ model meetingtype {
   Modified        DateTime?  @default(now()) @db.DateTime(0)
   meetings        meetings[]
 }
+
 
 model staff {
   StaffID       Int             @id @default(autoincrement())
@@ -86,6 +90,7 @@ model staff {
   @@index([DepartmentID], map: "fk_staff_dept")
 }
 
+
 model user {
   id           String     @id @default(uuid()) @db.VarChar(36)
   fullName     String     @db.VarChar(100)
@@ -98,8 +103,11 @@ model user {
   updatedAt    DateTime?  @default(now()) @db.DateTime(0)
 }
 
+
 enum user_role {
   ADMIN
   CONVENER
   STAFF
 }
+
+
