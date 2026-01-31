@@ -14,7 +14,7 @@ import {
     Phone,
     Briefcase
 } from "lucide-react";
-import { getStaff, deleteStaff, createStaff, getDepartments } from "@/app/actions/master-config";
+import { getStaff, deleteStaff, createStaff, updateStaff, getDepartments } from "@/app/actions/master-config";
 
 export default function StaffPage() {
     const [staffList, setStaffList] = useState<any[]>([]);
@@ -22,9 +22,10 @@ export default function StaffPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingStaff, setEditingStaff] = useState<any>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const [newStaff, setNewStaff] = useState({
+    const [formData, setFormData] = useState({
         name: "",
         email: "",
         mobile: "",
@@ -56,16 +57,36 @@ export default function StaffPage() {
         }
     };
 
-    const handleCreate = async (e: React.FormEvent) => {
+    const handleOpenModal = (staff: any = null) => {
+        if (staff) {
+            setEditingStaff(staff);
+            setFormData({
+                name: staff.StaffName,
+                email: staff.EmailAddress || "",
+                mobile: staff.MobileNo || "",
+                departmentId: staff.DepartmentID?.toString() || "",
+                remarks: staff.Remarks || ""
+            });
+        } else {
+            setEditingStaff(null);
+            setFormData({ name: "", email: "", mobile: "", departmentId: "", remarks: "" });
+        }
+        setIsModalOpen(true);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            await createStaff(newStaff);
+            if (editingStaff) {
+                await updateStaff(editingStaff.StaffID, formData);
+            } else {
+                await createStaff(formData);
+            }
             setIsModalOpen(false);
-            setNewStaff({ name: "", email: "", mobile: "", departmentId: "", remarks: "" });
             fetchData();
         } catch (error) {
-            alert("Failed to create staff member.");
+            alert("Failed to save staff member.");
         } finally {
             setIsSubmitting(false);
         }
@@ -85,7 +106,7 @@ export default function StaffPage() {
                     <p className="text-slate-500 text-sm font-medium">Manage staff members who participate in meetings</p>
                 </div>
                 <button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => handleOpenModal()}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 shadow-lg shadow-blue-500/20 transition-all active:scale-95"
                 >
                     <Plus size={18} />
@@ -164,7 +185,10 @@ export default function StaffPage() {
                                         </td>
                                         <td className="px-8 py-6">
                                             <div className="flex items-center justify-end gap-2">
-                                                <button className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                                                <button
+                                                    onClick={() => handleOpenModal(staff)}
+                                                    className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                                >
                                                     <Edit2 size={16} />
                                                 </button>
                                                 <button
@@ -183,7 +207,7 @@ export default function StaffPage() {
                 )}
             </div>
 
-            {/* Add Staff Modal */}
+            {/* Modal */}
             <AnimatePresence>
                 {isModalOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -202,8 +226,12 @@ export default function StaffPage() {
                         >
                             <div className="p-8 border-b border-slate-50 flex items-center justify-between">
                                 <div>
-                                    <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Add New Staff</h2>
-                                    <p className="text-slate-500 text-sm">Create a new organizational profile</p>
+                                    <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">
+                                        {editingStaff ? "Edit Staff member" : "Add New Staff"}
+                                    </h2>
+                                    <p className="text-slate-500 text-sm">
+                                        {editingStaff ? "Update staff profile information" : "Create a new organizational profile"}
+                                    </p>
                                 </div>
                                 <button
                                     onClick={() => setIsModalOpen(false)}
@@ -213,7 +241,7 @@ export default function StaffPage() {
                                 </button>
                             </div>
 
-                            <form onSubmit={handleCreate} className="p-8 space-y-5">
+                            <form onSubmit={handleSubmit} className="p-8 space-y-5">
                                 <div className="grid grid-cols-1 gap-5">
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Full name</label>
@@ -224,8 +252,8 @@ export default function StaffPage() {
                                                 type="text"
                                                 placeholder="e.g. John Doe"
                                                 className="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                                                value={newStaff.name}
-                                                onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
+                                                value={formData.name}
+                                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                             />
                                         </div>
                                     </div>
@@ -239,8 +267,8 @@ export default function StaffPage() {
                                                     type="email"
                                                     placeholder="john@company.com"
                                                     className="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                                                    value={newStaff.email}
-                                                    onChange={(e) => setNewStaff({ ...newStaff, email: e.target.value })}
+                                                    value={formData.email}
+                                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                                 />
                                             </div>
                                         </div>
@@ -252,8 +280,8 @@ export default function StaffPage() {
                                                     type="tel"
                                                     placeholder="+1 234 567"
                                                     className="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                                                    value={newStaff.mobile}
-                                                    onChange={(e) => setNewStaff({ ...newStaff, mobile: e.target.value })}
+                                                    value={formData.mobile}
+                                                    onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
                                                 />
                                             </div>
                                         </div>
@@ -265,8 +293,8 @@ export default function StaffPage() {
                                             <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                             <select
                                                 className="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20 appearance-none transition-all cursor-pointer"
-                                                value={newStaff.departmentId}
-                                                onChange={(e) => setNewStaff({ ...newStaff, departmentId: e.target.value })}
+                                                value={formData.departmentId}
+                                                onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
                                             >
                                                 <option value="">Select Department</option>
                                                 {departments.map(d => (
@@ -282,8 +310,8 @@ export default function StaffPage() {
                                             rows={3}
                                             placeholder="Additional notes..."
                                             className="w-full px-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
-                                            value={newStaff.remarks}
-                                            onChange={(e) => setNewStaff({ ...newStaff, remarks: e.target.value })}
+                                            value={formData.remarks}
+                                            onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
                                         />
                                     </div>
                                 </div>
@@ -302,7 +330,7 @@ export default function StaffPage() {
                                         className="flex-[2] py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold text-sm shadow-xl shadow-blue-500/20 transition-all active:scale-95 flex items-center justify-center gap-2"
                                     >
                                         {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />}
-                                        Confirm Membership
+                                        {editingStaff ? "Update Staff" : "Confirm Membership"}
                                     </button>
                                 </div>
                             </form>

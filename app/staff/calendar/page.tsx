@@ -42,12 +42,12 @@ export default function CalendarPage() {
     const prevMonth = () => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)));
 
     return (
-        <div className="space-y-8 max-w-[1200px] mx-auto pb-20 animate-in fade-in duration-700">
-            {/* Calendar Header */}
+        <div className="space-y-10 max-w-[1200px] mx-auto pb-20 animate-in fade-in duration-700">
+            {/* Perspective Header */}
             <div className="flex justify-between items-center bg-white dark:bg-gray-900 p-10 rounded-[40px] border border-slate-100 dark:border-gray-800 shadow-2xl shadow-blue-500/5">
                 <div>
-                    <p className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.3em] mb-2">Scheduling Perspective</p>
-                    <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                    <p className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.3em] mb-2">My Chronology</p>
+                    <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-none capitalize">
                         {currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
                     </h1>
                 </div>
@@ -64,14 +64,14 @@ export default function CalendarPage() {
             {isLoading ? (
                 <div className="flex items-center justify-center min-h-[400px] text-slate-400 gap-4 font-black uppercase tracking-widest text-xs">
                     <Loader2 className="animate-spin text-blue-500" />
-                    Syncing chronological events...
+                    Syncing chronological registry...
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {currentMonthMeetings.length === 0 ? (
                         <div className="col-span-full bg-slate-50/50 dark:bg-gray-900/50 py-32 rounded-[40px] border-4 border-dashed border-slate-100 dark:border-gray-800 text-center flex flex-col items-center justify-center text-slate-300">
                             <CalendarIcon size={64} className="mb-6 opacity-20" />
-                            <p className="font-black uppercase tracking-[0.2em] text-sm">No synchronized events for this period</p>
+                            <p className="font-black uppercase tracking-[0.2em] text-sm italic">No synchronized events detected for this period</p>
                         </div>
                     ) : (
                         currentMonthMeetings.map((meeting, idx) => (
@@ -80,7 +80,7 @@ export default function CalendarPage() {
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: idx * 0.05 }}
-                                className={`bg-white dark:bg-gray-900 rounded-[32px] border border-slate-100 dark:border-gray-800 shadow-xl shadow-blue-500/5 group hover:border-blue-500 dark:hover:border-blue-500/50 transition-all cursor-default relative overflow-hidden ${meeting.IsCancelled ? 'opacity-60 grayscale' : ''}`}
+                                className={`bg-white dark:bg-gray-900 rounded-[32px] border border-slate-100 dark:border-gray-800 shadow-xl shadow-blue-500/5 group hover:border-blue-500 transition-all cursor-default relative overflow-hidden ${meeting.IsCancelled ? 'opacity-60 grayscale' : ''}`}
                             >
                                 <div className="p-8 h-full flex flex-col">
                                     <div className="flex items-center justify-between mb-8">
@@ -88,7 +88,7 @@ export default function CalendarPage() {
                                             <CalendarIcon size={28} />
                                         </div>
                                         <div className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${meeting.IsCancelled ? 'bg-red-500 text-white' : 'bg-blue-600 text-white'}`}>
-                                            {meeting.IsCancelled ? 'Void' : 'Valid'}
+                                            Day {new Date(meeting.MeetingDate).getDate()}
                                         </div>
                                     </div>
 
@@ -117,7 +117,7 @@ export default function CalendarPage() {
                                         </div>
                                     </div>
 
-                                    {/* Decoration */}
+                                    {/* Visual Decoration */}
                                     <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors pointer-events-none" />
                                 </div>
                             </motion.div>

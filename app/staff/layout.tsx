@@ -6,15 +6,33 @@ import Loading from "@/components/ui/Loading";
 import {
     LayoutDashboard,
     Calendar,
-    ClipboardList,
-    Bell,
+    CalendarDays,
+    Users,
+    Settings,
+    List,
+    User,
+    Building,
+    MapPin,
+    FileBarChart,
 } from "lucide-react";
 
 const staffItems: SidebarItem[] = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/staff" },
     { name: "Meetings", icon: Calendar, href: "/staff/meetings" },
-    { name: "Tasks", icon: ClipboardList, href: "/staff/tasks" },
-    { name: "Notifications", icon: Bell, href: "/staff/notifications" },
+    { name: "Calendar View", icon: CalendarDays, href: "/staff/calendar" },
+    { name: "Attendance", icon: Users, href: "/staff/attendance" },
+    {
+        name: "Master Config",
+        icon: Settings,
+        href: "#",
+        subItems: [
+            { name: "Meeting Types", icon: List, href: "/staff/config/meeting-types" },
+            { name: "Staff", icon: User, href: "/staff/config/staff" },
+            { name: "Departments", icon: Building, href: "/staff/config/departments" },
+            { name: "Venues", icon: MapPin, href: "/staff/config/venues" },
+        ],
+    },
+    { name: "Reports", icon: FileBarChart, href: "/staff/reports" },
 ];
 
 export default function StaffLayout({ children }: { children: React.ReactNode }) {

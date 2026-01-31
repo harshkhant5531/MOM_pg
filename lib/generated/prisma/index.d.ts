@@ -19,11 +19,6 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type department = $Result.DefaultSelection<Prisma.$departmentPayload>
 /**
- * Model venue
- * 
- */
-export type venue = $Result.DefaultSelection<Prisma.$venuePayload>
-/**
  * Model meetingmember
  * 
  */
@@ -43,6 +38,11 @@ export type meetingtype = $Result.DefaultSelection<Prisma.$meetingtypePayload>
  * 
  */
 export type staff = $Result.DefaultSelection<Prisma.$staffPayload>
+/**
+ * Model venue
+ * 
+ */
+export type venue = $Result.DefaultSelection<Prisma.$venuePayload>
 /**
  * Model user
  * 
@@ -195,16 +195,6 @@ export class PrismaClient<
   get department(): Prisma.departmentDelegate<ExtArgs, ClientOptions>;
 
   /**
-   * `prisma.venue`: Exposes CRUD operations for the **venue** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Venues
-    * const venues = await prisma.venue.findMany()
-    * ```
-    */
-  get venue(): Prisma.venueDelegate<ExtArgs, ClientOptions>;
-
-  /**
    * `prisma.meetingmember`: Exposes CRUD operations for the **meetingmember** model.
     * Example usage:
     * ```ts
@@ -243,6 +233,16 @@ export class PrismaClient<
     * ```
     */
   get staff(): Prisma.staffDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.venue`: Exposes CRUD operations for the **venue** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Venues
+    * const venues = await prisma.venue.findMany()
+    * ```
+    */
+  get venue(): Prisma.venueDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.user`: Exposes CRUD operations for the **user** model.
@@ -688,11 +688,11 @@ export namespace Prisma {
 
   export const ModelName: {
     department: 'department',
-    venue: 'venue',
     meetingmember: 'meetingmember',
     meetings: 'meetings',
     meetingtype: 'meetingtype',
     staff: 'staff',
+    venue: 'venue',
     user: 'user'
   };
 
@@ -709,7 +709,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "department" | "venue" | "meetingmember" | "meetings" | "meetingtype" | "staff" | "user"
+      modelProps: "department" | "meetingmember" | "meetings" | "meetingtype" | "staff" | "venue" | "user"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -776,72 +776,6 @@ export namespace Prisma {
           count: {
             args: Prisma.departmentCountArgs<ExtArgs>
             result: $Utils.Optional<DepartmentCountAggregateOutputType> | number
-          }
-        }
-      }
-      venue: {
-        payload: Prisma.$venuePayload<ExtArgs>
-        fields: Prisma.venueFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.venueFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$venuePayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.venueFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$venuePayload>
-          }
-          findFirst: {
-            args: Prisma.venueFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$venuePayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.venueFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$venuePayload>
-          }
-          findMany: {
-            args: Prisma.venueFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$venuePayload>[]
-          }
-          create: {
-            args: Prisma.venueCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$venuePayload>
-          }
-          createMany: {
-            args: Prisma.venueCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          delete: {
-            args: Prisma.venueDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$venuePayload>
-          }
-          update: {
-            args: Prisma.venueUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$venuePayload>
-          }
-          deleteMany: {
-            args: Prisma.venueDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.venueUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.venueUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$venuePayload>
-          }
-          aggregate: {
-            args: Prisma.VenueAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateVenue>
-          }
-          groupBy: {
-            args: Prisma.venueGroupByArgs<ExtArgs>
-            result: $Utils.Optional<VenueGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.venueCountArgs<ExtArgs>
-            result: $Utils.Optional<VenueCountAggregateOutputType> | number
           }
         }
       }
@@ -1109,6 +1043,72 @@ export namespace Prisma {
           }
         }
       }
+      venue: {
+        payload: Prisma.$venuePayload<ExtArgs>
+        fields: Prisma.venueFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.venueFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$venuePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.venueFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$venuePayload>
+          }
+          findFirst: {
+            args: Prisma.venueFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$venuePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.venueFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$venuePayload>
+          }
+          findMany: {
+            args: Prisma.venueFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$venuePayload>[]
+          }
+          create: {
+            args: Prisma.venueCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$venuePayload>
+          }
+          createMany: {
+            args: Prisma.venueCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.venueDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$venuePayload>
+          }
+          update: {
+            args: Prisma.venueUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$venuePayload>
+          }
+          deleteMany: {
+            args: Prisma.venueDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.venueUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.venueUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$venuePayload>
+          }
+          aggregate: {
+            args: Prisma.VenueAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateVenue>
+          }
+          groupBy: {
+            args: Prisma.venueGroupByArgs<ExtArgs>
+            result: $Utils.Optional<VenueGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.venueCountArgs<ExtArgs>
+            result: $Utils.Optional<VenueCountAggregateOutputType> | number
+          }
+        }
+      }
       user: {
         payload: Prisma.$userPayload<ExtArgs>
         fields: Prisma.userFieldRefs
@@ -1284,11 +1284,11 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     department?: departmentOmit
-    venue?: venueOmit
     meetingmember?: meetingmemberOmit
     meetings?: meetingsOmit
     meetingtype?: meetingtypeOmit
     staff?: staffOmit
+    venue?: venueOmit
     user?: userOmit
   }
 
@@ -1397,37 +1397,6 @@ export namespace Prisma {
 
 
   /**
-   * Count Type VenueCountOutputType
-   */
-
-  export type VenueCountOutputType = {
-    meetings: number
-  }
-
-  export type VenueCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    meetings?: boolean | VenueCountOutputTypeCountMeetingsArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * VenueCountOutputType without action
-   */
-  export type VenueCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the VenueCountOutputType
-     */
-    select?: VenueCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * VenueCountOutputType without action
-   */
-  export type VenueCountOutputTypeCountMeetingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: meetingsWhereInput
-  }
-
-
-  /**
    * Count Type MeetingsCountOutputType
    */
 
@@ -1517,6 +1486,37 @@ export namespace Prisma {
    */
   export type StaffCountOutputTypeCountMeetingmemberArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: meetingmemberWhereInput
+  }
+
+
+  /**
+   * Count Type VenueCountOutputType
+   */
+
+  export type VenueCountOutputType = {
+    meetings: number
+  }
+
+  export type VenueCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    meetings?: boolean | VenueCountOutputTypeCountMeetingsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * VenueCountOutputType without action
+   */
+  export type VenueCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VenueCountOutputType
+     */
+    select?: VenueCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * VenueCountOutputType without action
+   */
+  export type VenueCountOutputTypeCountMeetingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: meetingsWhereInput
   }
 
 
@@ -2510,1010 +2510,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: departmentInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model venue
-   */
-
-  export type AggregateVenue = {
-    _count: VenueCountAggregateOutputType | null
-    _avg: VenueAvgAggregateOutputType | null
-    _sum: VenueSumAggregateOutputType | null
-    _min: VenueMinAggregateOutputType | null
-    _max: VenueMaxAggregateOutputType | null
-  }
-
-  export type VenueAvgAggregateOutputType = {
-    VenueID: number | null
-    Capacity: number | null
-  }
-
-  export type VenueSumAggregateOutputType = {
-    VenueID: number | null
-    Capacity: number | null
-  }
-
-  export type VenueMinAggregateOutputType = {
-    VenueID: number | null
-    VenueName: string | null
-    Location: string | null
-    Capacity: number | null
-    Created: Date | null
-    Modified: Date | null
-  }
-
-  export type VenueMaxAggregateOutputType = {
-    VenueID: number | null
-    VenueName: string | null
-    Location: string | null
-    Capacity: number | null
-    Created: Date | null
-    Modified: Date | null
-  }
-
-  export type VenueCountAggregateOutputType = {
-    VenueID: number
-    VenueName: number
-    Location: number
-    Capacity: number
-    Created: number
-    Modified: number
-    _all: number
-  }
-
-
-  export type VenueAvgAggregateInputType = {
-    VenueID?: true
-    Capacity?: true
-  }
-
-  export type VenueSumAggregateInputType = {
-    VenueID?: true
-    Capacity?: true
-  }
-
-  export type VenueMinAggregateInputType = {
-    VenueID?: true
-    VenueName?: true
-    Location?: true
-    Capacity?: true
-    Created?: true
-    Modified?: true
-  }
-
-  export type VenueMaxAggregateInputType = {
-    VenueID?: true
-    VenueName?: true
-    Location?: true
-    Capacity?: true
-    Created?: true
-    Modified?: true
-  }
-
-  export type VenueCountAggregateInputType = {
-    VenueID?: true
-    VenueName?: true
-    Location?: true
-    Capacity?: true
-    Created?: true
-    Modified?: true
-    _all?: true
-  }
-
-  export type VenueAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which venue to aggregate.
-     */
-    where?: venueWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of venues to fetch.
-     */
-    orderBy?: venueOrderByWithRelationInput | venueOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: venueWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` venues from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` venues.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned venues
-    **/
-    _count?: true | VenueCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: VenueAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: VenueSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: VenueMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: VenueMaxAggregateInputType
-  }
-
-  export type GetVenueAggregateType<T extends VenueAggregateArgs> = {
-        [P in keyof T & keyof AggregateVenue]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateVenue[P]>
-      : GetScalarType<T[P], AggregateVenue[P]>
-  }
-
-
-
-
-  export type venueGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: venueWhereInput
-    orderBy?: venueOrderByWithAggregationInput | venueOrderByWithAggregationInput[]
-    by: VenueScalarFieldEnum[] | VenueScalarFieldEnum
-    having?: venueScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: VenueCountAggregateInputType | true
-    _avg?: VenueAvgAggregateInputType
-    _sum?: VenueSumAggregateInputType
-    _min?: VenueMinAggregateInputType
-    _max?: VenueMaxAggregateInputType
-  }
-
-  export type VenueGroupByOutputType = {
-    VenueID: number
-    VenueName: string
-    Location: string | null
-    Capacity: number | null
-    Created: Date | null
-    Modified: Date | null
-    _count: VenueCountAggregateOutputType | null
-    _avg: VenueAvgAggregateOutputType | null
-    _sum: VenueSumAggregateOutputType | null
-    _min: VenueMinAggregateOutputType | null
-    _max: VenueMaxAggregateOutputType | null
-  }
-
-  type GetVenueGroupByPayload<T extends venueGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<VenueGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof VenueGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], VenueGroupByOutputType[P]>
-            : GetScalarType<T[P], VenueGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type venueSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    VenueID?: boolean
-    VenueName?: boolean
-    Location?: boolean
-    Capacity?: boolean
-    Created?: boolean
-    Modified?: boolean
-    meetings?: boolean | venue$meetingsArgs<ExtArgs>
-    _count?: boolean | VenueCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["venue"]>
-
-
-
-  export type venueSelectScalar = {
-    VenueID?: boolean
-    VenueName?: boolean
-    Location?: boolean
-    Capacity?: boolean
-    Created?: boolean
-    Modified?: boolean
-  }
-
-  export type venueOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"VenueID" | "VenueName" | "Location" | "Capacity" | "Created" | "Modified", ExtArgs["result"]["venue"]>
-  export type venueInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    meetings?: boolean | venue$meetingsArgs<ExtArgs>
-    _count?: boolean | VenueCountOutputTypeDefaultArgs<ExtArgs>
-  }
-
-  export type $venuePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "venue"
-    objects: {
-      meetings: Prisma.$meetingsPayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      VenueID: number
-      VenueName: string
-      Location: string | null
-      Capacity: number | null
-      Created: Date | null
-      Modified: Date | null
-    }, ExtArgs["result"]["venue"]>
-    composites: {}
-  }
-
-  type venueGetPayload<S extends boolean | null | undefined | venueDefaultArgs> = $Result.GetResult<Prisma.$venuePayload, S>
-
-  type venueCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<venueFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: VenueCountAggregateInputType | true
-    }
-
-  export interface venueDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['venue'], meta: { name: 'venue' } }
-    /**
-     * Find zero or one Venue that matches the filter.
-     * @param {venueFindUniqueArgs} args - Arguments to find a Venue
-     * @example
-     * // Get one Venue
-     * const venue = await prisma.venue.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends venueFindUniqueArgs>(args: SelectSubset<T, venueFindUniqueArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Venue that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {venueFindUniqueOrThrowArgs} args - Arguments to find a Venue
-     * @example
-     * // Get one Venue
-     * const venue = await prisma.venue.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends venueFindUniqueOrThrowArgs>(args: SelectSubset<T, venueFindUniqueOrThrowArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Venue that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {venueFindFirstArgs} args - Arguments to find a Venue
-     * @example
-     * // Get one Venue
-     * const venue = await prisma.venue.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends venueFindFirstArgs>(args?: SelectSubset<T, venueFindFirstArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Venue that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {venueFindFirstOrThrowArgs} args - Arguments to find a Venue
-     * @example
-     * // Get one Venue
-     * const venue = await prisma.venue.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends venueFindFirstOrThrowArgs>(args?: SelectSubset<T, venueFindFirstOrThrowArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Venues that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {venueFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Venues
-     * const venues = await prisma.venue.findMany()
-     * 
-     * // Get first 10 Venues
-     * const venues = await prisma.venue.findMany({ take: 10 })
-     * 
-     * // Only select the `VenueID`
-     * const venueWithVenueIDOnly = await prisma.venue.findMany({ select: { VenueID: true } })
-     * 
-     */
-    findMany<T extends venueFindManyArgs>(args?: SelectSubset<T, venueFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Venue.
-     * @param {venueCreateArgs} args - Arguments to create a Venue.
-     * @example
-     * // Create one Venue
-     * const Venue = await prisma.venue.create({
-     *   data: {
-     *     // ... data to create a Venue
-     *   }
-     * })
-     * 
-     */
-    create<T extends venueCreateArgs>(args: SelectSubset<T, venueCreateArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Venues.
-     * @param {venueCreateManyArgs} args - Arguments to create many Venues.
-     * @example
-     * // Create many Venues
-     * const venue = await prisma.venue.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends venueCreateManyArgs>(args?: SelectSubset<T, venueCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Delete a Venue.
-     * @param {venueDeleteArgs} args - Arguments to delete one Venue.
-     * @example
-     * // Delete one Venue
-     * const Venue = await prisma.venue.delete({
-     *   where: {
-     *     // ... filter to delete one Venue
-     *   }
-     * })
-     * 
-     */
-    delete<T extends venueDeleteArgs>(args: SelectSubset<T, venueDeleteArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Venue.
-     * @param {venueUpdateArgs} args - Arguments to update one Venue.
-     * @example
-     * // Update one Venue
-     * const venue = await prisma.venue.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends venueUpdateArgs>(args: SelectSubset<T, venueUpdateArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Venues.
-     * @param {venueDeleteManyArgs} args - Arguments to filter Venues to delete.
-     * @example
-     * // Delete a few Venues
-     * const { count } = await prisma.venue.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends venueDeleteManyArgs>(args?: SelectSubset<T, venueDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Venues.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {venueUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Venues
-     * const venue = await prisma.venue.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends venueUpdateManyArgs>(args: SelectSubset<T, venueUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one Venue.
-     * @param {venueUpsertArgs} args - Arguments to update or create a Venue.
-     * @example
-     * // Update or create a Venue
-     * const venue = await prisma.venue.upsert({
-     *   create: {
-     *     // ... data to create a Venue
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Venue we want to update
-     *   }
-     * })
-     */
-    upsert<T extends venueUpsertArgs>(args: SelectSubset<T, venueUpsertArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Venues.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {venueCountArgs} args - Arguments to filter Venues to count.
-     * @example
-     * // Count the number of Venues
-     * const count = await prisma.venue.count({
-     *   where: {
-     *     // ... the filter for the Venues we want to count
-     *   }
-     * })
-    **/
-    count<T extends venueCountArgs>(
-      args?: Subset<T, venueCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], VenueCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Venue.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {VenueAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends VenueAggregateArgs>(args: Subset<T, VenueAggregateArgs>): Prisma.PrismaPromise<GetVenueAggregateType<T>>
-
-    /**
-     * Group by Venue.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {venueGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends venueGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: venueGroupByArgs['orderBy'] }
-        : { orderBy?: venueGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, venueGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetVenueGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the venue model
-   */
-  readonly fields: venueFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for venue.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__venueClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    meetings<T extends venue$meetingsArgs<ExtArgs> = {}>(args?: Subset<T, venue$meetingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$meetingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the venue model
-   */
-  interface venueFieldRefs {
-    readonly VenueID: FieldRef<"venue", 'Int'>
-    readonly VenueName: FieldRef<"venue", 'String'>
-    readonly Location: FieldRef<"venue", 'String'>
-    readonly Capacity: FieldRef<"venue", 'Int'>
-    readonly Created: FieldRef<"venue", 'DateTime'>
-    readonly Modified: FieldRef<"venue", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * venue findUnique
-   */
-  export type venueFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the venue
-     */
-    select?: venueSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the venue
-     */
-    omit?: venueOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: venueInclude<ExtArgs> | null
-    /**
-     * Filter, which venue to fetch.
-     */
-    where: venueWhereUniqueInput
-  }
-
-  /**
-   * venue findUniqueOrThrow
-   */
-  export type venueFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the venue
-     */
-    select?: venueSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the venue
-     */
-    omit?: venueOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: venueInclude<ExtArgs> | null
-    /**
-     * Filter, which venue to fetch.
-     */
-    where: venueWhereUniqueInput
-  }
-
-  /**
-   * venue findFirst
-   */
-  export type venueFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the venue
-     */
-    select?: venueSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the venue
-     */
-    omit?: venueOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: venueInclude<ExtArgs> | null
-    /**
-     * Filter, which venue to fetch.
-     */
-    where?: venueWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of venues to fetch.
-     */
-    orderBy?: venueOrderByWithRelationInput | venueOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for venues.
-     */
-    cursor?: venueWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` venues from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` venues.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of venues.
-     */
-    distinct?: VenueScalarFieldEnum | VenueScalarFieldEnum[]
-  }
-
-  /**
-   * venue findFirstOrThrow
-   */
-  export type venueFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the venue
-     */
-    select?: venueSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the venue
-     */
-    omit?: venueOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: venueInclude<ExtArgs> | null
-    /**
-     * Filter, which venue to fetch.
-     */
-    where?: venueWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of venues to fetch.
-     */
-    orderBy?: venueOrderByWithRelationInput | venueOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for venues.
-     */
-    cursor?: venueWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` venues from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` venues.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of venues.
-     */
-    distinct?: VenueScalarFieldEnum | VenueScalarFieldEnum[]
-  }
-
-  /**
-   * venue findMany
-   */
-  export type venueFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the venue
-     */
-    select?: venueSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the venue
-     */
-    omit?: venueOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: venueInclude<ExtArgs> | null
-    /**
-     * Filter, which venues to fetch.
-     */
-    where?: venueWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of venues to fetch.
-     */
-    orderBy?: venueOrderByWithRelationInput | venueOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing venues.
-     */
-    cursor?: venueWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` venues from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` venues.
-     */
-    skip?: number
-    distinct?: VenueScalarFieldEnum | VenueScalarFieldEnum[]
-  }
-
-  /**
-   * venue create
-   */
-  export type venueCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the venue
-     */
-    select?: venueSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the venue
-     */
-    omit?: venueOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: venueInclude<ExtArgs> | null
-    /**
-     * The data needed to create a venue.
-     */
-    data: XOR<venueCreateInput, venueUncheckedCreateInput>
-  }
-
-  /**
-   * venue createMany
-   */
-  export type venueCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many venues.
-     */
-    data: venueCreateManyInput | venueCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * venue update
-   */
-  export type venueUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the venue
-     */
-    select?: venueSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the venue
-     */
-    omit?: venueOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: venueInclude<ExtArgs> | null
-    /**
-     * The data needed to update a venue.
-     */
-    data: XOR<venueUpdateInput, venueUncheckedUpdateInput>
-    /**
-     * Choose, which venue to update.
-     */
-    where: venueWhereUniqueInput
-  }
-
-  /**
-   * venue updateMany
-   */
-  export type venueUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update venues.
-     */
-    data: XOR<venueUpdateManyMutationInput, venueUncheckedUpdateManyInput>
-    /**
-     * Filter which venues to update
-     */
-    where?: venueWhereInput
-    /**
-     * Limit how many venues to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * venue upsert
-   */
-  export type venueUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the venue
-     */
-    select?: venueSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the venue
-     */
-    omit?: venueOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: venueInclude<ExtArgs> | null
-    /**
-     * The filter to search for the venue to update in case it exists.
-     */
-    where: venueWhereUniqueInput
-    /**
-     * In case the venue found by the `where` argument doesn't exist, create a new venue with this data.
-     */
-    create: XOR<venueCreateInput, venueUncheckedCreateInput>
-    /**
-     * In case the venue was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<venueUpdateInput, venueUncheckedUpdateInput>
-  }
-
-  /**
-   * venue delete
-   */
-  export type venueDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the venue
-     */
-    select?: venueSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the venue
-     */
-    omit?: venueOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: venueInclude<ExtArgs> | null
-    /**
-     * Filter which venue to delete.
-     */
-    where: venueWhereUniqueInput
-  }
-
-  /**
-   * venue deleteMany
-   */
-  export type venueDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which venues to delete
-     */
-    where?: venueWhereInput
-    /**
-     * Limit how many venues to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * venue.meetings
-   */
-  export type venue$meetingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the meetings
-     */
-    select?: meetingsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the meetings
-     */
-    omit?: meetingsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: meetingsInclude<ExtArgs> | null
-    where?: meetingsWhereInput
-    orderBy?: meetingsOrderByWithRelationInput | meetingsOrderByWithRelationInput[]
-    cursor?: meetingsWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: MeetingsScalarFieldEnum | MeetingsScalarFieldEnum[]
-  }
-
-  /**
-   * venue without action
-   */
-  export type venueDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the venue
-     */
-    select?: venueSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the venue
-     */
-    omit?: venueOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: venueInclude<ExtArgs> | null
   }
 
 
@@ -7643,6 +6639,1010 @@ export namespace Prisma {
 
 
   /**
+   * Model venue
+   */
+
+  export type AggregateVenue = {
+    _count: VenueCountAggregateOutputType | null
+    _avg: VenueAvgAggregateOutputType | null
+    _sum: VenueSumAggregateOutputType | null
+    _min: VenueMinAggregateOutputType | null
+    _max: VenueMaxAggregateOutputType | null
+  }
+
+  export type VenueAvgAggregateOutputType = {
+    VenueID: number | null
+    Capacity: number | null
+  }
+
+  export type VenueSumAggregateOutputType = {
+    VenueID: number | null
+    Capacity: number | null
+  }
+
+  export type VenueMinAggregateOutputType = {
+    VenueID: number | null
+    VenueName: string | null
+    Location: string | null
+    Capacity: number | null
+    Created: Date | null
+    Modified: Date | null
+  }
+
+  export type VenueMaxAggregateOutputType = {
+    VenueID: number | null
+    VenueName: string | null
+    Location: string | null
+    Capacity: number | null
+    Created: Date | null
+    Modified: Date | null
+  }
+
+  export type VenueCountAggregateOutputType = {
+    VenueID: number
+    VenueName: number
+    Location: number
+    Capacity: number
+    Created: number
+    Modified: number
+    _all: number
+  }
+
+
+  export type VenueAvgAggregateInputType = {
+    VenueID?: true
+    Capacity?: true
+  }
+
+  export type VenueSumAggregateInputType = {
+    VenueID?: true
+    Capacity?: true
+  }
+
+  export type VenueMinAggregateInputType = {
+    VenueID?: true
+    VenueName?: true
+    Location?: true
+    Capacity?: true
+    Created?: true
+    Modified?: true
+  }
+
+  export type VenueMaxAggregateInputType = {
+    VenueID?: true
+    VenueName?: true
+    Location?: true
+    Capacity?: true
+    Created?: true
+    Modified?: true
+  }
+
+  export type VenueCountAggregateInputType = {
+    VenueID?: true
+    VenueName?: true
+    Location?: true
+    Capacity?: true
+    Created?: true
+    Modified?: true
+    _all?: true
+  }
+
+  export type VenueAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which venue to aggregate.
+     */
+    where?: venueWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of venues to fetch.
+     */
+    orderBy?: venueOrderByWithRelationInput | venueOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: venueWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` venues from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` venues.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned venues
+    **/
+    _count?: true | VenueCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: VenueAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: VenueSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: VenueMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: VenueMaxAggregateInputType
+  }
+
+  export type GetVenueAggregateType<T extends VenueAggregateArgs> = {
+        [P in keyof T & keyof AggregateVenue]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateVenue[P]>
+      : GetScalarType<T[P], AggregateVenue[P]>
+  }
+
+
+
+
+  export type venueGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: venueWhereInput
+    orderBy?: venueOrderByWithAggregationInput | venueOrderByWithAggregationInput[]
+    by: VenueScalarFieldEnum[] | VenueScalarFieldEnum
+    having?: venueScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: VenueCountAggregateInputType | true
+    _avg?: VenueAvgAggregateInputType
+    _sum?: VenueSumAggregateInputType
+    _min?: VenueMinAggregateInputType
+    _max?: VenueMaxAggregateInputType
+  }
+
+  export type VenueGroupByOutputType = {
+    VenueID: number
+    VenueName: string
+    Location: string | null
+    Capacity: number | null
+    Created: Date | null
+    Modified: Date | null
+    _count: VenueCountAggregateOutputType | null
+    _avg: VenueAvgAggregateOutputType | null
+    _sum: VenueSumAggregateOutputType | null
+    _min: VenueMinAggregateOutputType | null
+    _max: VenueMaxAggregateOutputType | null
+  }
+
+  type GetVenueGroupByPayload<T extends venueGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<VenueGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof VenueGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], VenueGroupByOutputType[P]>
+            : GetScalarType<T[P], VenueGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type venueSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    VenueID?: boolean
+    VenueName?: boolean
+    Location?: boolean
+    Capacity?: boolean
+    Created?: boolean
+    Modified?: boolean
+    meetings?: boolean | venue$meetingsArgs<ExtArgs>
+    _count?: boolean | VenueCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["venue"]>
+
+
+
+  export type venueSelectScalar = {
+    VenueID?: boolean
+    VenueName?: boolean
+    Location?: boolean
+    Capacity?: boolean
+    Created?: boolean
+    Modified?: boolean
+  }
+
+  export type venueOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"VenueID" | "VenueName" | "Location" | "Capacity" | "Created" | "Modified", ExtArgs["result"]["venue"]>
+  export type venueInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    meetings?: boolean | venue$meetingsArgs<ExtArgs>
+    _count?: boolean | VenueCountOutputTypeDefaultArgs<ExtArgs>
+  }
+
+  export type $venuePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "venue"
+    objects: {
+      meetings: Prisma.$meetingsPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      VenueID: number
+      VenueName: string
+      Location: string | null
+      Capacity: number | null
+      Created: Date | null
+      Modified: Date | null
+    }, ExtArgs["result"]["venue"]>
+    composites: {}
+  }
+
+  type venueGetPayload<S extends boolean | null | undefined | venueDefaultArgs> = $Result.GetResult<Prisma.$venuePayload, S>
+
+  type venueCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<venueFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: VenueCountAggregateInputType | true
+    }
+
+  export interface venueDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['venue'], meta: { name: 'venue' } }
+    /**
+     * Find zero or one Venue that matches the filter.
+     * @param {venueFindUniqueArgs} args - Arguments to find a Venue
+     * @example
+     * // Get one Venue
+     * const venue = await prisma.venue.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends venueFindUniqueArgs>(args: SelectSubset<T, venueFindUniqueArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Venue that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {venueFindUniqueOrThrowArgs} args - Arguments to find a Venue
+     * @example
+     * // Get one Venue
+     * const venue = await prisma.venue.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends venueFindUniqueOrThrowArgs>(args: SelectSubset<T, venueFindUniqueOrThrowArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Venue that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {venueFindFirstArgs} args - Arguments to find a Venue
+     * @example
+     * // Get one Venue
+     * const venue = await prisma.venue.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends venueFindFirstArgs>(args?: SelectSubset<T, venueFindFirstArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Venue that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {venueFindFirstOrThrowArgs} args - Arguments to find a Venue
+     * @example
+     * // Get one Venue
+     * const venue = await prisma.venue.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends venueFindFirstOrThrowArgs>(args?: SelectSubset<T, venueFindFirstOrThrowArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Venues that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {venueFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Venues
+     * const venues = await prisma.venue.findMany()
+     * 
+     * // Get first 10 Venues
+     * const venues = await prisma.venue.findMany({ take: 10 })
+     * 
+     * // Only select the `VenueID`
+     * const venueWithVenueIDOnly = await prisma.venue.findMany({ select: { VenueID: true } })
+     * 
+     */
+    findMany<T extends venueFindManyArgs>(args?: SelectSubset<T, venueFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Venue.
+     * @param {venueCreateArgs} args - Arguments to create a Venue.
+     * @example
+     * // Create one Venue
+     * const Venue = await prisma.venue.create({
+     *   data: {
+     *     // ... data to create a Venue
+     *   }
+     * })
+     * 
+     */
+    create<T extends venueCreateArgs>(args: SelectSubset<T, venueCreateArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Venues.
+     * @param {venueCreateManyArgs} args - Arguments to create many Venues.
+     * @example
+     * // Create many Venues
+     * const venue = await prisma.venue.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends venueCreateManyArgs>(args?: SelectSubset<T, venueCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Venue.
+     * @param {venueDeleteArgs} args - Arguments to delete one Venue.
+     * @example
+     * // Delete one Venue
+     * const Venue = await prisma.venue.delete({
+     *   where: {
+     *     // ... filter to delete one Venue
+     *   }
+     * })
+     * 
+     */
+    delete<T extends venueDeleteArgs>(args: SelectSubset<T, venueDeleteArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Venue.
+     * @param {venueUpdateArgs} args - Arguments to update one Venue.
+     * @example
+     * // Update one Venue
+     * const venue = await prisma.venue.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends venueUpdateArgs>(args: SelectSubset<T, venueUpdateArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Venues.
+     * @param {venueDeleteManyArgs} args - Arguments to filter Venues to delete.
+     * @example
+     * // Delete a few Venues
+     * const { count } = await prisma.venue.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends venueDeleteManyArgs>(args?: SelectSubset<T, venueDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Venues.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {venueUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Venues
+     * const venue = await prisma.venue.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends venueUpdateManyArgs>(args: SelectSubset<T, venueUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Venue.
+     * @param {venueUpsertArgs} args - Arguments to update or create a Venue.
+     * @example
+     * // Update or create a Venue
+     * const venue = await prisma.venue.upsert({
+     *   create: {
+     *     // ... data to create a Venue
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Venue we want to update
+     *   }
+     * })
+     */
+    upsert<T extends venueUpsertArgs>(args: SelectSubset<T, venueUpsertArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Venues.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {venueCountArgs} args - Arguments to filter Venues to count.
+     * @example
+     * // Count the number of Venues
+     * const count = await prisma.venue.count({
+     *   where: {
+     *     // ... the filter for the Venues we want to count
+     *   }
+     * })
+    **/
+    count<T extends venueCountArgs>(
+      args?: Subset<T, venueCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], VenueCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Venue.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VenueAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends VenueAggregateArgs>(args: Subset<T, VenueAggregateArgs>): Prisma.PrismaPromise<GetVenueAggregateType<T>>
+
+    /**
+     * Group by Venue.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {venueGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends venueGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: venueGroupByArgs['orderBy'] }
+        : { orderBy?: venueGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, venueGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetVenueGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the venue model
+   */
+  readonly fields: venueFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for venue.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__venueClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    meetings<T extends venue$meetingsArgs<ExtArgs> = {}>(args?: Subset<T, venue$meetingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$meetingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the venue model
+   */
+  interface venueFieldRefs {
+    readonly VenueID: FieldRef<"venue", 'Int'>
+    readonly VenueName: FieldRef<"venue", 'String'>
+    readonly Location: FieldRef<"venue", 'String'>
+    readonly Capacity: FieldRef<"venue", 'Int'>
+    readonly Created: FieldRef<"venue", 'DateTime'>
+    readonly Modified: FieldRef<"venue", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * venue findUnique
+   */
+  export type venueFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the venue
+     */
+    select?: venueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the venue
+     */
+    omit?: venueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: venueInclude<ExtArgs> | null
+    /**
+     * Filter, which venue to fetch.
+     */
+    where: venueWhereUniqueInput
+  }
+
+  /**
+   * venue findUniqueOrThrow
+   */
+  export type venueFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the venue
+     */
+    select?: venueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the venue
+     */
+    omit?: venueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: venueInclude<ExtArgs> | null
+    /**
+     * Filter, which venue to fetch.
+     */
+    where: venueWhereUniqueInput
+  }
+
+  /**
+   * venue findFirst
+   */
+  export type venueFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the venue
+     */
+    select?: venueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the venue
+     */
+    omit?: venueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: venueInclude<ExtArgs> | null
+    /**
+     * Filter, which venue to fetch.
+     */
+    where?: venueWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of venues to fetch.
+     */
+    orderBy?: venueOrderByWithRelationInput | venueOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for venues.
+     */
+    cursor?: venueWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` venues from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` venues.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of venues.
+     */
+    distinct?: VenueScalarFieldEnum | VenueScalarFieldEnum[]
+  }
+
+  /**
+   * venue findFirstOrThrow
+   */
+  export type venueFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the venue
+     */
+    select?: venueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the venue
+     */
+    omit?: venueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: venueInclude<ExtArgs> | null
+    /**
+     * Filter, which venue to fetch.
+     */
+    where?: venueWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of venues to fetch.
+     */
+    orderBy?: venueOrderByWithRelationInput | venueOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for venues.
+     */
+    cursor?: venueWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` venues from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` venues.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of venues.
+     */
+    distinct?: VenueScalarFieldEnum | VenueScalarFieldEnum[]
+  }
+
+  /**
+   * venue findMany
+   */
+  export type venueFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the venue
+     */
+    select?: venueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the venue
+     */
+    omit?: venueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: venueInclude<ExtArgs> | null
+    /**
+     * Filter, which venues to fetch.
+     */
+    where?: venueWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of venues to fetch.
+     */
+    orderBy?: venueOrderByWithRelationInput | venueOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing venues.
+     */
+    cursor?: venueWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` venues from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` venues.
+     */
+    skip?: number
+    distinct?: VenueScalarFieldEnum | VenueScalarFieldEnum[]
+  }
+
+  /**
+   * venue create
+   */
+  export type venueCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the venue
+     */
+    select?: venueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the venue
+     */
+    omit?: venueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: venueInclude<ExtArgs> | null
+    /**
+     * The data needed to create a venue.
+     */
+    data: XOR<venueCreateInput, venueUncheckedCreateInput>
+  }
+
+  /**
+   * venue createMany
+   */
+  export type venueCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many venues.
+     */
+    data: venueCreateManyInput | venueCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * venue update
+   */
+  export type venueUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the venue
+     */
+    select?: venueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the venue
+     */
+    omit?: venueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: venueInclude<ExtArgs> | null
+    /**
+     * The data needed to update a venue.
+     */
+    data: XOR<venueUpdateInput, venueUncheckedUpdateInput>
+    /**
+     * Choose, which venue to update.
+     */
+    where: venueWhereUniqueInput
+  }
+
+  /**
+   * venue updateMany
+   */
+  export type venueUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update venues.
+     */
+    data: XOR<venueUpdateManyMutationInput, venueUncheckedUpdateManyInput>
+    /**
+     * Filter which venues to update
+     */
+    where?: venueWhereInput
+    /**
+     * Limit how many venues to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * venue upsert
+   */
+  export type venueUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the venue
+     */
+    select?: venueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the venue
+     */
+    omit?: venueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: venueInclude<ExtArgs> | null
+    /**
+     * The filter to search for the venue to update in case it exists.
+     */
+    where: venueWhereUniqueInput
+    /**
+     * In case the venue found by the `where` argument doesn't exist, create a new venue with this data.
+     */
+    create: XOR<venueCreateInput, venueUncheckedCreateInput>
+    /**
+     * In case the venue was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<venueUpdateInput, venueUncheckedUpdateInput>
+  }
+
+  /**
+   * venue delete
+   */
+  export type venueDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the venue
+     */
+    select?: venueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the venue
+     */
+    omit?: venueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: venueInclude<ExtArgs> | null
+    /**
+     * Filter which venue to delete.
+     */
+    where: venueWhereUniqueInput
+  }
+
+  /**
+   * venue deleteMany
+   */
+  export type venueDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which venues to delete
+     */
+    where?: venueWhereInput
+    /**
+     * Limit how many venues to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * venue.meetings
+   */
+  export type venue$meetingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the meetings
+     */
+    select?: meetingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the meetings
+     */
+    omit?: meetingsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: meetingsInclude<ExtArgs> | null
+    where?: meetingsWhereInput
+    orderBy?: meetingsOrderByWithRelationInput | meetingsOrderByWithRelationInput[]
+    cursor?: meetingsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MeetingsScalarFieldEnum | MeetingsScalarFieldEnum[]
+  }
+
+  /**
+   * venue without action
+   */
+  export type venueDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the venue
+     */
+    select?: venueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the venue
+     */
+    omit?: venueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: venueInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model user
    */
 
@@ -8593,18 +8593,6 @@ export namespace Prisma {
   export type DepartmentScalarFieldEnum = (typeof DepartmentScalarFieldEnum)[keyof typeof DepartmentScalarFieldEnum]
 
 
-  export const VenueScalarFieldEnum: {
-    VenueID: 'VenueID',
-    VenueName: 'VenueName',
-    Location: 'Location',
-    Capacity: 'Capacity',
-    Created: 'Created',
-    Modified: 'Modified'
-  };
-
-  export type VenueScalarFieldEnum = (typeof VenueScalarFieldEnum)[keyof typeof VenueScalarFieldEnum]
-
-
   export const MeetingmemberScalarFieldEnum: {
     MeetingMemberID: 'MeetingMemberID',
     MeetingID: 'MeetingID',
@@ -8660,6 +8648,18 @@ export namespace Prisma {
   export type StaffScalarFieldEnum = (typeof StaffScalarFieldEnum)[keyof typeof StaffScalarFieldEnum]
 
 
+  export const VenueScalarFieldEnum: {
+    VenueID: 'VenueID',
+    VenueName: 'VenueName',
+    Location: 'Location',
+    Capacity: 'Capacity',
+    Created: 'Created',
+    Modified: 'Modified'
+  };
+
+  export type VenueScalarFieldEnum = (typeof VenueScalarFieldEnum)[keyof typeof VenueScalarFieldEnum]
+
+
   export const UserScalarFieldEnum: {
     id: 'id',
     fullName: 'fullName',
@@ -8699,14 +8699,6 @@ export namespace Prisma {
   export type departmentOrderByRelevanceFieldEnum = (typeof departmentOrderByRelevanceFieldEnum)[keyof typeof departmentOrderByRelevanceFieldEnum]
 
 
-  export const venueOrderByRelevanceFieldEnum: {
-    VenueName: 'VenueName',
-    Location: 'Location'
-  };
-
-  export type venueOrderByRelevanceFieldEnum = (typeof venueOrderByRelevanceFieldEnum)[keyof typeof venueOrderByRelevanceFieldEnum]
-
-
   export const meetingmemberOrderByRelevanceFieldEnum: {
     Remarks: 'Remarks'
   };
@@ -8739,6 +8731,14 @@ export namespace Prisma {
   };
 
   export type staffOrderByRelevanceFieldEnum = (typeof staffOrderByRelevanceFieldEnum)[keyof typeof staffOrderByRelevanceFieldEnum]
+
+
+  export const venueOrderByRelevanceFieldEnum: {
+    VenueName: 'VenueName',
+    Location: 'Location'
+  };
+
+  export type venueOrderByRelevanceFieldEnum = (typeof venueOrderByRelevanceFieldEnum)[keyof typeof venueOrderByRelevanceFieldEnum]
 
 
   export const userOrderByRelevanceFieldEnum: {
@@ -8859,69 +8859,6 @@ export namespace Prisma {
     DepartmentCode?: StringNullableWithAggregatesFilter<"department"> | string | null
     Created?: DateTimeNullableWithAggregatesFilter<"department"> | Date | string | null
     Modified?: DateTimeNullableWithAggregatesFilter<"department"> | Date | string | null
-  }
-
-  export type venueWhereInput = {
-    AND?: venueWhereInput | venueWhereInput[]
-    OR?: venueWhereInput[]
-    NOT?: venueWhereInput | venueWhereInput[]
-    VenueID?: IntFilter<"venue"> | number
-    VenueName?: StringFilter<"venue"> | string
-    Location?: StringNullableFilter<"venue"> | string | null
-    Capacity?: IntNullableFilter<"venue"> | number | null
-    Created?: DateTimeNullableFilter<"venue"> | Date | string | null
-    Modified?: DateTimeNullableFilter<"venue"> | Date | string | null
-    meetings?: MeetingsListRelationFilter
-  }
-
-  export type venueOrderByWithRelationInput = {
-    VenueID?: SortOrder
-    VenueName?: SortOrder
-    Location?: SortOrderInput | SortOrder
-    Capacity?: SortOrderInput | SortOrder
-    Created?: SortOrderInput | SortOrder
-    Modified?: SortOrderInput | SortOrder
-    meetings?: meetingsOrderByRelationAggregateInput
-    _relevance?: venueOrderByRelevanceInput
-  }
-
-  export type venueWhereUniqueInput = Prisma.AtLeast<{
-    VenueID?: number
-    AND?: venueWhereInput | venueWhereInput[]
-    OR?: venueWhereInput[]
-    NOT?: venueWhereInput | venueWhereInput[]
-    VenueName?: StringFilter<"venue"> | string
-    Location?: StringNullableFilter<"venue"> | string | null
-    Capacity?: IntNullableFilter<"venue"> | number | null
-    Created?: DateTimeNullableFilter<"venue"> | Date | string | null
-    Modified?: DateTimeNullableFilter<"venue"> | Date | string | null
-    meetings?: MeetingsListRelationFilter
-  }, "VenueID">
-
-  export type venueOrderByWithAggregationInput = {
-    VenueID?: SortOrder
-    VenueName?: SortOrder
-    Location?: SortOrderInput | SortOrder
-    Capacity?: SortOrderInput | SortOrder
-    Created?: SortOrderInput | SortOrder
-    Modified?: SortOrderInput | SortOrder
-    _count?: venueCountOrderByAggregateInput
-    _avg?: venueAvgOrderByAggregateInput
-    _max?: venueMaxOrderByAggregateInput
-    _min?: venueMinOrderByAggregateInput
-    _sum?: venueSumOrderByAggregateInput
-  }
-
-  export type venueScalarWhereWithAggregatesInput = {
-    AND?: venueScalarWhereWithAggregatesInput | venueScalarWhereWithAggregatesInput[]
-    OR?: venueScalarWhereWithAggregatesInput[]
-    NOT?: venueScalarWhereWithAggregatesInput | venueScalarWhereWithAggregatesInput[]
-    VenueID?: IntWithAggregatesFilter<"venue"> | number
-    VenueName?: StringWithAggregatesFilter<"venue"> | string
-    Location?: StringNullableWithAggregatesFilter<"venue"> | string | null
-    Capacity?: IntNullableWithAggregatesFilter<"venue"> | number | null
-    Created?: DateTimeNullableWithAggregatesFilter<"venue"> | Date | string | null
-    Modified?: DateTimeNullableWithAggregatesFilter<"venue"> | Date | string | null
   }
 
   export type meetingmemberWhereInput = {
@@ -9223,6 +9160,69 @@ export namespace Prisma {
     Modified?: DateTimeNullableWithAggregatesFilter<"staff"> | Date | string | null
   }
 
+  export type venueWhereInput = {
+    AND?: venueWhereInput | venueWhereInput[]
+    OR?: venueWhereInput[]
+    NOT?: venueWhereInput | venueWhereInput[]
+    VenueID?: IntFilter<"venue"> | number
+    VenueName?: StringFilter<"venue"> | string
+    Location?: StringNullableFilter<"venue"> | string | null
+    Capacity?: IntNullableFilter<"venue"> | number | null
+    Created?: DateTimeNullableFilter<"venue"> | Date | string | null
+    Modified?: DateTimeNullableFilter<"venue"> | Date | string | null
+    meetings?: MeetingsListRelationFilter
+  }
+
+  export type venueOrderByWithRelationInput = {
+    VenueID?: SortOrder
+    VenueName?: SortOrder
+    Location?: SortOrderInput | SortOrder
+    Capacity?: SortOrderInput | SortOrder
+    Created?: SortOrderInput | SortOrder
+    Modified?: SortOrderInput | SortOrder
+    meetings?: meetingsOrderByRelationAggregateInput
+    _relevance?: venueOrderByRelevanceInput
+  }
+
+  export type venueWhereUniqueInput = Prisma.AtLeast<{
+    VenueID?: number
+    AND?: venueWhereInput | venueWhereInput[]
+    OR?: venueWhereInput[]
+    NOT?: venueWhereInput | venueWhereInput[]
+    VenueName?: StringFilter<"venue"> | string
+    Location?: StringNullableFilter<"venue"> | string | null
+    Capacity?: IntNullableFilter<"venue"> | number | null
+    Created?: DateTimeNullableFilter<"venue"> | Date | string | null
+    Modified?: DateTimeNullableFilter<"venue"> | Date | string | null
+    meetings?: MeetingsListRelationFilter
+  }, "VenueID">
+
+  export type venueOrderByWithAggregationInput = {
+    VenueID?: SortOrder
+    VenueName?: SortOrder
+    Location?: SortOrderInput | SortOrder
+    Capacity?: SortOrderInput | SortOrder
+    Created?: SortOrderInput | SortOrder
+    Modified?: SortOrderInput | SortOrder
+    _count?: venueCountOrderByAggregateInput
+    _avg?: venueAvgOrderByAggregateInput
+    _max?: venueMaxOrderByAggregateInput
+    _min?: venueMinOrderByAggregateInput
+    _sum?: venueSumOrderByAggregateInput
+  }
+
+  export type venueScalarWhereWithAggregatesInput = {
+    AND?: venueScalarWhereWithAggregatesInput | venueScalarWhereWithAggregatesInput[]
+    OR?: venueScalarWhereWithAggregatesInput[]
+    NOT?: venueScalarWhereWithAggregatesInput | venueScalarWhereWithAggregatesInput[]
+    VenueID?: IntWithAggregatesFilter<"venue"> | number
+    VenueName?: StringWithAggregatesFilter<"venue"> | string
+    Location?: StringNullableWithAggregatesFilter<"venue"> | string | null
+    Capacity?: IntNullableWithAggregatesFilter<"venue"> | number | null
+    Created?: DateTimeNullableWithAggregatesFilter<"venue"> | Date | string | null
+    Modified?: DateTimeNullableWithAggregatesFilter<"venue"> | Date | string | null
+  }
+
   export type userWhereInput = {
     AND?: userWhereInput | userWhereInput[]
     OR?: userWhereInput[]
@@ -9349,70 +9349,6 @@ export namespace Prisma {
     DepartmentID?: IntFieldUpdateOperationsInput | number
     DepartmentName?: StringFieldUpdateOperationsInput | string
     DepartmentCode?: NullableStringFieldUpdateOperationsInput | string | null
-    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type venueCreateInput = {
-    VenueName: string
-    Location?: string | null
-    Capacity?: number | null
-    Created?: Date | string | null
-    Modified?: Date | string | null
-    meetings?: meetingsCreateNestedManyWithoutVenueInput
-  }
-
-  export type venueUncheckedCreateInput = {
-    VenueID?: number
-    VenueName: string
-    Location?: string | null
-    Capacity?: number | null
-    Created?: Date | string | null
-    Modified?: Date | string | null
-    meetings?: meetingsUncheckedCreateNestedManyWithoutVenueInput
-  }
-
-  export type venueUpdateInput = {
-    VenueName?: StringFieldUpdateOperationsInput | string
-    Location?: NullableStringFieldUpdateOperationsInput | string | null
-    Capacity?: NullableIntFieldUpdateOperationsInput | number | null
-    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    meetings?: meetingsUpdateManyWithoutVenueNestedInput
-  }
-
-  export type venueUncheckedUpdateInput = {
-    VenueID?: IntFieldUpdateOperationsInput | number
-    VenueName?: StringFieldUpdateOperationsInput | string
-    Location?: NullableStringFieldUpdateOperationsInput | string | null
-    Capacity?: NullableIntFieldUpdateOperationsInput | number | null
-    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    meetings?: meetingsUncheckedUpdateManyWithoutVenueNestedInput
-  }
-
-  export type venueCreateManyInput = {
-    VenueID?: number
-    VenueName: string
-    Location?: string | null
-    Capacity?: number | null
-    Created?: Date | string | null
-    Modified?: Date | string | null
-  }
-
-  export type venueUpdateManyMutationInput = {
-    VenueName?: StringFieldUpdateOperationsInput | string
-    Location?: NullableStringFieldUpdateOperationsInput | string | null
-    Capacity?: NullableIntFieldUpdateOperationsInput | number | null
-    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type venueUncheckedUpdateManyInput = {
-    VenueID?: IntFieldUpdateOperationsInput | number
-    VenueName?: StringFieldUpdateOperationsInput | string
-    Location?: NullableStringFieldUpdateOperationsInput | string | null
-    Capacity?: NullableIntFieldUpdateOperationsInput | number | null
     Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -9713,6 +9649,70 @@ export namespace Prisma {
     Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type venueCreateInput = {
+    VenueName: string
+    Location?: string | null
+    Capacity?: number | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+    meetings?: meetingsCreateNestedManyWithoutVenueInput
+  }
+
+  export type venueUncheckedCreateInput = {
+    VenueID?: number
+    VenueName: string
+    Location?: string | null
+    Capacity?: number | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+    meetings?: meetingsUncheckedCreateNestedManyWithoutVenueInput
+  }
+
+  export type venueUpdateInput = {
+    VenueName?: StringFieldUpdateOperationsInput | string
+    Location?: NullableStringFieldUpdateOperationsInput | string | null
+    Capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    meetings?: meetingsUpdateManyWithoutVenueNestedInput
+  }
+
+  export type venueUncheckedUpdateInput = {
+    VenueID?: IntFieldUpdateOperationsInput | number
+    VenueName?: StringFieldUpdateOperationsInput | string
+    Location?: NullableStringFieldUpdateOperationsInput | string | null
+    Capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    meetings?: meetingsUncheckedUpdateManyWithoutVenueNestedInput
+  }
+
+  export type venueCreateManyInput = {
+    VenueID?: number
+    VenueName: string
+    Location?: string | null
+    Capacity?: number | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+  }
+
+  export type venueUpdateManyMutationInput = {
+    VenueName?: StringFieldUpdateOperationsInput | string
+    Location?: NullableStringFieldUpdateOperationsInput | string | null
+    Capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type venueUncheckedUpdateManyInput = {
+    VenueID?: IntFieldUpdateOperationsInput | number
+    VenueName?: StringFieldUpdateOperationsInput | string
+    Location?: NullableStringFieldUpdateOperationsInput | string | null
+    Capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type userCreateInput = {
     id?: string
     fullName: string
@@ -9968,86 +9968,6 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type MeetingsListRelationFilter = {
-    every?: meetingsWhereInput
-    some?: meetingsWhereInput
-    none?: meetingsWhereInput
-  }
-
-  export type meetingsOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type venueOrderByRelevanceInput = {
-    fields: venueOrderByRelevanceFieldEnum | venueOrderByRelevanceFieldEnum[]
-    sort: SortOrder
-    search: string
-  }
-
-  export type venueCountOrderByAggregateInput = {
-    VenueID?: SortOrder
-    VenueName?: SortOrder
-    Location?: SortOrder
-    Capacity?: SortOrder
-    Created?: SortOrder
-    Modified?: SortOrder
-  }
-
-  export type venueAvgOrderByAggregateInput = {
-    VenueID?: SortOrder
-    Capacity?: SortOrder
-  }
-
-  export type venueMaxOrderByAggregateInput = {
-    VenueID?: SortOrder
-    VenueName?: SortOrder
-    Location?: SortOrder
-    Capacity?: SortOrder
-    Created?: SortOrder
-    Modified?: SortOrder
-  }
-
-  export type venueMinOrderByAggregateInput = {
-    VenueID?: SortOrder
-    VenueName?: SortOrder
-    Location?: SortOrder
-    Capacity?: SortOrder
-    Created?: SortOrder
-    Modified?: SortOrder
-  }
-
-  export type venueSumOrderByAggregateInput = {
-    VenueID?: SortOrder
-    Capacity?: SortOrder
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
   export type BoolNullableFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
     not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
@@ -10128,6 +10048,17 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type MeetingmemberListRelationFilter = {
@@ -10224,6 +10155,32 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type MeetingsListRelationFilter = {
+    every?: meetingsWhereInput
+    some?: meetingsWhereInput
+    none?: meetingsWhereInput
+  }
+
+  export type meetingsOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type meetingtypeOrderByRelevanceInput = {
     fields: meetingtypeOrderByRelevanceFieldEnum | meetingtypeOrderByRelevanceFieldEnum[]
     sort: SortOrder
@@ -10314,6 +10271,49 @@ export namespace Prisma {
   export type staffSumOrderByAggregateInput = {
     StaffID?: SortOrder
     DepartmentID?: SortOrder
+  }
+
+  export type venueOrderByRelevanceInput = {
+    fields: venueOrderByRelevanceFieldEnum | venueOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type venueCountOrderByAggregateInput = {
+    VenueID?: SortOrder
+    VenueName?: SortOrder
+    Location?: SortOrder
+    Capacity?: SortOrder
+    Created?: SortOrder
+    Modified?: SortOrder
+  }
+
+  export type venueAvgOrderByAggregateInput = {
+    VenueID?: SortOrder
+    Capacity?: SortOrder
+  }
+
+  export type venueMaxOrderByAggregateInput = {
+    VenueID?: SortOrder
+    VenueName?: SortOrder
+    Location?: SortOrder
+    Capacity?: SortOrder
+    Created?: SortOrder
+    Modified?: SortOrder
+  }
+
+  export type venueMinOrderByAggregateInput = {
+    VenueID?: SortOrder
+    VenueName?: SortOrder
+    Location?: SortOrder
+    Capacity?: SortOrder
+    Created?: SortOrder
+    Modified?: SortOrder
+  }
+
+  export type venueSumOrderByAggregateInput = {
+    VenueID?: SortOrder
+    Capacity?: SortOrder
   }
 
   export type Enumuser_roleNullableFilter<$PrismaModel = never> = {
@@ -10437,56 +10437,6 @@ export namespace Prisma {
     deleteMany?: staffScalarWhereInput | staffScalarWhereInput[]
   }
 
-  export type meetingsCreateNestedManyWithoutVenueInput = {
-    create?: XOR<meetingsCreateWithoutVenueInput, meetingsUncheckedCreateWithoutVenueInput> | meetingsCreateWithoutVenueInput[] | meetingsUncheckedCreateWithoutVenueInput[]
-    connectOrCreate?: meetingsCreateOrConnectWithoutVenueInput | meetingsCreateOrConnectWithoutVenueInput[]
-    createMany?: meetingsCreateManyVenueInputEnvelope
-    connect?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
-  }
-
-  export type meetingsUncheckedCreateNestedManyWithoutVenueInput = {
-    create?: XOR<meetingsCreateWithoutVenueInput, meetingsUncheckedCreateWithoutVenueInput> | meetingsCreateWithoutVenueInput[] | meetingsUncheckedCreateWithoutVenueInput[]
-    connectOrCreate?: meetingsCreateOrConnectWithoutVenueInput | meetingsCreateOrConnectWithoutVenueInput[]
-    createMany?: meetingsCreateManyVenueInputEnvelope
-    connect?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type meetingsUpdateManyWithoutVenueNestedInput = {
-    create?: XOR<meetingsCreateWithoutVenueInput, meetingsUncheckedCreateWithoutVenueInput> | meetingsCreateWithoutVenueInput[] | meetingsUncheckedCreateWithoutVenueInput[]
-    connectOrCreate?: meetingsCreateOrConnectWithoutVenueInput | meetingsCreateOrConnectWithoutVenueInput[]
-    upsert?: meetingsUpsertWithWhereUniqueWithoutVenueInput | meetingsUpsertWithWhereUniqueWithoutVenueInput[]
-    createMany?: meetingsCreateManyVenueInputEnvelope
-    set?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
-    disconnect?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
-    delete?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
-    connect?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
-    update?: meetingsUpdateWithWhereUniqueWithoutVenueInput | meetingsUpdateWithWhereUniqueWithoutVenueInput[]
-    updateMany?: meetingsUpdateManyWithWhereWithoutVenueInput | meetingsUpdateManyWithWhereWithoutVenueInput[]
-    deleteMany?: meetingsScalarWhereInput | meetingsScalarWhereInput[]
-  }
-
-  export type meetingsUncheckedUpdateManyWithoutVenueNestedInput = {
-    create?: XOR<meetingsCreateWithoutVenueInput, meetingsUncheckedCreateWithoutVenueInput> | meetingsCreateWithoutVenueInput[] | meetingsUncheckedCreateWithoutVenueInput[]
-    connectOrCreate?: meetingsCreateOrConnectWithoutVenueInput | meetingsCreateOrConnectWithoutVenueInput[]
-    upsert?: meetingsUpsertWithWhereUniqueWithoutVenueInput | meetingsUpsertWithWhereUniqueWithoutVenueInput[]
-    createMany?: meetingsCreateManyVenueInputEnvelope
-    set?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
-    disconnect?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
-    delete?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
-    connect?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
-    update?: meetingsUpdateWithWhereUniqueWithoutVenueInput | meetingsUpdateWithWhereUniqueWithoutVenueInput[]
-    updateMany?: meetingsUpdateManyWithWhereWithoutVenueInput | meetingsUpdateManyWithWhereWithoutVenueInput[]
-    deleteMany?: meetingsScalarWhereInput | meetingsScalarWhereInput[]
-  }
-
   export type meetingsCreateNestedOneWithoutMeetingmemberInput = {
     create?: XOR<meetingsCreateWithoutMeetingmemberInput, meetingsUncheckedCreateWithoutMeetingmemberInput>
     connectOrCreate?: meetingsCreateOrConnectWithoutMeetingmemberInput
@@ -10579,6 +10529,14 @@ export namespace Prisma {
     delete?: venueWhereInput | boolean
     connect?: venueWhereUniqueInput
     update?: XOR<XOR<venueUpdateToOneWithWhereWithoutMeetingsInput, venueUpdateWithoutMeetingsInput>, venueUncheckedUpdateWithoutMeetingsInput>
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type meetingmemberUncheckedUpdateManyWithoutMeetingsNestedInput = {
@@ -10693,6 +10651,48 @@ export namespace Prisma {
     update?: meetingmemberUpdateWithWhereUniqueWithoutStaffInput | meetingmemberUpdateWithWhereUniqueWithoutStaffInput[]
     updateMany?: meetingmemberUpdateManyWithWhereWithoutStaffInput | meetingmemberUpdateManyWithWhereWithoutStaffInput[]
     deleteMany?: meetingmemberScalarWhereInput | meetingmemberScalarWhereInput[]
+  }
+
+  export type meetingsCreateNestedManyWithoutVenueInput = {
+    create?: XOR<meetingsCreateWithoutVenueInput, meetingsUncheckedCreateWithoutVenueInput> | meetingsCreateWithoutVenueInput[] | meetingsUncheckedCreateWithoutVenueInput[]
+    connectOrCreate?: meetingsCreateOrConnectWithoutVenueInput | meetingsCreateOrConnectWithoutVenueInput[]
+    createMany?: meetingsCreateManyVenueInputEnvelope
+    connect?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
+  }
+
+  export type meetingsUncheckedCreateNestedManyWithoutVenueInput = {
+    create?: XOR<meetingsCreateWithoutVenueInput, meetingsUncheckedCreateWithoutVenueInput> | meetingsCreateWithoutVenueInput[] | meetingsUncheckedCreateWithoutVenueInput[]
+    connectOrCreate?: meetingsCreateOrConnectWithoutVenueInput | meetingsCreateOrConnectWithoutVenueInput[]
+    createMany?: meetingsCreateManyVenueInputEnvelope
+    connect?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
+  }
+
+  export type meetingsUpdateManyWithoutVenueNestedInput = {
+    create?: XOR<meetingsCreateWithoutVenueInput, meetingsUncheckedCreateWithoutVenueInput> | meetingsCreateWithoutVenueInput[] | meetingsUncheckedCreateWithoutVenueInput[]
+    connectOrCreate?: meetingsCreateOrConnectWithoutVenueInput | meetingsCreateOrConnectWithoutVenueInput[]
+    upsert?: meetingsUpsertWithWhereUniqueWithoutVenueInput | meetingsUpsertWithWhereUniqueWithoutVenueInput[]
+    createMany?: meetingsCreateManyVenueInputEnvelope
+    set?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
+    disconnect?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
+    delete?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
+    connect?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
+    update?: meetingsUpdateWithWhereUniqueWithoutVenueInput | meetingsUpdateWithWhereUniqueWithoutVenueInput[]
+    updateMany?: meetingsUpdateManyWithWhereWithoutVenueInput | meetingsUpdateManyWithWhereWithoutVenueInput[]
+    deleteMany?: meetingsScalarWhereInput | meetingsScalarWhereInput[]
+  }
+
+  export type meetingsUncheckedUpdateManyWithoutVenueNestedInput = {
+    create?: XOR<meetingsCreateWithoutVenueInput, meetingsUncheckedCreateWithoutVenueInput> | meetingsCreateWithoutVenueInput[] | meetingsUncheckedCreateWithoutVenueInput[]
+    connectOrCreate?: meetingsCreateOrConnectWithoutVenueInput | meetingsCreateOrConnectWithoutVenueInput[]
+    upsert?: meetingsUpsertWithWhereUniqueWithoutVenueInput | meetingsUpsertWithWhereUniqueWithoutVenueInput[]
+    createMany?: meetingsCreateManyVenueInputEnvelope
+    set?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
+    disconnect?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
+    delete?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
+    connect?: meetingsWhereUniqueInput | meetingsWhereUniqueInput[]
+    update?: meetingsUpdateWithWhereUniqueWithoutVenueInput | meetingsUpdateWithWhereUniqueWithoutVenueInput[]
+    updateMany?: meetingsUpdateManyWithWhereWithoutVenueInput | meetingsUpdateManyWithWhereWithoutVenueInput[]
+    deleteMany?: meetingsScalarWhereInput | meetingsScalarWhereInput[]
   }
 
   export type NullableEnumuser_roleFieldUpdateOperationsInput = {
@@ -10839,33 +10839,6 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
   export type NestedBoolNullableFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
     not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
@@ -10902,6 +10875,33 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedEnumuser_roleNullableFilter<$PrismaModel = never> = {
@@ -10980,76 +10980,6 @@ export namespace Prisma {
     Remarks?: StringNullableFilter<"staff"> | string | null
     Created?: DateTimeNullableFilter<"staff"> | Date | string | null
     Modified?: DateTimeNullableFilter<"staff"> | Date | string | null
-  }
-
-  export type meetingsCreateWithoutVenueInput = {
-    MeetingDate: Date | string
-    MeetingDescription?: string | null
-    DocumentPath?: string | null
-    Created?: Date | string | null
-    Modified?: Date | string | null
-    IsCancelled?: boolean | null
-    CancellationDateTime?: Date | string | null
-    CancellationReason?: string | null
-    meetingmember?: meetingmemberCreateNestedManyWithoutMeetingsInput
-    meetingtype: meetingtypeCreateNestedOneWithoutMeetingsInput
-  }
-
-  export type meetingsUncheckedCreateWithoutVenueInput = {
-    MeetingID?: number
-    MeetingDate: Date | string
-    MeetingTypeID: number
-    MeetingDescription?: string | null
-    DocumentPath?: string | null
-    Created?: Date | string | null
-    Modified?: Date | string | null
-    IsCancelled?: boolean | null
-    CancellationDateTime?: Date | string | null
-    CancellationReason?: string | null
-    meetingmember?: meetingmemberUncheckedCreateNestedManyWithoutMeetingsInput
-  }
-
-  export type meetingsCreateOrConnectWithoutVenueInput = {
-    where: meetingsWhereUniqueInput
-    create: XOR<meetingsCreateWithoutVenueInput, meetingsUncheckedCreateWithoutVenueInput>
-  }
-
-  export type meetingsCreateManyVenueInputEnvelope = {
-    data: meetingsCreateManyVenueInput | meetingsCreateManyVenueInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type meetingsUpsertWithWhereUniqueWithoutVenueInput = {
-    where: meetingsWhereUniqueInput
-    update: XOR<meetingsUpdateWithoutVenueInput, meetingsUncheckedUpdateWithoutVenueInput>
-    create: XOR<meetingsCreateWithoutVenueInput, meetingsUncheckedCreateWithoutVenueInput>
-  }
-
-  export type meetingsUpdateWithWhereUniqueWithoutVenueInput = {
-    where: meetingsWhereUniqueInput
-    data: XOR<meetingsUpdateWithoutVenueInput, meetingsUncheckedUpdateWithoutVenueInput>
-  }
-
-  export type meetingsUpdateManyWithWhereWithoutVenueInput = {
-    where: meetingsScalarWhereInput
-    data: XOR<meetingsUpdateManyMutationInput, meetingsUncheckedUpdateManyWithoutVenueInput>
-  }
-
-  export type meetingsScalarWhereInput = {
-    AND?: meetingsScalarWhereInput | meetingsScalarWhereInput[]
-    OR?: meetingsScalarWhereInput[]
-    NOT?: meetingsScalarWhereInput | meetingsScalarWhereInput[]
-    MeetingID?: IntFilter<"meetings"> | number
-    MeetingDate?: DateTimeFilter<"meetings"> | Date | string
-    MeetingTypeID?: IntFilter<"meetings"> | number
-    VenueID?: IntNullableFilter<"meetings"> | number | null
-    MeetingDescription?: StringNullableFilter<"meetings"> | string | null
-    DocumentPath?: StringNullableFilter<"meetings"> | string | null
-    Created?: DateTimeNullableFilter<"meetings"> | Date | string | null
-    Modified?: DateTimeNullableFilter<"meetings"> | Date | string | null
-    IsCancelled?: BoolNullableFilter<"meetings"> | boolean | null
-    CancellationDateTime?: DateTimeNullableFilter<"meetings"> | Date | string | null
-    CancellationReason?: StringNullableFilter<"meetings"> | string | null
   }
 
   export type meetingsCreateWithoutMeetingmemberInput = {
@@ -11385,6 +11315,23 @@ export namespace Prisma {
     data: XOR<meetingsUpdateManyMutationInput, meetingsUncheckedUpdateManyWithoutMeetingtypeInput>
   }
 
+  export type meetingsScalarWhereInput = {
+    AND?: meetingsScalarWhereInput | meetingsScalarWhereInput[]
+    OR?: meetingsScalarWhereInput[]
+    NOT?: meetingsScalarWhereInput | meetingsScalarWhereInput[]
+    MeetingID?: IntFilter<"meetings"> | number
+    MeetingDate?: DateTimeFilter<"meetings"> | Date | string
+    MeetingTypeID?: IntFilter<"meetings"> | number
+    VenueID?: IntNullableFilter<"meetings"> | number | null
+    MeetingDescription?: StringNullableFilter<"meetings"> | string | null
+    DocumentPath?: StringNullableFilter<"meetings"> | string | null
+    Created?: DateTimeNullableFilter<"meetings"> | Date | string | null
+    Modified?: DateTimeNullableFilter<"meetings"> | Date | string | null
+    IsCancelled?: BoolNullableFilter<"meetings"> | boolean | null
+    CancellationDateTime?: DateTimeNullableFilter<"meetings"> | Date | string | null
+    CancellationReason?: StringNullableFilter<"meetings"> | string | null
+  }
+
   export type departmentCreateWithoutStaffInput = {
     DepartmentName: string
     DepartmentCode?: string | null
@@ -11474,6 +11421,59 @@ export namespace Prisma {
     data: XOR<meetingmemberUpdateManyMutationInput, meetingmemberUncheckedUpdateManyWithoutStaffInput>
   }
 
+  export type meetingsCreateWithoutVenueInput = {
+    MeetingDate: Date | string
+    MeetingDescription?: string | null
+    DocumentPath?: string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+    IsCancelled?: boolean | null
+    CancellationDateTime?: Date | string | null
+    CancellationReason?: string | null
+    meetingmember?: meetingmemberCreateNestedManyWithoutMeetingsInput
+    meetingtype: meetingtypeCreateNestedOneWithoutMeetingsInput
+  }
+
+  export type meetingsUncheckedCreateWithoutVenueInput = {
+    MeetingID?: number
+    MeetingDate: Date | string
+    MeetingTypeID: number
+    MeetingDescription?: string | null
+    DocumentPath?: string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+    IsCancelled?: boolean | null
+    CancellationDateTime?: Date | string | null
+    CancellationReason?: string | null
+    meetingmember?: meetingmemberUncheckedCreateNestedManyWithoutMeetingsInput
+  }
+
+  export type meetingsCreateOrConnectWithoutVenueInput = {
+    where: meetingsWhereUniqueInput
+    create: XOR<meetingsCreateWithoutVenueInput, meetingsUncheckedCreateWithoutVenueInput>
+  }
+
+  export type meetingsCreateManyVenueInputEnvelope = {
+    data: meetingsCreateManyVenueInput | meetingsCreateManyVenueInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type meetingsUpsertWithWhereUniqueWithoutVenueInput = {
+    where: meetingsWhereUniqueInput
+    update: XOR<meetingsUpdateWithoutVenueInput, meetingsUncheckedUpdateWithoutVenueInput>
+    create: XOR<meetingsCreateWithoutVenueInput, meetingsUncheckedCreateWithoutVenueInput>
+  }
+
+  export type meetingsUpdateWithWhereUniqueWithoutVenueInput = {
+    where: meetingsWhereUniqueInput
+    data: XOR<meetingsUpdateWithoutVenueInput, meetingsUncheckedUpdateWithoutVenueInput>
+  }
+
+  export type meetingsUpdateManyWithWhereWithoutVenueInput = {
+    where: meetingsScalarWhereInput
+    data: XOR<meetingsUpdateManyMutationInput, meetingsUncheckedUpdateManyWithoutVenueInput>
+  }
+
   export type staffCreateManyDepartmentInput = {
     StaffID?: number
     StaffName: string
@@ -11513,59 +11513,6 @@ export namespace Prisma {
     Remarks?: NullableStringFieldUpdateOperationsInput | string | null
     Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type meetingsCreateManyVenueInput = {
-    MeetingID?: number
-    MeetingDate: Date | string
-    MeetingTypeID: number
-    MeetingDescription?: string | null
-    DocumentPath?: string | null
-    Created?: Date | string | null
-    Modified?: Date | string | null
-    IsCancelled?: boolean | null
-    CancellationDateTime?: Date | string | null
-    CancellationReason?: string | null
-  }
-
-  export type meetingsUpdateWithoutVenueInput = {
-    MeetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    MeetingDescription?: NullableStringFieldUpdateOperationsInput | string | null
-    DocumentPath?: NullableStringFieldUpdateOperationsInput | string | null
-    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    IsCancelled?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
-    meetingmember?: meetingmemberUpdateManyWithoutMeetingsNestedInput
-    meetingtype?: meetingtypeUpdateOneRequiredWithoutMeetingsNestedInput
-  }
-
-  export type meetingsUncheckedUpdateWithoutVenueInput = {
-    MeetingID?: IntFieldUpdateOperationsInput | number
-    MeetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    MeetingTypeID?: IntFieldUpdateOperationsInput | number
-    MeetingDescription?: NullableStringFieldUpdateOperationsInput | string | null
-    DocumentPath?: NullableStringFieldUpdateOperationsInput | string | null
-    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    IsCancelled?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
-    meetingmember?: meetingmemberUncheckedUpdateManyWithoutMeetingsNestedInput
-  }
-
-  export type meetingsUncheckedUpdateManyWithoutVenueInput = {
-    MeetingID?: IntFieldUpdateOperationsInput | number
-    MeetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    MeetingTypeID?: IntFieldUpdateOperationsInput | number
-    MeetingDescription?: NullableStringFieldUpdateOperationsInput | string | null
-    DocumentPath?: NullableStringFieldUpdateOperationsInput | string | null
-    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    IsCancelled?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type meetingmemberCreateManyMeetingsInput = {
@@ -11689,6 +11636,59 @@ export namespace Prisma {
     Remarks?: NullableStringFieldUpdateOperationsInput | string | null
     Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type meetingsCreateManyVenueInput = {
+    MeetingID?: number
+    MeetingDate: Date | string
+    MeetingTypeID: number
+    MeetingDescription?: string | null
+    DocumentPath?: string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+    IsCancelled?: boolean | null
+    CancellationDateTime?: Date | string | null
+    CancellationReason?: string | null
+  }
+
+  export type meetingsUpdateWithoutVenueInput = {
+    MeetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    MeetingDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    DocumentPath?: NullableStringFieldUpdateOperationsInput | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    IsCancelled?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingmember?: meetingmemberUpdateManyWithoutMeetingsNestedInput
+    meetingtype?: meetingtypeUpdateOneRequiredWithoutMeetingsNestedInput
+  }
+
+  export type meetingsUncheckedUpdateWithoutVenueInput = {
+    MeetingID?: IntFieldUpdateOperationsInput | number
+    MeetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    MeetingTypeID?: IntFieldUpdateOperationsInput | number
+    MeetingDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    DocumentPath?: NullableStringFieldUpdateOperationsInput | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    IsCancelled?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingmember?: meetingmemberUncheckedUpdateManyWithoutMeetingsNestedInput
+  }
+
+  export type meetingsUncheckedUpdateManyWithoutVenueInput = {
+    MeetingID?: IntFieldUpdateOperationsInput | number
+    MeetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    MeetingTypeID?: IntFieldUpdateOperationsInput | number
+    MeetingDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    DocumentPath?: NullableStringFieldUpdateOperationsInput | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    IsCancelled?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

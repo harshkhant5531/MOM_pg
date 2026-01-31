@@ -16,16 +16,6 @@ model department {
   staff          staff[]
 }
 
-model venue {
-  VenueID   Int        @id @default(autoincrement())
-  VenueName String     @db.VarChar(255)
-  Location  String?    @db.VarChar(500)
-  Capacity  Int?
-  Created   DateTime?  @default(now()) @db.DateTime(0)
-  Modified  DateTime?  @default(now()) @db.DateTime(0)
-  meetings  meetings[]
-}
-
 model meetingmember {
   MeetingMemberID Int       @id @default(autoincrement())
   MeetingID       Int
@@ -83,6 +73,16 @@ model staff {
   meetingmember meetingmember[]
 
   @@index([DepartmentID], map: "fk_staff_dept")
+}
+
+model venue {
+  VenueID   Int        @id @default(autoincrement())
+  VenueName String     @db.VarChar(255)
+  Location  String?    @db.VarChar(500)
+  Capacity  Int?
+  Created   DateTime?  @default(now()) @db.DateTime(0)
+  Modified  DateTime?  @default(now()) @db.DateTime(0)
+  meetings  meetings[]
 }
 
 model user {

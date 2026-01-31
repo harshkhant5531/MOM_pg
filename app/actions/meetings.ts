@@ -43,6 +43,40 @@ export async function createMeeting(data: any) {
     return meeting;
 }
 
+export async function updateMeeting(id: number, data: any) {
+    const meeting = await prisma.meetings.update({
+        where: { MeetingID: id },
+        data: {
+            MeetingDate: new Date(data.date),
+            MeetingTypeID: parseInt(data.typeId),
+            VenueID: data.venueId ? parseInt(data.venueId) : null,
+            MeetingDescription: data.description
+        }
+    });
+
+    if (data.participants) {
+        // Delete existing members and recreate
+        await prisma.meetingmember.deleteMany({
+            where: { MeetingID: id }
+        });
+
+        if (data.participants.length > 0) {
+            await prisma.meetingmember.createMany({
+                data: data.participants.map((staffId: number) => ({
+                    MeetingID: id,
+                    StaffID: staffId,
+                    IsPresent: false
+                }))
+            });
+        }
+    }
+
+    revalidatePath("/admin/meetings");
+    revalidatePath("/admin/calendar");
+    revalidatePath("/admin/attendance");
+    return meeting;
+}
+
 export async function updateAttendance(meetingId: number, attendanceData: { staffId: number, isPresent: boolean, remarks?: string }[]) {
     for (const item of attendanceData) {
         await prisma.meetingmember.updateMany({

@@ -25,6 +25,21 @@ export async function createStaff(data: any) {
     return staff;
 }
 
+export async function updateStaff(id: number, data: any) {
+    const staff = await prisma.staff.update({
+        where: { StaffID: id },
+        data: {
+            StaffName: data.name,
+            EmailAddress: data.email,
+            MobileNo: data.mobile,
+            DepartmentID: data.departmentId ? parseInt(data.departmentId) : null,
+            Remarks: data.remarks
+        }
+    });
+    revalidatePath("/admin/master-config/staff");
+    return staff;
+}
+
 export async function deleteStaff(id: number) {
     await prisma.staff.delete({ where: { StaffID: id } });
     revalidatePath("/admin/master-config/staff");
@@ -39,6 +54,18 @@ export async function getDepartments() {
 
 export async function createDepartment(data: any) {
     const dept = await prisma.department.create({
+        data: {
+            DepartmentName: data.name,
+            DepartmentCode: data.code
+        }
+    });
+    revalidatePath("/admin/master-config/departments");
+    return dept;
+}
+
+export async function updateDepartment(id: number, data: any) {
+    const dept = await prisma.department.update({
+        where: { DepartmentID: id },
         data: {
             DepartmentName: data.name,
             DepartmentCode: data.code
@@ -72,6 +99,19 @@ export async function createVenue(data: any) {
     return venue;
 }
 
+export async function updateVenue(id: number, data: any) {
+    const venue = await prisma.venue.update({
+        where: { VenueID: id },
+        data: {
+            VenueName: data.name,
+            Location: data.location,
+            Capacity: data.capacity ? parseInt(data.capacity) : null
+        }
+    });
+    revalidatePath("/admin/master-config/venues");
+    return venue;
+}
+
 export async function deleteVenue(id: number) {
     await prisma.venue.delete({ where: { VenueID: id } });
     revalidatePath("/admin/master-config/venues");
@@ -86,6 +126,18 @@ export async function getMeetingTypes() {
 
 export async function createMeetingType(data: any) {
     const type = await prisma.meetingtype.create({
+        data: {
+            MeetingTypeName: data.name,
+            Remarks: data.remarks
+        }
+    });
+    revalidatePath("/admin/master-config/meeting-types");
+    return type;
+}
+
+export async function updateMeetingType(id: number, data: any) {
+    const type = await prisma.meetingtype.update({
+        where: { MeetingTypeID: id },
         data: {
             MeetingTypeName: data.name,
             Remarks: data.remarks

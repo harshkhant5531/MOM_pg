@@ -1,19 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
     Plus,
     FileText,
     Edit2,
     Trash2,
-    Loader2
+    Loader2,
+    X,
+    AlignLeft
 } from "lucide-react";
-import { getMeetingTypes, deleteMeetingType } from "@/app/actions/master-config";
+import { getMeetingTypes, deleteMeetingType, createMeetingType, updateMeetingType } from "@/app/actions/master-config";
 
 export default function MeetingTypesPage() {
     const [meetingTypes, setMeetingTypes] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingType, setEditingType] = useState<any>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [formData, setFormData] = useState({
+        name: "",
+        remarks: ""
+    });
 
     const fetchTypes = async () => {
         setIsLoading(true);
@@ -38,6 +48,38 @@ export default function MeetingTypesPage() {
         }
     };
 
+    const handleOpenModal = (type: any = null) => {
+        if (type) {
+            setEditingType(type);
+            setFormData({
+                name: type.MeetingTypeName,
+                remarks: type.Remarks || ""
+            });
+        } else {
+            setEditingType(null);
+            setFormData({ name: "", remarks: "" });
+        }
+        setIsModalOpen(true);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        try {
+            if (editingType) {
+                await updateMeetingType(editingType.MeetingTypeID, formData);
+            } else {
+                await createMeetingType(formData);
+            }
+            setIsModalOpen(false);
+            fetchTypes();
+        } catch (error) {
+            alert("Failed to save meeting type.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <div className="space-y-6 max-w-[1200px] mx-auto">
             {/* Header */}
@@ -46,7 +88,10 @@ export default function MeetingTypesPage() {
                     <h1 className="text-2xl font-bold text-slate-900">Meeting Types</h1>
                     <p className="text-slate-500 text-sm font-medium">Configure different types of meetings</p>
                 </div>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 shadow-lg shadow-blue-500/20 transition-all active:scale-95">
+                <button
+                    onClick={() => handleOpenModal()}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 shadow-lg shadow-blue-500/20 transition-all active:scale-95"
+                >
                     <Plus size={18} />
                     Add Meeting Type
                 </button>
@@ -91,7 +136,10 @@ export default function MeetingTypesPage() {
                                         </td>
                                         <td className="px-8 py-6">
                                             <div className="flex items-center justify-end gap-2">
-                                                <button className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
+                                                <button
+                                                    onClick={() => handleOpenModal(type)}
+                                                    className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                                >
                                                     <Edit2 size={18} />
                                                 </button>
                                                 <button
@@ -109,6 +157,93 @@ export default function MeetingTypesPage() {
                     </div>
                 )}
             </div>
+
+            {/* Modal */}
+            <AnimatePresence>
+                {isModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsModalOpen(false)}
+                            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden"
+                        >
+                            <div className="p-8 border-b border-slate-50 flex items-center justify-between">
+                                <div>
+                                    <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">
+                                        {editingType ? "Edit Meeting Type" : "Add Meeting Type"}
+                                    </h2>
+                                    <p className="text-slate-500 text-sm">
+                                        {editingType ? "Update meeting category details" : "Define a new meeting category"}
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => setIsModalOpen(false)}
+                                    className="p-2 hover:bg-slate-50 rounded-xl text-slate-400 transition-colors"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="p-8 space-y-5">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Type Name</label>
+                                    <div className="relative">
+                                        <FileText className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                        <input
+                                            required
+                                            type="text"
+                                            placeholder="e.g. Weekly Sync"
+                                            className="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                                            value={formData.name}
+                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Remarks</label>
+                                    <div className="relative">
+                                        <AlignLeft className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                        <input
+                                            type="text"
+                                            placeholder="Additional notes about this type..."
+                                            className="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                                            value={formData.remarks}
+                                            onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="pt-4 flex gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsModalOpen(false)}
+                                        className="flex-1 py-3 text-sm font-bold text-slate-500 hover:bg-slate-50 rounded-2xl transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        className="flex-[2] py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold text-sm shadow-xl shadow-blue-500/20 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                    >
+                                        {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />}
+                                        {editingType ? "Update Type" : "Create Type"}
+                                    </button>
+                                </div>
+                            </form>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

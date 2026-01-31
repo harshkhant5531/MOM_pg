@@ -1,227 +1,363 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-    Calendar,
+    Calendar as CalendarIcon,
     Plus,
     Search,
-    Eye,
-    Edit,
+    Edit2,
     Trash2,
-    Clock
+    Clock,
+    MapPin,
+    Loader2,
+    X,
+    Filter,
+    Users,
+    CheckCircle2,
+    XCircle,
+    Info,
+    ChevronRight
 } from "lucide-react";
-
-const meetingsData = [
-    {
-        id: 1,
-        title: "Weekly Sprint Planning",
-        description: "Discuss sprint goals and task assignments for the upcoming week.",
-        date: "Jan 28, 2026",
-        time: "10:00",
-        type: "Team Meeting",
-        venue: "Conference Room A",
-        convener: "Rajesh Kumar",
-        status: "scheduled",
-        attendees: 3,
-    },
-    {
-        id: 2,
-        title: "Project Demo - ABC Corp",
-        description: "Present the latest project deliverables to ABC Corp stakeholders.",
-        date: "Jan 29, 2026",
-        time: "14:00",
-        type: "Client Meeting",
-        venue: "Board Room",
-        convener: "Priya Sharma",
-        status: "scheduled",
-        attendees: 2,
-    },
-    {
-        id: 3,
-        title: "Q4 Performance Review",
-        description: "Review quarterly performance metrics and set goals for next quarter.",
-        date: "Jan 25, 2026",
-        time: "11:00",
-        type: "Management Review",
-        venue: "Board Room",
-        convener: "Rajesh Kumar",
-        status: "completed",
-        attendees: 5,
-    },
-    {
-        id: 4,
-        title: "New CRM Implementation",
-        description: "Kickoff meeting for the new CRM system implementation project.",
-        date: "Feb 1, 2026",
-        time: "09:00",
-        type: "Project Kickoff",
-        venue: "Training Hall",
-        convener: "Amit Patel",
-        status: "scheduled",
-        attendees: 10,
-    },
-    {
-        id: 5,
-        title: "Monthly Team Sync",
-        description: "Monthly sync to discuss team updates and upcoming initiatives.",
-        date: "Jan 22, 2026",
-        time: "15:00",
-        type: "Team Meeting",
-        venue: "Meeting Room B",
-        convener: "Sneha Gupta",
-        status: "cancelled",
-        attendees: 8,
-    },
-];
+import { motion, AnimatePresence } from "framer-motion";
+import { getMeetings, createMeeting, updateMeeting, cancelMeeting } from "@/app/actions/meetings";
+import { getVenues, getMeetingTypes, getStaff } from "@/app/actions/master-config";
 
 export default function MeetingsPage() {
+    const [meetings, setMeetings] = useState<any[]>([]);
+    const [venues, setVenues] = useState<any[]>([]);
+    const [types, setTypes] = useState<any[]>([]);
+    const [staff, setStaff] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
-    const [statusFilter, setStatusFilter] = useState("All Status");
-    const [typeFilter, setTypeFilter] = useState("All Types");
 
-    const getStatusBadge = (status: string) => {
-        switch (status) {
-            case "scheduled":
-                return <div className="inline-flex items-center rounded-full border border-transparent px-2.5 py-0.5 text-xs font-normal transition-colors focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 bg-blue-50 text-blue-600">scheduled</div>;
-            case "completed":
-                return <div className="inline-flex items-center rounded-full border border-transparent px-2.5 py-0.5 text-xs font-normal transition-colors focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 bg-green-50 text-green-600">completed</div>;
-            case "cancelled":
-                return <div className="inline-flex items-center rounded-full border border-transparent px-2.5 py-0.5 text-xs font-normal transition-colors focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 bg-red-50 text-red-600">cancelled</div>;
-            default:
-                return <div className="inline-flex items-center rounded-full border border-transparent px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 bg-gray-100 text-gray-900">{status}</div>;
+    // Modal state
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingMeeting, setEditingMeeting] = useState<any>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [formData, setFormData] = useState({
+        date: "",
+        time: "",
+        typeId: "",
+        venueId: "",
+        description: "",
+        participants: [] as number[]
+    });
+
+    const fetchData = async () => {
+        setIsLoading(true);
+        try {
+            const [m, v, t, s] = await Promise.all([
+                getMeetings(),
+                getVenues(),
+                getMeetingTypes(),
+                getStaff()
+            ]);
+            setMeetings(m);
+            setVenues(v);
+            setTypes(t);
+            setStaff(s);
+        } catch (error) {
+            console.error("Failed to fetch meetings data:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const handleOpenModal = (meeting: any = null) => {
+        if (meeting) {
+            setEditingMeeting(meeting);
+            const mDate = new Date(meeting.MeetingDate);
+            setFormData({
+                date: mDate.toISOString().split('T')[0],
+                time: mDate.toTimeString().slice(0, 5),
+                typeId: meeting.MeetingTypeID.toString(),
+                venueId: meeting.VenueID?.toString() || "",
+                description: meeting.MeetingDescription || "",
+                participants: meeting.meetingmember?.map((mm: any) => mm.StaffID) || []
+            });
+        } else {
+            setEditingMeeting(null);
+            setFormData({
+                date: new Date().toISOString().split('T')[0],
+                time: "10:00",
+                typeId: "",
+                venueId: "",
+                description: "",
+                participants: []
+            });
+        }
+        setIsModalOpen(true);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        try {
+            const dateTime = new Date(`${formData.date}T${formData.time}`);
+            const data = {
+                ...formData,
+                date: dateTime,
+            };
+
+            if (editingMeeting) {
+                await updateMeeting(editingMeeting.MeetingID, data);
+            } else {
+                await createMeeting(data);
+            }
+            setIsModalOpen(false);
+            fetchData();
+        } catch (error) {
+            alert("Failed to save meeting.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleCancel = async (id: number) => {
+        const reason = prompt("Enter cancellation reason:");
+        if (reason !== null) {
+            await cancelMeeting(id, reason);
+            fetchData();
+        }
+    };
+
+    const toggleParticipant = (staffId: number) => {
+        setFormData(prev => ({
+            ...prev,
+            participants: prev.participants.includes(staffId)
+                ? prev.participants.filter(id => id !== staffId)
+                : [...prev.participants, staffId]
+        }));
+    };
+
+    const filteredMeetings = meetings.filter(m =>
+        m.MeetingDescription?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        m.meetingtype?.MeetingTypeName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
-        <div className="p-8">
-            <div className="flex items-center justify-between mb-8">
+        <div className="p-8 pb-20 max-w-[1400px] mx-auto">
+            <div className="flex justify-between items-end mb-10">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Meetings</h1>
-                    <p className="text-gray-500 dark:text-gray-400">Manage and track all meetings</p>
+                    <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">MEETING MANAGEMENT</h1>
+                    <p className="text-slate-500 font-medium">Schedule and oversee organizational collaborative sessions</p>
                 </div>
-                <button className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 h-10 px-4 py-2">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create Meeting
+                <button
+                    onClick={() => handleOpenModal()}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 shadow-xl shadow-blue-500/20 transition-all active:scale-95"
+                >
+                    <Plus size={20} />
+                    Schedule Meeting
                 </button>
             </div>
 
-            {/* Filters and Search */}
-            <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div className="relative flex-1 w-full">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                     <input
                         type="text"
-                        placeholder="Search meetings..."
-                        className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Search by topic or type..."
+                        className="w-full pl-12 pr-4 py-3.5 bg-white dark:bg-gray-900 border border-slate-100 dark:border-gray-800 rounded-2xl text-sm font-bold shadow-sm focus:ring-2 focus:ring-blue-500/10 transition-all"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="flex gap-3 w-full md:w-auto">
-                    <div className="relative">
-                        <select
-                            className="appearance-none bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer min-w-[140px]"
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                        >
-                            <option>All Status</option>
-                            <option>Scheduled</option>
-                            <option>Completed</option>
-                            <option>Cancelled</option>
-                        </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-                            <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
-                        </div>
-                    </div>
-
-                    <div className="relative">
-                        <select
-                            className="appearance-none bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer min-w-[140px]"
-                            value={typeFilter}
-                            onChange={(e) => setTypeFilter(e.target.value)}
-                        >
-                            <option>All Types</option>
-                            <option>Team Meeting</option>
-                            <option>Client Meeting</option>
-                            <option>Project Kickoff</option>
-                        </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-                            <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
-                        </div>
-                    </div>
+                <div className="flex gap-3">
+                    <button className="p-3.5 bg-white dark:bg-gray-900 border border-slate-100 dark:border-gray-800 rounded-2xl text-slate-400 hover:text-blue-600 transition-colors shadow-sm">
+                        <Filter size={20} />
+                    </button>
                 </div>
             </div>
 
-            {/* Meetings List Table */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left">
-                        <thead className="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
-                            <tr>
-                                <th className="px-6 py-4 font-medium">Meeting</th>
-                                <th className="px-6 py-4 font-medium">Date & Time</th>
-                                <th className="px-6 py-4 font-medium">Type</th>
-                                <th className="px-6 py-4 font-medium">Venue</th>
-                                <th className="px-6 py-4 font-medium">Convener</th>
-                                <th className="px-6 py-4 font-medium">Status</th>
-                                <th className="px-6 py-4 font-medium text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                            {meetingsData.map((meeting) => (
-                                <tr key={meeting.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
-                                    <td className="px-6 py-4">
-                                        <div className="font-medium text-gray-900 dark:text-white">{meeting.title}</div>
-                                        <div className="text-xs text-gray-500 mt-1 max-w-xs">{meeting.description}</div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                                            <Calendar className="h-3 w-3 text-gray-400" />
-                                            {meeting.date}
-                                        </div>
-                                        <div className="flex items-center gap-2 text-gray-500 mt-1">
-                                            <Clock className="h-3 w-3 text-gray-400" />
-                                            {meeting.time}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className="text-gray-700 dark:text-gray-300">{meeting.type}</span>
-                                    </td>
-                                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
-                                        {meeting.venue}
-                                    </td>
-                                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
-                                        {meeting.convener}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {getStatusBadge(meeting.status)}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center justify-end gap-2">
-                                            <button className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 h-8 w-8 text-gray-500 hover:text-blue-600">
-                                                <Eye className="h-4 w-4" />
-                                            </button>
-                                            {meeting.status !== "completed" && meeting.status !== "cancelled" && (
-                                                <>
-                                                    <button className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 h-8 w-8 text-gray-500 hover:text-blue-600">
-                                                        <Edit className="h-4 w-4" />
-                                                    </button>
-                                                    <button className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 h-8 w-8 text-gray-500 hover:text-red-600">
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </button>
-                                                </>
-                                            )}
-                                            {(meeting.status === "completed" || meeting.status === "cancelled") && (
-                                                <div className="w-16"></div> /* Spacer to keep alignment */
-                                            )}
-                                        </div>
-                                    </td>
+            <div className="bg-white dark:bg-gray-900 rounded-[32px] border border-slate-100 dark:border-gray-800 shadow-xl shadow-blue-500/5 overflow-hidden">
+                {isLoading ? (
+                    <div className="p-24 flex flex-col items-center justify-center text-slate-400 gap-4">
+                        <Loader2 className="animate-spin text-blue-500" size={32} />
+                        <span className="font-black uppercase tracking-widest text-xs">Syncing meeting records...</span>
+                    </div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                            <thead>
+                                <tr className="bg-slate-50/50 dark:bg-gray-800/50 border-b border-slate-100 dark:border-gray-800">
+                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Session Details</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Schedule</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Venue</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Scale</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Status</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50 dark:divide-gray-800">
+                                {filteredMeetings.map((meeting) => (
+                                    <tr key={meeting.MeetingID} className={`group hover:bg-slate-50/50 dark:hover:bg-gray-800/50 transition-colors ${meeting.IsCancelled ? 'opacity-60' : ''}`}>
+                                        <td className="px-8 py-6">
+                                            <div className="space-y-1 max-w-xs">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-black rounded-md uppercase">
+                                                        {meeting.meetingtype?.MeetingTypeName}
+                                                    </span>
+                                                </div>
+                                                <h4 className="font-bold text-slate-900 dark:text-white capitalize group-hover:text-blue-600 transition-colors">
+                                                    {meeting.MeetingDescription}
+                                                </h4>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6 text-sm">
+                                            <div className="font-bold text-slate-700 dark:text-gray-300">{new Date(meeting.MeetingDate).toLocaleDateString()}</div>
+                                            <div className="flex items-center gap-1.5 text-slate-400 font-medium text-xs mt-1">
+                                                <Clock size={12} />
+                                                {new Date(meeting.MeetingDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <div className="flex items-center gap-2 text-slate-600 dark:text-gray-400 font-bold text-sm">
+                                                <MapPin size={14} className="text-blue-500" />
+                                                {meeting.venue?.VenueName || "TBD"}
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex -space-x-2">
+                                                    {meeting.meetingmember?.slice(0, 3).map((mm: any, i: number) => (
+                                                        <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500">
+                                                            {mm.staff?.StaffName.charAt(0)}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                <span className="text-[11px] font-black text-slate-400">
+                                                    {meeting.meetingmember?.length || 0} Members
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            {meeting.IsCancelled ? (
+                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-50 text-red-600 text-[10px] font-black rounded-full border border-red-100 uppercase">
+                                                    <XCircle size={12} /> Cancelled
+                                                </span>
+                                            ) : new Date(meeting.MeetingDate) < new Date() ? (
+                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-600 text-[10px] font-black rounded-full border border-green-100 uppercase">
+                                                    <CheckCircle2 size={12} /> Completed
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black rounded-full border border-blue-100 uppercase">
+                                                    <Clock size={12} /> Upcoming
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td className="px-8 py-6 text-right">
+                                            {!meeting.IsCancelled && new Date(meeting.MeetingDate) >= new Date() && (
+                                                <div className="flex gap-2 justify-end">
+                                                    <button onClick={() => handleOpenModal(meeting)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
+                                                        <Edit2 size={18} />
+                                                    </button>
+                                                    <button onClick={() => handleCancel(meeting.MeetingID)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
+
+            {/* Modal */}
+            <AnimatePresence>
+                {isModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" />
+                        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-4xl bg-white dark:bg-gray-900 rounded-[40px] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+                            <div className="p-10 border-b border-slate-50 dark:border-gray-800 flex items-center justify-between bg-slate-50/50 dark:bg-gray-800/50">
+                                <div className="flex items-center gap-5">
+                                    <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30">
+                                        <Plus size={28} />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{editingMeeting ? "Reconfigure Session" : "Schedule New Session"}</h2>
+                                        <p className="text-slate-500 font-medium">Coordinate participants, time, and logistics</p>
+                                    </div>
+                                </div>
+                                <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-white dark:hover:bg-gray-700 rounded-2xl text-slate-400 shadow-sm transition-all">
+                                    <X size={24} />
+                                </button>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-10 space-y-10 custom-scrollbar">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                    <div className="space-y-8">
+                                        <div className="space-y-3">
+                                            <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                                                <CalendarIcon size={14} className="text-blue-500" /> Date & Time
+                                            </label>
+                                            <div className="flex gap-4">
+                                                <input required type="date" className="flex-1 px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} />
+                                                <input required type="time" className="w-32 px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all" value={formData.time} onChange={(e) => setFormData({ ...formData, time: e.target.value })} />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                                                <Info size={14} className="text-blue-500" /> Category & Venue
+                                            </label>
+                                            <div className="grid grid-cols-1 gap-4">
+                                                <select required className="w-full px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all appearance-none" value={formData.typeId} onChange={(e) => setFormData({ ...formData, typeId: e.target.value })}>
+                                                    <option value="">Select Meeting Type</option>
+                                                    {types.map(t => <option key={t.MeetingTypeID} value={t.MeetingTypeID}>{t.MeetingTypeName}</option>)}
+                                                </select>
+                                                <select required className="w-full px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all appearance-none" value={formData.venueId} onChange={(e) => setFormData({ ...formData, venueId: e.target.value })}>
+                                                    <option value="">Select Venue</option>
+                                                    {venues.map(v => <option key={v.VenueID} value={v.VenueID}>{v.VenueName} (Cap: {v.Capacity})</option>)}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Topic/Description</label>
+                                            <textarea required rows={4} className="w-full px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all resize-none" placeholder="What is the objective of this meeting?" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3 flex flex-col h-full">
+                                        <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center justify-between">
+                                            Participants
+                                            <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md text-[10px]">{formData.participants.length} selected</span>
+                                        </label>
+                                        <div className="flex-1 bg-slate-50 dark:bg-gray-800 rounded-3xl p-6 overflow-y-auto space-y-2 border border-slate-100 dark:border-gray-700">
+                                            {staff.map(member => (
+                                                <button key={member.StaffID} type="button" onClick={() => toggleParticipant(member.StaffID)} className={`w-full flex items-center justify-between p-3.5 rounded-2xl transition-all ${formData.participants.includes(member.StaffID) ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'bg-white dark:bg-gray-900 text-slate-700 dark:text-gray-300 hover:bg-blue-50 group'}`}>
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black ${formData.participants.includes(member.StaffID) ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-600'}`}>
+                                                            {member.StaffName.charAt(0)}
+                                                        </div>
+                                                        <span className="text-xs font-bold">{member.StaffName}</span>
+                                                    </div>
+                                                    <ChevronRight size={14} className={formData.participants.includes(member.StaffID) ? 'opacity-100' : 'opacity-0'} />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="pt-6 flex gap-4">
+                                    <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-4 text-sm font-black text-slate-400 hover:text-slate-600 hover:bg-slate-50 dark:hover:bg-gray-800 rounded-2xl transition-all uppercase tracking-widest">Discard</button>
+                                    <button type="submit" disabled={isSubmitting} className="flex-[2] py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-3xl font-black text-sm shadow-2xl shadow-blue-500/40 transition-all active:scale-[0.98] flex items-center justify-center gap-3 uppercase tracking-widest">
+                                        {isSubmitting ? <Loader2 size={20} className="animate-spin" /> : editingMeeting ? "Apply Changes" : "Confirm Schedule"}
+                                    </button>
+                                </div>
+                            </form>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
