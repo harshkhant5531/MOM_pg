@@ -40,6 +40,10 @@ export async function createMeeting(data: any) {
     revalidatePath("/admin/meetings");
     revalidatePath("/admin/calendar");
     revalidatePath("/admin/attendance");
+    revalidatePath("/convener");
+    revalidatePath("/convener/meetings");
+    revalidatePath("/staff");
+    revalidatePath("/staff/meetings");
     return meeting;
 }
 
@@ -74,6 +78,10 @@ export async function updateMeeting(id: number, data: any) {
     revalidatePath("/admin/meetings");
     revalidatePath("/admin/calendar");
     revalidatePath("/admin/attendance");
+    revalidatePath("/convener");
+    revalidatePath("/convener/meetings");
+    revalidatePath("/staff");
+    revalidatePath("/staff/meetings");
     return meeting;
 }
 
@@ -92,6 +100,10 @@ export async function updateAttendance(meetingId: number, attendanceData: { staf
     }
     revalidatePath("/admin/attendance");
     revalidatePath("/admin/reports");
+    revalidatePath("/convener");
+    revalidatePath("/convener/attendance");
+    revalidatePath("/staff");
+    revalidatePath("/staff/attendance");
 }
 
 export async function cancelMeeting(id: number, reason: string) {
@@ -104,4 +116,8 @@ export async function cancelMeeting(id: number, reason: string) {
         }
     });
     revalidatePath("/admin/meetings");
+    revalidatePath("/convener");
+    revalidatePath("/convener/meetings");
+    revalidatePath("/staff");
+    revalidatePath("/staff/meetings");
 }

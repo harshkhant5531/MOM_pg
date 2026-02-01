@@ -22,6 +22,8 @@ export async function createStaff(data: any) {
         }
     });
     revalidatePath("/admin/master-config/staff");
+    revalidatePath("/convener/config/staff");
+    revalidatePath("/staff/config/staff");
     return staff;
 }
 
@@ -37,12 +39,16 @@ export async function updateStaff(id: number, data: any) {
         }
     });
     revalidatePath("/admin/master-config/staff");
+    revalidatePath("/convener/config/staff");
+    revalidatePath("/staff/config/staff");
     return staff;
 }
 
 export async function deleteStaff(id: number) {
     await prisma.staff.delete({ where: { StaffID: id } });
     revalidatePath("/admin/master-config/staff");
+    revalidatePath("/convener/config/staff");
+    revalidatePath("/staff/config/staff");
 }
 
 // --- Department Actions ---
@@ -60,6 +66,8 @@ export async function createDepartment(data: any) {
         }
     });
     revalidatePath("/admin/master-config/departments");
+    revalidatePath("/convener/config/departments");
+    revalidatePath("/staff/config/departments");
     return dept;
 }
 
@@ -72,12 +80,16 @@ export async function updateDepartment(id: number, data: any) {
         }
     });
     revalidatePath("/admin/master-config/departments");
+    revalidatePath("/convener/config/departments");
+    revalidatePath("/staff/config/departments");
     return dept;
 }
 
 export async function deleteDepartment(id: number) {
     await prisma.department.delete({ where: { DepartmentID: id } });
     revalidatePath("/admin/master-config/departments");
+    revalidatePath("/convener/config/departments");
+    revalidatePath("/staff/config/departments");
 }
 
 // --- Venue Actions ---
@@ -96,6 +108,8 @@ export async function createVenue(data: any) {
         }
     });
     revalidatePath("/admin/master-config/venues");
+    revalidatePath("/convener/config/venues");
+    revalidatePath("/staff/config/venues");
     return venue;
 }
 
@@ -109,12 +123,16 @@ export async function updateVenue(id: number, data: any) {
         }
     });
     revalidatePath("/admin/master-config/venues");
+    revalidatePath("/convener/config/venues");
+    revalidatePath("/staff/config/venues");
     return venue;
 }
 
 export async function deleteVenue(id: number) {
     await prisma.venue.delete({ where: { VenueID: id } });
     revalidatePath("/admin/master-config/venues");
+    revalidatePath("/convener/config/venues");
+    revalidatePath("/staff/config/venues");
 }
 
 // --- Meeting Type Actions ---
@@ -132,6 +150,8 @@ export async function createMeetingType(data: any) {
         }
     });
     revalidatePath("/admin/master-config/meeting-types");
+    revalidatePath("/convener/config/meeting-types");
+    revalidatePath("/staff/config/meeting-types");
     return type;
 }
 
@@ -144,10 +164,14 @@ export async function updateMeetingType(id: number, data: any) {
         }
     });
     revalidatePath("/admin/master-config/meeting-types");
+    revalidatePath("/convener/config/meeting-types");
+    revalidatePath("/staff/config/meeting-types");
     return type;
 }
 
 export async function deleteMeetingType(id: number) {
     await prisma.meetingtype.delete({ where: { MeetingTypeID: id } });
     revalidatePath("/admin/master-config/meeting-types");
+    revalidatePath("/convener/config/meeting-types");
+    revalidatePath("/staff/config/meeting-types");
 }

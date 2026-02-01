@@ -18,21 +18,35 @@ import {
 } from "lucide-react";
 import { getDashboardStats } from "@/app/actions/dashboard";
 import { getMeetings } from "@/app/actions/meetings";
+import { getCurrentUser } from "@/app/actions/auth";
 
 export default function StaffDashboard() {
   const [data, setData] = useState<any>(null);
   const [meetings, setMeetings] = useState<any[]>([]);
+  const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+
         const [stats, m] = await Promise.all([
-          getDashboardStats(),
+          getDashboardStats(currentUser?.email),
           getMeetings()
         ]);
+
         setData(stats);
-        setMeetings(m);
+        // Filter meetings for this staff member if they are not admin
+        if (currentUser?.role === 'STAFF') {
+          const filteredMeetings = m.filter((meeting: any) =>
+            meeting.meetingmember?.some((mm: any) => mm.staff?.EmailAddress === currentUser.email)
+          );
+          setMeetings(filteredMeetings);
+        } else {
+          setMeetings(m);
+        }
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
       } finally {

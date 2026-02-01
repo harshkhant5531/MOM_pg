@@ -44,6 +44,11 @@ export type staff = $Result.DefaultSelection<Prisma.$staffPayload>
  */
 export type venue = $Result.DefaultSelection<Prisma.$venuePayload>
 /**
+ * Model actionitem
+ * 
+ */
+export type actionitem = $Result.DefaultSelection<Prisma.$actionitemPayload>
+/**
  * Model user
  * 
  */
@@ -53,7 +58,16 @@ export type user = $Result.DefaultSelection<Prisma.$userPayload>
  * Enums
  */
 export namespace $Enums {
-  export const user_role: {
+  export const action_item_status: {
+  PENDING: 'PENDING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED'
+};
+
+export type action_item_status = (typeof action_item_status)[keyof typeof action_item_status]
+
+
+export const user_role: {
   ADMIN: 'ADMIN',
   CONVENER: 'CONVENER',
   STAFF: 'STAFF'
@@ -62,6 +76,10 @@ export namespace $Enums {
 export type user_role = (typeof user_role)[keyof typeof user_role]
 
 }
+
+export type action_item_status = $Enums.action_item_status
+
+export const action_item_status: typeof $Enums.action_item_status
 
 export type user_role = $Enums.user_role
 
@@ -243,6 +261,16 @@ export class PrismaClient<
     * ```
     */
   get venue(): Prisma.venueDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.actionitem`: Exposes CRUD operations for the **actionitem** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Actionitems
+    * const actionitems = await prisma.actionitem.findMany()
+    * ```
+    */
+  get actionitem(): Prisma.actionitemDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.user`: Exposes CRUD operations for the **user** model.
@@ -693,6 +721,7 @@ export namespace Prisma {
     meetingtype: 'meetingtype',
     staff: 'staff',
     venue: 'venue',
+    actionitem: 'actionitem',
     user: 'user'
   };
 
@@ -709,7 +738,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "department" | "meetingmember" | "meetings" | "meetingtype" | "staff" | "venue" | "user"
+      modelProps: "department" | "meetingmember" | "meetings" | "meetingtype" | "staff" | "venue" | "actionitem" | "user"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1109,6 +1138,72 @@ export namespace Prisma {
           }
         }
       }
+      actionitem: {
+        payload: Prisma.$actionitemPayload<ExtArgs>
+        fields: Prisma.actionitemFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.actionitemFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$actionitemPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.actionitemFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$actionitemPayload>
+          }
+          findFirst: {
+            args: Prisma.actionitemFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$actionitemPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.actionitemFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$actionitemPayload>
+          }
+          findMany: {
+            args: Prisma.actionitemFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$actionitemPayload>[]
+          }
+          create: {
+            args: Prisma.actionitemCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$actionitemPayload>
+          }
+          createMany: {
+            args: Prisma.actionitemCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.actionitemDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$actionitemPayload>
+          }
+          update: {
+            args: Prisma.actionitemUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$actionitemPayload>
+          }
+          deleteMany: {
+            args: Prisma.actionitemDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.actionitemUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.actionitemUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$actionitemPayload>
+          }
+          aggregate: {
+            args: Prisma.ActionitemAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateActionitem>
+          }
+          groupBy: {
+            args: Prisma.actionitemGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ActionitemGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.actionitemCountArgs<ExtArgs>
+            result: $Utils.Optional<ActionitemCountAggregateOutputType> | number
+          }
+        }
+      }
       user: {
         payload: Prisma.$userPayload<ExtArgs>
         fields: Prisma.userFieldRefs
@@ -1289,6 +1384,7 @@ export namespace Prisma {
     meetingtype?: meetingtypeOmit
     staff?: staffOmit
     venue?: venueOmit
+    actionitem?: actionitemOmit
     user?: userOmit
   }
 
@@ -1402,10 +1498,12 @@ export namespace Prisma {
 
   export type MeetingsCountOutputType = {
     meetingmember: number
+    actionitem: number
   }
 
   export type MeetingsCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     meetingmember?: boolean | MeetingsCountOutputTypeCountMeetingmemberArgs
+    actionitem?: boolean | MeetingsCountOutputTypeCountActionitemArgs
   }
 
   // Custom InputTypes
@@ -1424,6 +1522,13 @@ export namespace Prisma {
    */
   export type MeetingsCountOutputTypeCountMeetingmemberArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: meetingmemberWhereInput
+  }
+
+  /**
+   * MeetingsCountOutputType without action
+   */
+  export type MeetingsCountOutputTypeCountActionitemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: actionitemWhereInput
   }
 
 
@@ -1464,10 +1569,12 @@ export namespace Prisma {
 
   export type StaffCountOutputType = {
     meetingmember: number
+    actionitem: number
   }
 
   export type StaffCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     meetingmember?: boolean | StaffCountOutputTypeCountMeetingmemberArgs
+    actionitem?: boolean | StaffCountOutputTypeCountActionitemArgs
   }
 
   // Custom InputTypes
@@ -1486,6 +1593,13 @@ export namespace Prisma {
    */
   export type StaffCountOutputTypeCountMeetingmemberArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: meetingmemberWhereInput
+  }
+
+  /**
+   * StaffCountOutputType without action
+   */
+  export type StaffCountOutputTypeCountActionitemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: actionitemWhereInput
   }
 
 
@@ -3765,6 +3879,7 @@ export namespace Prisma {
     CancellationDateTime?: boolean
     CancellationReason?: boolean
     meetingmember?: boolean | meetings$meetingmemberArgs<ExtArgs>
+    actionitem?: boolean | meetings$actionitemArgs<ExtArgs>
     meetingtype?: boolean | meetingtypeDefaultArgs<ExtArgs>
     venue?: boolean | meetings$venueArgs<ExtArgs>
     _count?: boolean | MeetingsCountOutputTypeDefaultArgs<ExtArgs>
@@ -3789,6 +3904,7 @@ export namespace Prisma {
   export type meetingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"MeetingID" | "MeetingDate" | "MeetingTypeID" | "VenueID" | "MeetingDescription" | "DocumentPath" | "Created" | "Modified" | "IsCancelled" | "CancellationDateTime" | "CancellationReason", ExtArgs["result"]["meetings"]>
   export type meetingsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     meetingmember?: boolean | meetings$meetingmemberArgs<ExtArgs>
+    actionitem?: boolean | meetings$actionitemArgs<ExtArgs>
     meetingtype?: boolean | meetingtypeDefaultArgs<ExtArgs>
     venue?: boolean | meetings$venueArgs<ExtArgs>
     _count?: boolean | MeetingsCountOutputTypeDefaultArgs<ExtArgs>
@@ -3798,6 +3914,7 @@ export namespace Prisma {
     name: "meetings"
     objects: {
       meetingmember: Prisma.$meetingmemberPayload<ExtArgs>[]
+      actionitem: Prisma.$actionitemPayload<ExtArgs>[]
       meetingtype: Prisma.$meetingtypePayload<ExtArgs>
       venue: Prisma.$venuePayload<ExtArgs> | null
     }
@@ -4154,6 +4271,7 @@ export namespace Prisma {
   export interface Prisma__meetingsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     meetingmember<T extends meetings$meetingmemberArgs<ExtArgs> = {}>(args?: Subset<T, meetings$meetingmemberArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$meetingmemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    actionitem<T extends meetings$actionitemArgs<ExtArgs> = {}>(args?: Subset<T, meetings$actionitemArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$actionitemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     meetingtype<T extends meetingtypeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, meetingtypeDefaultArgs<ExtArgs>>): Prisma__meetingtypeClient<$Result.GetResult<Prisma.$meetingtypePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     venue<T extends meetings$venueArgs<ExtArgs> = {}>(args?: Subset<T, meetings$venueArgs<ExtArgs>>): Prisma__venueClient<$Result.GetResult<Prisma.$venuePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
@@ -4560,6 +4678,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: MeetingmemberScalarFieldEnum | MeetingmemberScalarFieldEnum[]
+  }
+
+  /**
+   * meetings.actionitem
+   */
+  export type meetings$actionitemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the actionitem
+     */
+    select?: actionitemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the actionitem
+     */
+    omit?: actionitemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: actionitemInclude<ExtArgs> | null
+    where?: actionitemWhereInput
+    orderBy?: actionitemOrderByWithRelationInput | actionitemOrderByWithRelationInput[]
+    cursor?: actionitemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ActionitemScalarFieldEnum | ActionitemScalarFieldEnum[]
   }
 
   /**
@@ -5817,6 +5959,7 @@ export namespace Prisma {
     Modified?: boolean
     department?: boolean | staff$departmentArgs<ExtArgs>
     meetingmember?: boolean | staff$meetingmemberArgs<ExtArgs>
+    actionitem?: boolean | staff$actionitemArgs<ExtArgs>
     _count?: boolean | StaffCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["staff"]>
 
@@ -5837,6 +5980,7 @@ export namespace Prisma {
   export type staffInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     department?: boolean | staff$departmentArgs<ExtArgs>
     meetingmember?: boolean | staff$meetingmemberArgs<ExtArgs>
+    actionitem?: boolean | staff$actionitemArgs<ExtArgs>
     _count?: boolean | StaffCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -5845,6 +5989,7 @@ export namespace Prisma {
     objects: {
       department: Prisma.$departmentPayload<ExtArgs> | null
       meetingmember: Prisma.$meetingmemberPayload<ExtArgs>[]
+      actionitem: Prisma.$actionitemPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       StaffID: number
@@ -6197,6 +6342,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     department<T extends staff$departmentArgs<ExtArgs> = {}>(args?: Subset<T, staff$departmentArgs<ExtArgs>>): Prisma__departmentClient<$Result.GetResult<Prisma.$departmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     meetingmember<T extends staff$meetingmemberArgs<ExtArgs> = {}>(args?: Subset<T, staff$meetingmemberArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$meetingmemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    actionitem<T extends staff$actionitemArgs<ExtArgs> = {}>(args?: Subset<T, staff$actionitemArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$actionitemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6617,6 +6763,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: MeetingmemberScalarFieldEnum | MeetingmemberScalarFieldEnum[]
+  }
+
+  /**
+   * staff.actionitem
+   */
+  export type staff$actionitemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the actionitem
+     */
+    select?: actionitemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the actionitem
+     */
+    omit?: actionitemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: actionitemInclude<ExtArgs> | null
+    where?: actionitemWhereInput
+    orderBy?: actionitemOrderByWithRelationInput | actionitemOrderByWithRelationInput[]
+    cursor?: actionitemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ActionitemScalarFieldEnum | ActionitemScalarFieldEnum[]
   }
 
   /**
@@ -7643,6 +7813,1052 @@ export namespace Prisma {
 
 
   /**
+   * Model actionitem
+   */
+
+  export type AggregateActionitem = {
+    _count: ActionitemCountAggregateOutputType | null
+    _avg: ActionitemAvgAggregateOutputType | null
+    _sum: ActionitemSumAggregateOutputType | null
+    _min: ActionitemMinAggregateOutputType | null
+    _max: ActionitemMaxAggregateOutputType | null
+  }
+
+  export type ActionitemAvgAggregateOutputType = {
+    ActionItemID: number | null
+    MeetingID: number | null
+    StaffID: number | null
+  }
+
+  export type ActionitemSumAggregateOutputType = {
+    ActionItemID: number | null
+    MeetingID: number | null
+    StaffID: number | null
+  }
+
+  export type ActionitemMinAggregateOutputType = {
+    ActionItemID: number | null
+    MeetingID: number | null
+    StaffID: number | null
+    Description: string | null
+    Status: $Enums.action_item_status | null
+    DueDate: Date | null
+    Created: Date | null
+    Modified: Date | null
+  }
+
+  export type ActionitemMaxAggregateOutputType = {
+    ActionItemID: number | null
+    MeetingID: number | null
+    StaffID: number | null
+    Description: string | null
+    Status: $Enums.action_item_status | null
+    DueDate: Date | null
+    Created: Date | null
+    Modified: Date | null
+  }
+
+  export type ActionitemCountAggregateOutputType = {
+    ActionItemID: number
+    MeetingID: number
+    StaffID: number
+    Description: number
+    Status: number
+    DueDate: number
+    Created: number
+    Modified: number
+    _all: number
+  }
+
+
+  export type ActionitemAvgAggregateInputType = {
+    ActionItemID?: true
+    MeetingID?: true
+    StaffID?: true
+  }
+
+  export type ActionitemSumAggregateInputType = {
+    ActionItemID?: true
+    MeetingID?: true
+    StaffID?: true
+  }
+
+  export type ActionitemMinAggregateInputType = {
+    ActionItemID?: true
+    MeetingID?: true
+    StaffID?: true
+    Description?: true
+    Status?: true
+    DueDate?: true
+    Created?: true
+    Modified?: true
+  }
+
+  export type ActionitemMaxAggregateInputType = {
+    ActionItemID?: true
+    MeetingID?: true
+    StaffID?: true
+    Description?: true
+    Status?: true
+    DueDate?: true
+    Created?: true
+    Modified?: true
+  }
+
+  export type ActionitemCountAggregateInputType = {
+    ActionItemID?: true
+    MeetingID?: true
+    StaffID?: true
+    Description?: true
+    Status?: true
+    DueDate?: true
+    Created?: true
+    Modified?: true
+    _all?: true
+  }
+
+  export type ActionitemAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which actionitem to aggregate.
+     */
+    where?: actionitemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of actionitems to fetch.
+     */
+    orderBy?: actionitemOrderByWithRelationInput | actionitemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: actionitemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` actionitems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` actionitems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned actionitems
+    **/
+    _count?: true | ActionitemCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ActionitemAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ActionitemSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ActionitemMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ActionitemMaxAggregateInputType
+  }
+
+  export type GetActionitemAggregateType<T extends ActionitemAggregateArgs> = {
+        [P in keyof T & keyof AggregateActionitem]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateActionitem[P]>
+      : GetScalarType<T[P], AggregateActionitem[P]>
+  }
+
+
+
+
+  export type actionitemGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: actionitemWhereInput
+    orderBy?: actionitemOrderByWithAggregationInput | actionitemOrderByWithAggregationInput[]
+    by: ActionitemScalarFieldEnum[] | ActionitemScalarFieldEnum
+    having?: actionitemScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ActionitemCountAggregateInputType | true
+    _avg?: ActionitemAvgAggregateInputType
+    _sum?: ActionitemSumAggregateInputType
+    _min?: ActionitemMinAggregateInputType
+    _max?: ActionitemMaxAggregateInputType
+  }
+
+  export type ActionitemGroupByOutputType = {
+    ActionItemID: number
+    MeetingID: number | null
+    StaffID: number | null
+    Description: string
+    Status: $Enums.action_item_status
+    DueDate: Date | null
+    Created: Date | null
+    Modified: Date | null
+    _count: ActionitemCountAggregateOutputType | null
+    _avg: ActionitemAvgAggregateOutputType | null
+    _sum: ActionitemSumAggregateOutputType | null
+    _min: ActionitemMinAggregateOutputType | null
+    _max: ActionitemMaxAggregateOutputType | null
+  }
+
+  type GetActionitemGroupByPayload<T extends actionitemGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ActionitemGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ActionitemGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ActionitemGroupByOutputType[P]>
+            : GetScalarType<T[P], ActionitemGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type actionitemSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    ActionItemID?: boolean
+    MeetingID?: boolean
+    StaffID?: boolean
+    Description?: boolean
+    Status?: boolean
+    DueDate?: boolean
+    Created?: boolean
+    Modified?: boolean
+    meetings?: boolean | actionitem$meetingsArgs<ExtArgs>
+    staff?: boolean | actionitem$staffArgs<ExtArgs>
+  }, ExtArgs["result"]["actionitem"]>
+
+
+
+  export type actionitemSelectScalar = {
+    ActionItemID?: boolean
+    MeetingID?: boolean
+    StaffID?: boolean
+    Description?: boolean
+    Status?: boolean
+    DueDate?: boolean
+    Created?: boolean
+    Modified?: boolean
+  }
+
+  export type actionitemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"ActionItemID" | "MeetingID" | "StaffID" | "Description" | "Status" | "DueDate" | "Created" | "Modified", ExtArgs["result"]["actionitem"]>
+  export type actionitemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    meetings?: boolean | actionitem$meetingsArgs<ExtArgs>
+    staff?: boolean | actionitem$staffArgs<ExtArgs>
+  }
+
+  export type $actionitemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "actionitem"
+    objects: {
+      meetings: Prisma.$meetingsPayload<ExtArgs> | null
+      staff: Prisma.$staffPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      ActionItemID: number
+      MeetingID: number | null
+      StaffID: number | null
+      Description: string
+      Status: $Enums.action_item_status
+      DueDate: Date | null
+      Created: Date | null
+      Modified: Date | null
+    }, ExtArgs["result"]["actionitem"]>
+    composites: {}
+  }
+
+  type actionitemGetPayload<S extends boolean | null | undefined | actionitemDefaultArgs> = $Result.GetResult<Prisma.$actionitemPayload, S>
+
+  type actionitemCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<actionitemFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ActionitemCountAggregateInputType | true
+    }
+
+  export interface actionitemDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['actionitem'], meta: { name: 'actionitem' } }
+    /**
+     * Find zero or one Actionitem that matches the filter.
+     * @param {actionitemFindUniqueArgs} args - Arguments to find a Actionitem
+     * @example
+     * // Get one Actionitem
+     * const actionitem = await prisma.actionitem.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends actionitemFindUniqueArgs>(args: SelectSubset<T, actionitemFindUniqueArgs<ExtArgs>>): Prisma__actionitemClient<$Result.GetResult<Prisma.$actionitemPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Actionitem that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {actionitemFindUniqueOrThrowArgs} args - Arguments to find a Actionitem
+     * @example
+     * // Get one Actionitem
+     * const actionitem = await prisma.actionitem.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends actionitemFindUniqueOrThrowArgs>(args: SelectSubset<T, actionitemFindUniqueOrThrowArgs<ExtArgs>>): Prisma__actionitemClient<$Result.GetResult<Prisma.$actionitemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Actionitem that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {actionitemFindFirstArgs} args - Arguments to find a Actionitem
+     * @example
+     * // Get one Actionitem
+     * const actionitem = await prisma.actionitem.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends actionitemFindFirstArgs>(args?: SelectSubset<T, actionitemFindFirstArgs<ExtArgs>>): Prisma__actionitemClient<$Result.GetResult<Prisma.$actionitemPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Actionitem that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {actionitemFindFirstOrThrowArgs} args - Arguments to find a Actionitem
+     * @example
+     * // Get one Actionitem
+     * const actionitem = await prisma.actionitem.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends actionitemFindFirstOrThrowArgs>(args?: SelectSubset<T, actionitemFindFirstOrThrowArgs<ExtArgs>>): Prisma__actionitemClient<$Result.GetResult<Prisma.$actionitemPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Actionitems that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {actionitemFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Actionitems
+     * const actionitems = await prisma.actionitem.findMany()
+     * 
+     * // Get first 10 Actionitems
+     * const actionitems = await prisma.actionitem.findMany({ take: 10 })
+     * 
+     * // Only select the `ActionItemID`
+     * const actionitemWithActionItemIDOnly = await prisma.actionitem.findMany({ select: { ActionItemID: true } })
+     * 
+     */
+    findMany<T extends actionitemFindManyArgs>(args?: SelectSubset<T, actionitemFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$actionitemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Actionitem.
+     * @param {actionitemCreateArgs} args - Arguments to create a Actionitem.
+     * @example
+     * // Create one Actionitem
+     * const Actionitem = await prisma.actionitem.create({
+     *   data: {
+     *     // ... data to create a Actionitem
+     *   }
+     * })
+     * 
+     */
+    create<T extends actionitemCreateArgs>(args: SelectSubset<T, actionitemCreateArgs<ExtArgs>>): Prisma__actionitemClient<$Result.GetResult<Prisma.$actionitemPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Actionitems.
+     * @param {actionitemCreateManyArgs} args - Arguments to create many Actionitems.
+     * @example
+     * // Create many Actionitems
+     * const actionitem = await prisma.actionitem.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends actionitemCreateManyArgs>(args?: SelectSubset<T, actionitemCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Actionitem.
+     * @param {actionitemDeleteArgs} args - Arguments to delete one Actionitem.
+     * @example
+     * // Delete one Actionitem
+     * const Actionitem = await prisma.actionitem.delete({
+     *   where: {
+     *     // ... filter to delete one Actionitem
+     *   }
+     * })
+     * 
+     */
+    delete<T extends actionitemDeleteArgs>(args: SelectSubset<T, actionitemDeleteArgs<ExtArgs>>): Prisma__actionitemClient<$Result.GetResult<Prisma.$actionitemPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Actionitem.
+     * @param {actionitemUpdateArgs} args - Arguments to update one Actionitem.
+     * @example
+     * // Update one Actionitem
+     * const actionitem = await prisma.actionitem.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends actionitemUpdateArgs>(args: SelectSubset<T, actionitemUpdateArgs<ExtArgs>>): Prisma__actionitemClient<$Result.GetResult<Prisma.$actionitemPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Actionitems.
+     * @param {actionitemDeleteManyArgs} args - Arguments to filter Actionitems to delete.
+     * @example
+     * // Delete a few Actionitems
+     * const { count } = await prisma.actionitem.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends actionitemDeleteManyArgs>(args?: SelectSubset<T, actionitemDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Actionitems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {actionitemUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Actionitems
+     * const actionitem = await prisma.actionitem.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends actionitemUpdateManyArgs>(args: SelectSubset<T, actionitemUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Actionitem.
+     * @param {actionitemUpsertArgs} args - Arguments to update or create a Actionitem.
+     * @example
+     * // Update or create a Actionitem
+     * const actionitem = await prisma.actionitem.upsert({
+     *   create: {
+     *     // ... data to create a Actionitem
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Actionitem we want to update
+     *   }
+     * })
+     */
+    upsert<T extends actionitemUpsertArgs>(args: SelectSubset<T, actionitemUpsertArgs<ExtArgs>>): Prisma__actionitemClient<$Result.GetResult<Prisma.$actionitemPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Actionitems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {actionitemCountArgs} args - Arguments to filter Actionitems to count.
+     * @example
+     * // Count the number of Actionitems
+     * const count = await prisma.actionitem.count({
+     *   where: {
+     *     // ... the filter for the Actionitems we want to count
+     *   }
+     * })
+    **/
+    count<T extends actionitemCountArgs>(
+      args?: Subset<T, actionitemCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ActionitemCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Actionitem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActionitemAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ActionitemAggregateArgs>(args: Subset<T, ActionitemAggregateArgs>): Prisma.PrismaPromise<GetActionitemAggregateType<T>>
+
+    /**
+     * Group by Actionitem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {actionitemGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends actionitemGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: actionitemGroupByArgs['orderBy'] }
+        : { orderBy?: actionitemGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, actionitemGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetActionitemGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the actionitem model
+   */
+  readonly fields: actionitemFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for actionitem.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__actionitemClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    meetings<T extends actionitem$meetingsArgs<ExtArgs> = {}>(args?: Subset<T, actionitem$meetingsArgs<ExtArgs>>): Prisma__meetingsClient<$Result.GetResult<Prisma.$meetingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    staff<T extends actionitem$staffArgs<ExtArgs> = {}>(args?: Subset<T, actionitem$staffArgs<ExtArgs>>): Prisma__staffClient<$Result.GetResult<Prisma.$staffPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the actionitem model
+   */
+  interface actionitemFieldRefs {
+    readonly ActionItemID: FieldRef<"actionitem", 'Int'>
+    readonly MeetingID: FieldRef<"actionitem", 'Int'>
+    readonly StaffID: FieldRef<"actionitem", 'Int'>
+    readonly Description: FieldRef<"actionitem", 'String'>
+    readonly Status: FieldRef<"actionitem", 'action_item_status'>
+    readonly DueDate: FieldRef<"actionitem", 'DateTime'>
+    readonly Created: FieldRef<"actionitem", 'DateTime'>
+    readonly Modified: FieldRef<"actionitem", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * actionitem findUnique
+   */
+  export type actionitemFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the actionitem
+     */
+    select?: actionitemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the actionitem
+     */
+    omit?: actionitemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: actionitemInclude<ExtArgs> | null
+    /**
+     * Filter, which actionitem to fetch.
+     */
+    where: actionitemWhereUniqueInput
+  }
+
+  /**
+   * actionitem findUniqueOrThrow
+   */
+  export type actionitemFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the actionitem
+     */
+    select?: actionitemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the actionitem
+     */
+    omit?: actionitemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: actionitemInclude<ExtArgs> | null
+    /**
+     * Filter, which actionitem to fetch.
+     */
+    where: actionitemWhereUniqueInput
+  }
+
+  /**
+   * actionitem findFirst
+   */
+  export type actionitemFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the actionitem
+     */
+    select?: actionitemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the actionitem
+     */
+    omit?: actionitemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: actionitemInclude<ExtArgs> | null
+    /**
+     * Filter, which actionitem to fetch.
+     */
+    where?: actionitemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of actionitems to fetch.
+     */
+    orderBy?: actionitemOrderByWithRelationInput | actionitemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for actionitems.
+     */
+    cursor?: actionitemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` actionitems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` actionitems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of actionitems.
+     */
+    distinct?: ActionitemScalarFieldEnum | ActionitemScalarFieldEnum[]
+  }
+
+  /**
+   * actionitem findFirstOrThrow
+   */
+  export type actionitemFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the actionitem
+     */
+    select?: actionitemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the actionitem
+     */
+    omit?: actionitemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: actionitemInclude<ExtArgs> | null
+    /**
+     * Filter, which actionitem to fetch.
+     */
+    where?: actionitemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of actionitems to fetch.
+     */
+    orderBy?: actionitemOrderByWithRelationInput | actionitemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for actionitems.
+     */
+    cursor?: actionitemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` actionitems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` actionitems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of actionitems.
+     */
+    distinct?: ActionitemScalarFieldEnum | ActionitemScalarFieldEnum[]
+  }
+
+  /**
+   * actionitem findMany
+   */
+  export type actionitemFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the actionitem
+     */
+    select?: actionitemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the actionitem
+     */
+    omit?: actionitemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: actionitemInclude<ExtArgs> | null
+    /**
+     * Filter, which actionitems to fetch.
+     */
+    where?: actionitemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of actionitems to fetch.
+     */
+    orderBy?: actionitemOrderByWithRelationInput | actionitemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing actionitems.
+     */
+    cursor?: actionitemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` actionitems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` actionitems.
+     */
+    skip?: number
+    distinct?: ActionitemScalarFieldEnum | ActionitemScalarFieldEnum[]
+  }
+
+  /**
+   * actionitem create
+   */
+  export type actionitemCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the actionitem
+     */
+    select?: actionitemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the actionitem
+     */
+    omit?: actionitemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: actionitemInclude<ExtArgs> | null
+    /**
+     * The data needed to create a actionitem.
+     */
+    data: XOR<actionitemCreateInput, actionitemUncheckedCreateInput>
+  }
+
+  /**
+   * actionitem createMany
+   */
+  export type actionitemCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many actionitems.
+     */
+    data: actionitemCreateManyInput | actionitemCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * actionitem update
+   */
+  export type actionitemUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the actionitem
+     */
+    select?: actionitemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the actionitem
+     */
+    omit?: actionitemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: actionitemInclude<ExtArgs> | null
+    /**
+     * The data needed to update a actionitem.
+     */
+    data: XOR<actionitemUpdateInput, actionitemUncheckedUpdateInput>
+    /**
+     * Choose, which actionitem to update.
+     */
+    where: actionitemWhereUniqueInput
+  }
+
+  /**
+   * actionitem updateMany
+   */
+  export type actionitemUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update actionitems.
+     */
+    data: XOR<actionitemUpdateManyMutationInput, actionitemUncheckedUpdateManyInput>
+    /**
+     * Filter which actionitems to update
+     */
+    where?: actionitemWhereInput
+    /**
+     * Limit how many actionitems to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * actionitem upsert
+   */
+  export type actionitemUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the actionitem
+     */
+    select?: actionitemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the actionitem
+     */
+    omit?: actionitemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: actionitemInclude<ExtArgs> | null
+    /**
+     * The filter to search for the actionitem to update in case it exists.
+     */
+    where: actionitemWhereUniqueInput
+    /**
+     * In case the actionitem found by the `where` argument doesn't exist, create a new actionitem with this data.
+     */
+    create: XOR<actionitemCreateInput, actionitemUncheckedCreateInput>
+    /**
+     * In case the actionitem was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<actionitemUpdateInput, actionitemUncheckedUpdateInput>
+  }
+
+  /**
+   * actionitem delete
+   */
+  export type actionitemDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the actionitem
+     */
+    select?: actionitemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the actionitem
+     */
+    omit?: actionitemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: actionitemInclude<ExtArgs> | null
+    /**
+     * Filter which actionitem to delete.
+     */
+    where: actionitemWhereUniqueInput
+  }
+
+  /**
+   * actionitem deleteMany
+   */
+  export type actionitemDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which actionitems to delete
+     */
+    where?: actionitemWhereInput
+    /**
+     * Limit how many actionitems to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * actionitem.meetings
+   */
+  export type actionitem$meetingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the meetings
+     */
+    select?: meetingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the meetings
+     */
+    omit?: meetingsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: meetingsInclude<ExtArgs> | null
+    where?: meetingsWhereInput
+  }
+
+  /**
+   * actionitem.staff
+   */
+  export type actionitem$staffArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the staff
+     */
+    select?: staffSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the staff
+     */
+    omit?: staffOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: staffInclude<ExtArgs> | null
+    where?: staffWhereInput
+  }
+
+  /**
+   * actionitem without action
+   */
+  export type actionitemDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the actionitem
+     */
+    select?: actionitemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the actionitem
+     */
+    omit?: actionitemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: actionitemInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model user
    */
 
@@ -8660,6 +9876,20 @@ export namespace Prisma {
   export type VenueScalarFieldEnum = (typeof VenueScalarFieldEnum)[keyof typeof VenueScalarFieldEnum]
 
 
+  export const ActionitemScalarFieldEnum: {
+    ActionItemID: 'ActionItemID',
+    MeetingID: 'MeetingID',
+    StaffID: 'StaffID',
+    Description: 'Description',
+    Status: 'Status',
+    DueDate: 'DueDate',
+    Created: 'Created',
+    Modified: 'Modified'
+  };
+
+  export type ActionitemScalarFieldEnum = (typeof ActionitemScalarFieldEnum)[keyof typeof ActionitemScalarFieldEnum]
+
+
   export const UserScalarFieldEnum: {
     id: 'id',
     fullName: 'fullName',
@@ -8741,6 +9971,13 @@ export namespace Prisma {
   export type venueOrderByRelevanceFieldEnum = (typeof venueOrderByRelevanceFieldEnum)[keyof typeof venueOrderByRelevanceFieldEnum]
 
 
+  export const actionitemOrderByRelevanceFieldEnum: {
+    Description: 'Description'
+  };
+
+  export type actionitemOrderByRelevanceFieldEnum = (typeof actionitemOrderByRelevanceFieldEnum)[keyof typeof actionitemOrderByRelevanceFieldEnum]
+
+
   export const userOrderByRelevanceFieldEnum: {
     id: 'id',
     fullName: 'fullName',
@@ -8783,6 +10020,13 @@ export namespace Prisma {
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'action_item_status'
+   */
+  export type Enumaction_item_statusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'action_item_status'>
     
 
 
@@ -8948,6 +10192,7 @@ export namespace Prisma {
     CancellationDateTime?: DateTimeNullableFilter<"meetings"> | Date | string | null
     CancellationReason?: StringNullableFilter<"meetings"> | string | null
     meetingmember?: MeetingmemberListRelationFilter
+    actionitem?: ActionitemListRelationFilter
     meetingtype?: XOR<MeetingtypeScalarRelationFilter, meetingtypeWhereInput>
     venue?: XOR<VenueNullableScalarRelationFilter, venueWhereInput> | null
   }
@@ -8965,6 +10210,7 @@ export namespace Prisma {
     CancellationDateTime?: SortOrderInput | SortOrder
     CancellationReason?: SortOrderInput | SortOrder
     meetingmember?: meetingmemberOrderByRelationAggregateInput
+    actionitem?: actionitemOrderByRelationAggregateInput
     meetingtype?: meetingtypeOrderByWithRelationInput
     venue?: venueOrderByWithRelationInput
     _relevance?: meetingsOrderByRelevanceInput
@@ -8986,6 +10232,7 @@ export namespace Prisma {
     CancellationDateTime?: DateTimeNullableFilter<"meetings"> | Date | string | null
     CancellationReason?: StringNullableFilter<"meetings"> | string | null
     meetingmember?: MeetingmemberListRelationFilter
+    actionitem?: ActionitemListRelationFilter
     meetingtype?: XOR<MeetingtypeScalarRelationFilter, meetingtypeWhereInput>
     venue?: XOR<VenueNullableScalarRelationFilter, venueWhereInput> | null
   }, "MeetingID">
@@ -9098,6 +10345,7 @@ export namespace Prisma {
     Modified?: DateTimeNullableFilter<"staff"> | Date | string | null
     department?: XOR<DepartmentNullableScalarRelationFilter, departmentWhereInput> | null
     meetingmember?: MeetingmemberListRelationFilter
+    actionitem?: ActionitemListRelationFilter
   }
 
   export type staffOrderByWithRelationInput = {
@@ -9111,6 +10359,7 @@ export namespace Prisma {
     Modified?: SortOrderInput | SortOrder
     department?: departmentOrderByWithRelationInput
     meetingmember?: meetingmemberOrderByRelationAggregateInput
+    actionitem?: actionitemOrderByRelationAggregateInput
     _relevance?: staffOrderByRelevanceInput
   }
 
@@ -9128,6 +10377,7 @@ export namespace Prisma {
     Modified?: DateTimeNullableFilter<"staff"> | Date | string | null
     department?: XOR<DepartmentNullableScalarRelationFilter, departmentWhereInput> | null
     meetingmember?: MeetingmemberListRelationFilter
+    actionitem?: ActionitemListRelationFilter
   }, "StaffID">
 
   export type staffOrderByWithAggregationInput = {
@@ -9221,6 +10471,82 @@ export namespace Prisma {
     Capacity?: IntNullableWithAggregatesFilter<"venue"> | number | null
     Created?: DateTimeNullableWithAggregatesFilter<"venue"> | Date | string | null
     Modified?: DateTimeNullableWithAggregatesFilter<"venue"> | Date | string | null
+  }
+
+  export type actionitemWhereInput = {
+    AND?: actionitemWhereInput | actionitemWhereInput[]
+    OR?: actionitemWhereInput[]
+    NOT?: actionitemWhereInput | actionitemWhereInput[]
+    ActionItemID?: IntFilter<"actionitem"> | number
+    MeetingID?: IntNullableFilter<"actionitem"> | number | null
+    StaffID?: IntNullableFilter<"actionitem"> | number | null
+    Description?: StringFilter<"actionitem"> | string
+    Status?: Enumaction_item_statusFilter<"actionitem"> | $Enums.action_item_status
+    DueDate?: DateTimeNullableFilter<"actionitem"> | Date | string | null
+    Created?: DateTimeNullableFilter<"actionitem"> | Date | string | null
+    Modified?: DateTimeNullableFilter<"actionitem"> | Date | string | null
+    meetings?: XOR<MeetingsNullableScalarRelationFilter, meetingsWhereInput> | null
+    staff?: XOR<StaffNullableScalarRelationFilter, staffWhereInput> | null
+  }
+
+  export type actionitemOrderByWithRelationInput = {
+    ActionItemID?: SortOrder
+    MeetingID?: SortOrderInput | SortOrder
+    StaffID?: SortOrderInput | SortOrder
+    Description?: SortOrder
+    Status?: SortOrder
+    DueDate?: SortOrderInput | SortOrder
+    Created?: SortOrderInput | SortOrder
+    Modified?: SortOrderInput | SortOrder
+    meetings?: meetingsOrderByWithRelationInput
+    staff?: staffOrderByWithRelationInput
+    _relevance?: actionitemOrderByRelevanceInput
+  }
+
+  export type actionitemWhereUniqueInput = Prisma.AtLeast<{
+    ActionItemID?: number
+    AND?: actionitemWhereInput | actionitemWhereInput[]
+    OR?: actionitemWhereInput[]
+    NOT?: actionitemWhereInput | actionitemWhereInput[]
+    MeetingID?: IntNullableFilter<"actionitem"> | number | null
+    StaffID?: IntNullableFilter<"actionitem"> | number | null
+    Description?: StringFilter<"actionitem"> | string
+    Status?: Enumaction_item_statusFilter<"actionitem"> | $Enums.action_item_status
+    DueDate?: DateTimeNullableFilter<"actionitem"> | Date | string | null
+    Created?: DateTimeNullableFilter<"actionitem"> | Date | string | null
+    Modified?: DateTimeNullableFilter<"actionitem"> | Date | string | null
+    meetings?: XOR<MeetingsNullableScalarRelationFilter, meetingsWhereInput> | null
+    staff?: XOR<StaffNullableScalarRelationFilter, staffWhereInput> | null
+  }, "ActionItemID">
+
+  export type actionitemOrderByWithAggregationInput = {
+    ActionItemID?: SortOrder
+    MeetingID?: SortOrderInput | SortOrder
+    StaffID?: SortOrderInput | SortOrder
+    Description?: SortOrder
+    Status?: SortOrder
+    DueDate?: SortOrderInput | SortOrder
+    Created?: SortOrderInput | SortOrder
+    Modified?: SortOrderInput | SortOrder
+    _count?: actionitemCountOrderByAggregateInput
+    _avg?: actionitemAvgOrderByAggregateInput
+    _max?: actionitemMaxOrderByAggregateInput
+    _min?: actionitemMinOrderByAggregateInput
+    _sum?: actionitemSumOrderByAggregateInput
+  }
+
+  export type actionitemScalarWhereWithAggregatesInput = {
+    AND?: actionitemScalarWhereWithAggregatesInput | actionitemScalarWhereWithAggregatesInput[]
+    OR?: actionitemScalarWhereWithAggregatesInput[]
+    NOT?: actionitemScalarWhereWithAggregatesInput | actionitemScalarWhereWithAggregatesInput[]
+    ActionItemID?: IntWithAggregatesFilter<"actionitem"> | number
+    MeetingID?: IntNullableWithAggregatesFilter<"actionitem"> | number | null
+    StaffID?: IntNullableWithAggregatesFilter<"actionitem"> | number | null
+    Description?: StringWithAggregatesFilter<"actionitem"> | string
+    Status?: Enumaction_item_statusWithAggregatesFilter<"actionitem"> | $Enums.action_item_status
+    DueDate?: DateTimeNullableWithAggregatesFilter<"actionitem"> | Date | string | null
+    Created?: DateTimeNullableWithAggregatesFilter<"actionitem"> | Date | string | null
+    Modified?: DateTimeNullableWithAggregatesFilter<"actionitem"> | Date | string | null
   }
 
   export type userWhereInput = {
@@ -9428,6 +10754,7 @@ export namespace Prisma {
     CancellationDateTime?: Date | string | null
     CancellationReason?: string | null
     meetingmember?: meetingmemberCreateNestedManyWithoutMeetingsInput
+    actionitem?: actionitemCreateNestedManyWithoutMeetingsInput
     meetingtype: meetingtypeCreateNestedOneWithoutMeetingsInput
     venue?: venueCreateNestedOneWithoutMeetingsInput
   }
@@ -9445,6 +10772,7 @@ export namespace Prisma {
     CancellationDateTime?: Date | string | null
     CancellationReason?: string | null
     meetingmember?: meetingmemberUncheckedCreateNestedManyWithoutMeetingsInput
+    actionitem?: actionitemUncheckedCreateNestedManyWithoutMeetingsInput
   }
 
   export type meetingsUpdateInput = {
@@ -9457,6 +10785,7 @@ export namespace Prisma {
     CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingmember?: meetingmemberUpdateManyWithoutMeetingsNestedInput
+    actionitem?: actionitemUpdateManyWithoutMeetingsNestedInput
     meetingtype?: meetingtypeUpdateOneRequiredWithoutMeetingsNestedInput
     venue?: venueUpdateOneWithoutMeetingsNestedInput
   }
@@ -9474,6 +10803,7 @@ export namespace Prisma {
     CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingmember?: meetingmemberUncheckedUpdateManyWithoutMeetingsNestedInput
+    actionitem?: actionitemUncheckedUpdateManyWithoutMeetingsNestedInput
   }
 
   export type meetingsCreateManyInput = {
@@ -9581,6 +10911,7 @@ export namespace Prisma {
     Modified?: Date | string | null
     department?: departmentCreateNestedOneWithoutStaffInput
     meetingmember?: meetingmemberCreateNestedManyWithoutStaffInput
+    actionitem?: actionitemCreateNestedManyWithoutStaffInput
   }
 
   export type staffUncheckedCreateInput = {
@@ -9593,6 +10924,7 @@ export namespace Prisma {
     Created?: Date | string | null
     Modified?: Date | string | null
     meetingmember?: meetingmemberUncheckedCreateNestedManyWithoutStaffInput
+    actionitem?: actionitemUncheckedCreateNestedManyWithoutStaffInput
   }
 
   export type staffUpdateInput = {
@@ -9604,6 +10936,7 @@ export namespace Prisma {
     Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     department?: departmentUpdateOneWithoutStaffNestedInput
     meetingmember?: meetingmemberUpdateManyWithoutStaffNestedInput
+    actionitem?: actionitemUpdateManyWithoutStaffNestedInput
   }
 
   export type staffUncheckedUpdateInput = {
@@ -9616,6 +10949,7 @@ export namespace Prisma {
     Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     meetingmember?: meetingmemberUncheckedUpdateManyWithoutStaffNestedInput
+    actionitem?: actionitemUncheckedUpdateManyWithoutStaffNestedInput
   }
 
   export type staffCreateManyInput = {
@@ -9709,6 +11043,78 @@ export namespace Prisma {
     VenueName?: StringFieldUpdateOperationsInput | string
     Location?: NullableStringFieldUpdateOperationsInput | string | null
     Capacity?: NullableIntFieldUpdateOperationsInput | number | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type actionitemCreateInput = {
+    Description: string
+    Status?: $Enums.action_item_status
+    DueDate?: Date | string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+    meetings?: meetingsCreateNestedOneWithoutActionitemInput
+    staff?: staffCreateNestedOneWithoutActionitemInput
+  }
+
+  export type actionitemUncheckedCreateInput = {
+    ActionItemID?: number
+    MeetingID?: number | null
+    StaffID?: number | null
+    Description: string
+    Status?: $Enums.action_item_status
+    DueDate?: Date | string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+  }
+
+  export type actionitemUpdateInput = {
+    Description?: StringFieldUpdateOperationsInput | string
+    Status?: Enumaction_item_statusFieldUpdateOperationsInput | $Enums.action_item_status
+    DueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    meetings?: meetingsUpdateOneWithoutActionitemNestedInput
+    staff?: staffUpdateOneWithoutActionitemNestedInput
+  }
+
+  export type actionitemUncheckedUpdateInput = {
+    ActionItemID?: IntFieldUpdateOperationsInput | number
+    MeetingID?: NullableIntFieldUpdateOperationsInput | number | null
+    StaffID?: NullableIntFieldUpdateOperationsInput | number | null
+    Description?: StringFieldUpdateOperationsInput | string
+    Status?: Enumaction_item_statusFieldUpdateOperationsInput | $Enums.action_item_status
+    DueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type actionitemCreateManyInput = {
+    ActionItemID?: number
+    MeetingID?: number | null
+    StaffID?: number | null
+    Description: string
+    Status?: $Enums.action_item_status
+    DueDate?: Date | string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+  }
+
+  export type actionitemUpdateManyMutationInput = {
+    Description?: StringFieldUpdateOperationsInput | string
+    Status?: Enumaction_item_statusFieldUpdateOperationsInput | $Enums.action_item_status
+    DueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type actionitemUncheckedUpdateManyInput = {
+    ActionItemID?: IntFieldUpdateOperationsInput | number
+    MeetingID?: NullableIntFieldUpdateOperationsInput | number | null
+    StaffID?: NullableIntFieldUpdateOperationsInput | number | null
+    Description?: StringFieldUpdateOperationsInput | string
+    Status?: Enumaction_item_statusFieldUpdateOperationsInput | $Enums.action_item_status
+    DueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -10067,6 +11473,12 @@ export namespace Prisma {
     none?: meetingmemberWhereInput
   }
 
+  export type ActionitemListRelationFilter = {
+    every?: actionitemWhereInput
+    some?: actionitemWhereInput
+    none?: actionitemWhereInput
+  }
+
   export type MeetingtypeScalarRelationFilter = {
     is?: meetingtypeWhereInput
     isNot?: meetingtypeWhereInput
@@ -10078,6 +11490,10 @@ export namespace Prisma {
   }
 
   export type meetingmemberOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type actionitemOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -10316,6 +11732,84 @@ export namespace Prisma {
     Capacity?: SortOrder
   }
 
+  export type Enumaction_item_statusFilter<$PrismaModel = never> = {
+    equals?: $Enums.action_item_status | Enumaction_item_statusFieldRefInput<$PrismaModel>
+    in?: $Enums.action_item_status[]
+    notIn?: $Enums.action_item_status[]
+    not?: NestedEnumaction_item_statusFilter<$PrismaModel> | $Enums.action_item_status
+  }
+
+  export type MeetingsNullableScalarRelationFilter = {
+    is?: meetingsWhereInput | null
+    isNot?: meetingsWhereInput | null
+  }
+
+  export type StaffNullableScalarRelationFilter = {
+    is?: staffWhereInput | null
+    isNot?: staffWhereInput | null
+  }
+
+  export type actionitemOrderByRelevanceInput = {
+    fields: actionitemOrderByRelevanceFieldEnum | actionitemOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type actionitemCountOrderByAggregateInput = {
+    ActionItemID?: SortOrder
+    MeetingID?: SortOrder
+    StaffID?: SortOrder
+    Description?: SortOrder
+    Status?: SortOrder
+    DueDate?: SortOrder
+    Created?: SortOrder
+    Modified?: SortOrder
+  }
+
+  export type actionitemAvgOrderByAggregateInput = {
+    ActionItemID?: SortOrder
+    MeetingID?: SortOrder
+    StaffID?: SortOrder
+  }
+
+  export type actionitemMaxOrderByAggregateInput = {
+    ActionItemID?: SortOrder
+    MeetingID?: SortOrder
+    StaffID?: SortOrder
+    Description?: SortOrder
+    Status?: SortOrder
+    DueDate?: SortOrder
+    Created?: SortOrder
+    Modified?: SortOrder
+  }
+
+  export type actionitemMinOrderByAggregateInput = {
+    ActionItemID?: SortOrder
+    MeetingID?: SortOrder
+    StaffID?: SortOrder
+    Description?: SortOrder
+    Status?: SortOrder
+    DueDate?: SortOrder
+    Created?: SortOrder
+    Modified?: SortOrder
+  }
+
+  export type actionitemSumOrderByAggregateInput = {
+    ActionItemID?: SortOrder
+    MeetingID?: SortOrder
+    StaffID?: SortOrder
+  }
+
+  export type Enumaction_item_statusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.action_item_status | Enumaction_item_statusFieldRefInput<$PrismaModel>
+    in?: $Enums.action_item_status[]
+    notIn?: $Enums.action_item_status[]
+    not?: NestedEnumaction_item_statusWithAggregatesFilter<$PrismaModel> | $Enums.action_item_status
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumaction_item_statusFilter<$PrismaModel>
+    _max?: NestedEnumaction_item_statusFilter<$PrismaModel>
+  }
+
   export type Enumuser_roleNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.user_role | Enumuser_roleFieldRefInput<$PrismaModel> | null
     in?: $Enums.user_role[] | null
@@ -10476,6 +11970,13 @@ export namespace Prisma {
     connect?: meetingmemberWhereUniqueInput | meetingmemberWhereUniqueInput[]
   }
 
+  export type actionitemCreateNestedManyWithoutMeetingsInput = {
+    create?: XOR<actionitemCreateWithoutMeetingsInput, actionitemUncheckedCreateWithoutMeetingsInput> | actionitemCreateWithoutMeetingsInput[] | actionitemUncheckedCreateWithoutMeetingsInput[]
+    connectOrCreate?: actionitemCreateOrConnectWithoutMeetingsInput | actionitemCreateOrConnectWithoutMeetingsInput[]
+    createMany?: actionitemCreateManyMeetingsInputEnvelope
+    connect?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+  }
+
   export type meetingtypeCreateNestedOneWithoutMeetingsInput = {
     create?: XOR<meetingtypeCreateWithoutMeetingsInput, meetingtypeUncheckedCreateWithoutMeetingsInput>
     connectOrCreate?: meetingtypeCreateOrConnectWithoutMeetingsInput
@@ -10495,6 +11996,13 @@ export namespace Prisma {
     connect?: meetingmemberWhereUniqueInput | meetingmemberWhereUniqueInput[]
   }
 
+  export type actionitemUncheckedCreateNestedManyWithoutMeetingsInput = {
+    create?: XOR<actionitemCreateWithoutMeetingsInput, actionitemUncheckedCreateWithoutMeetingsInput> | actionitemCreateWithoutMeetingsInput[] | actionitemUncheckedCreateWithoutMeetingsInput[]
+    connectOrCreate?: actionitemCreateOrConnectWithoutMeetingsInput | actionitemCreateOrConnectWithoutMeetingsInput[]
+    createMany?: actionitemCreateManyMeetingsInputEnvelope
+    connect?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+  }
+
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
@@ -10511,6 +12019,20 @@ export namespace Prisma {
     update?: meetingmemberUpdateWithWhereUniqueWithoutMeetingsInput | meetingmemberUpdateWithWhereUniqueWithoutMeetingsInput[]
     updateMany?: meetingmemberUpdateManyWithWhereWithoutMeetingsInput | meetingmemberUpdateManyWithWhereWithoutMeetingsInput[]
     deleteMany?: meetingmemberScalarWhereInput | meetingmemberScalarWhereInput[]
+  }
+
+  export type actionitemUpdateManyWithoutMeetingsNestedInput = {
+    create?: XOR<actionitemCreateWithoutMeetingsInput, actionitemUncheckedCreateWithoutMeetingsInput> | actionitemCreateWithoutMeetingsInput[] | actionitemUncheckedCreateWithoutMeetingsInput[]
+    connectOrCreate?: actionitemCreateOrConnectWithoutMeetingsInput | actionitemCreateOrConnectWithoutMeetingsInput[]
+    upsert?: actionitemUpsertWithWhereUniqueWithoutMeetingsInput | actionitemUpsertWithWhereUniqueWithoutMeetingsInput[]
+    createMany?: actionitemCreateManyMeetingsInputEnvelope
+    set?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    disconnect?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    delete?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    connect?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    update?: actionitemUpdateWithWhereUniqueWithoutMeetingsInput | actionitemUpdateWithWhereUniqueWithoutMeetingsInput[]
+    updateMany?: actionitemUpdateManyWithWhereWithoutMeetingsInput | actionitemUpdateManyWithWhereWithoutMeetingsInput[]
+    deleteMany?: actionitemScalarWhereInput | actionitemScalarWhereInput[]
   }
 
   export type meetingtypeUpdateOneRequiredWithoutMeetingsNestedInput = {
@@ -10551,6 +12073,20 @@ export namespace Prisma {
     update?: meetingmemberUpdateWithWhereUniqueWithoutMeetingsInput | meetingmemberUpdateWithWhereUniqueWithoutMeetingsInput[]
     updateMany?: meetingmemberUpdateManyWithWhereWithoutMeetingsInput | meetingmemberUpdateManyWithWhereWithoutMeetingsInput[]
     deleteMany?: meetingmemberScalarWhereInput | meetingmemberScalarWhereInput[]
+  }
+
+  export type actionitemUncheckedUpdateManyWithoutMeetingsNestedInput = {
+    create?: XOR<actionitemCreateWithoutMeetingsInput, actionitemUncheckedCreateWithoutMeetingsInput> | actionitemCreateWithoutMeetingsInput[] | actionitemUncheckedCreateWithoutMeetingsInput[]
+    connectOrCreate?: actionitemCreateOrConnectWithoutMeetingsInput | actionitemCreateOrConnectWithoutMeetingsInput[]
+    upsert?: actionitemUpsertWithWhereUniqueWithoutMeetingsInput | actionitemUpsertWithWhereUniqueWithoutMeetingsInput[]
+    createMany?: actionitemCreateManyMeetingsInputEnvelope
+    set?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    disconnect?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    delete?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    connect?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    update?: actionitemUpdateWithWhereUniqueWithoutMeetingsInput | actionitemUpdateWithWhereUniqueWithoutMeetingsInput[]
+    updateMany?: actionitemUpdateManyWithWhereWithoutMeetingsInput | actionitemUpdateManyWithWhereWithoutMeetingsInput[]
+    deleteMany?: actionitemScalarWhereInput | actionitemScalarWhereInput[]
   }
 
   export type meetingsCreateNestedManyWithoutMeetingtypeInput = {
@@ -10608,11 +12144,25 @@ export namespace Prisma {
     connect?: meetingmemberWhereUniqueInput | meetingmemberWhereUniqueInput[]
   }
 
+  export type actionitemCreateNestedManyWithoutStaffInput = {
+    create?: XOR<actionitemCreateWithoutStaffInput, actionitemUncheckedCreateWithoutStaffInput> | actionitemCreateWithoutStaffInput[] | actionitemUncheckedCreateWithoutStaffInput[]
+    connectOrCreate?: actionitemCreateOrConnectWithoutStaffInput | actionitemCreateOrConnectWithoutStaffInput[]
+    createMany?: actionitemCreateManyStaffInputEnvelope
+    connect?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+  }
+
   export type meetingmemberUncheckedCreateNestedManyWithoutStaffInput = {
     create?: XOR<meetingmemberCreateWithoutStaffInput, meetingmemberUncheckedCreateWithoutStaffInput> | meetingmemberCreateWithoutStaffInput[] | meetingmemberUncheckedCreateWithoutStaffInput[]
     connectOrCreate?: meetingmemberCreateOrConnectWithoutStaffInput | meetingmemberCreateOrConnectWithoutStaffInput[]
     createMany?: meetingmemberCreateManyStaffInputEnvelope
     connect?: meetingmemberWhereUniqueInput | meetingmemberWhereUniqueInput[]
+  }
+
+  export type actionitemUncheckedCreateNestedManyWithoutStaffInput = {
+    create?: XOR<actionitemCreateWithoutStaffInput, actionitemUncheckedCreateWithoutStaffInput> | actionitemCreateWithoutStaffInput[] | actionitemUncheckedCreateWithoutStaffInput[]
+    connectOrCreate?: actionitemCreateOrConnectWithoutStaffInput | actionitemCreateOrConnectWithoutStaffInput[]
+    createMany?: actionitemCreateManyStaffInputEnvelope
+    connect?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
   }
 
   export type departmentUpdateOneWithoutStaffNestedInput = {
@@ -10639,6 +12189,20 @@ export namespace Prisma {
     deleteMany?: meetingmemberScalarWhereInput | meetingmemberScalarWhereInput[]
   }
 
+  export type actionitemUpdateManyWithoutStaffNestedInput = {
+    create?: XOR<actionitemCreateWithoutStaffInput, actionitemUncheckedCreateWithoutStaffInput> | actionitemCreateWithoutStaffInput[] | actionitemUncheckedCreateWithoutStaffInput[]
+    connectOrCreate?: actionitemCreateOrConnectWithoutStaffInput | actionitemCreateOrConnectWithoutStaffInput[]
+    upsert?: actionitemUpsertWithWhereUniqueWithoutStaffInput | actionitemUpsertWithWhereUniqueWithoutStaffInput[]
+    createMany?: actionitemCreateManyStaffInputEnvelope
+    set?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    disconnect?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    delete?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    connect?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    update?: actionitemUpdateWithWhereUniqueWithoutStaffInput | actionitemUpdateWithWhereUniqueWithoutStaffInput[]
+    updateMany?: actionitemUpdateManyWithWhereWithoutStaffInput | actionitemUpdateManyWithWhereWithoutStaffInput[]
+    deleteMany?: actionitemScalarWhereInput | actionitemScalarWhereInput[]
+  }
+
   export type meetingmemberUncheckedUpdateManyWithoutStaffNestedInput = {
     create?: XOR<meetingmemberCreateWithoutStaffInput, meetingmemberUncheckedCreateWithoutStaffInput> | meetingmemberCreateWithoutStaffInput[] | meetingmemberUncheckedCreateWithoutStaffInput[]
     connectOrCreate?: meetingmemberCreateOrConnectWithoutStaffInput | meetingmemberCreateOrConnectWithoutStaffInput[]
@@ -10651,6 +12215,20 @@ export namespace Prisma {
     update?: meetingmemberUpdateWithWhereUniqueWithoutStaffInput | meetingmemberUpdateWithWhereUniqueWithoutStaffInput[]
     updateMany?: meetingmemberUpdateManyWithWhereWithoutStaffInput | meetingmemberUpdateManyWithWhereWithoutStaffInput[]
     deleteMany?: meetingmemberScalarWhereInput | meetingmemberScalarWhereInput[]
+  }
+
+  export type actionitemUncheckedUpdateManyWithoutStaffNestedInput = {
+    create?: XOR<actionitemCreateWithoutStaffInput, actionitemUncheckedCreateWithoutStaffInput> | actionitemCreateWithoutStaffInput[] | actionitemUncheckedCreateWithoutStaffInput[]
+    connectOrCreate?: actionitemCreateOrConnectWithoutStaffInput | actionitemCreateOrConnectWithoutStaffInput[]
+    upsert?: actionitemUpsertWithWhereUniqueWithoutStaffInput | actionitemUpsertWithWhereUniqueWithoutStaffInput[]
+    createMany?: actionitemCreateManyStaffInputEnvelope
+    set?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    disconnect?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    delete?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    connect?: actionitemWhereUniqueInput | actionitemWhereUniqueInput[]
+    update?: actionitemUpdateWithWhereUniqueWithoutStaffInput | actionitemUpdateWithWhereUniqueWithoutStaffInput[]
+    updateMany?: actionitemUpdateManyWithWhereWithoutStaffInput | actionitemUpdateManyWithWhereWithoutStaffInput[]
+    deleteMany?: actionitemScalarWhereInput | actionitemScalarWhereInput[]
   }
 
   export type meetingsCreateNestedManyWithoutVenueInput = {
@@ -10693,6 +12271,42 @@ export namespace Prisma {
     update?: meetingsUpdateWithWhereUniqueWithoutVenueInput | meetingsUpdateWithWhereUniqueWithoutVenueInput[]
     updateMany?: meetingsUpdateManyWithWhereWithoutVenueInput | meetingsUpdateManyWithWhereWithoutVenueInput[]
     deleteMany?: meetingsScalarWhereInput | meetingsScalarWhereInput[]
+  }
+
+  export type meetingsCreateNestedOneWithoutActionitemInput = {
+    create?: XOR<meetingsCreateWithoutActionitemInput, meetingsUncheckedCreateWithoutActionitemInput>
+    connectOrCreate?: meetingsCreateOrConnectWithoutActionitemInput
+    connect?: meetingsWhereUniqueInput
+  }
+
+  export type staffCreateNestedOneWithoutActionitemInput = {
+    create?: XOR<staffCreateWithoutActionitemInput, staffUncheckedCreateWithoutActionitemInput>
+    connectOrCreate?: staffCreateOrConnectWithoutActionitemInput
+    connect?: staffWhereUniqueInput
+  }
+
+  export type Enumaction_item_statusFieldUpdateOperationsInput = {
+    set?: $Enums.action_item_status
+  }
+
+  export type meetingsUpdateOneWithoutActionitemNestedInput = {
+    create?: XOR<meetingsCreateWithoutActionitemInput, meetingsUncheckedCreateWithoutActionitemInput>
+    connectOrCreate?: meetingsCreateOrConnectWithoutActionitemInput
+    upsert?: meetingsUpsertWithoutActionitemInput
+    disconnect?: meetingsWhereInput | boolean
+    delete?: meetingsWhereInput | boolean
+    connect?: meetingsWhereUniqueInput
+    update?: XOR<XOR<meetingsUpdateToOneWithWhereWithoutActionitemInput, meetingsUpdateWithoutActionitemInput>, meetingsUncheckedUpdateWithoutActionitemInput>
+  }
+
+  export type staffUpdateOneWithoutActionitemNestedInput = {
+    create?: XOR<staffCreateWithoutActionitemInput, staffUncheckedCreateWithoutActionitemInput>
+    connectOrCreate?: staffCreateOrConnectWithoutActionitemInput
+    upsert?: staffUpsertWithoutActionitemInput
+    disconnect?: staffWhereInput | boolean
+    delete?: staffWhereInput | boolean
+    connect?: staffWhereUniqueInput
+    update?: XOR<XOR<staffUpdateToOneWithWhereWithoutActionitemInput, staffUpdateWithoutActionitemInput>, staffUncheckedUpdateWithoutActionitemInput>
   }
 
   export type NullableEnumuser_roleFieldUpdateOperationsInput = {
@@ -10904,6 +12518,23 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumaction_item_statusFilter<$PrismaModel = never> = {
+    equals?: $Enums.action_item_status | Enumaction_item_statusFieldRefInput<$PrismaModel>
+    in?: $Enums.action_item_status[]
+    notIn?: $Enums.action_item_status[]
+    not?: NestedEnumaction_item_statusFilter<$PrismaModel> | $Enums.action_item_status
+  }
+
+  export type NestedEnumaction_item_statusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.action_item_status | Enumaction_item_statusFieldRefInput<$PrismaModel>
+    in?: $Enums.action_item_status[]
+    notIn?: $Enums.action_item_status[]
+    not?: NestedEnumaction_item_statusWithAggregatesFilter<$PrismaModel> | $Enums.action_item_status
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumaction_item_statusFilter<$PrismaModel>
+    _max?: NestedEnumaction_item_statusFilter<$PrismaModel>
+  }
+
   export type NestedEnumuser_roleNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.user_role | Enumuser_roleFieldRefInput<$PrismaModel> | null
     in?: $Enums.user_role[] | null
@@ -10929,6 +12560,7 @@ export namespace Prisma {
     Created?: Date | string | null
     Modified?: Date | string | null
     meetingmember?: meetingmemberCreateNestedManyWithoutStaffInput
+    actionitem?: actionitemCreateNestedManyWithoutStaffInput
   }
 
   export type staffUncheckedCreateWithoutDepartmentInput = {
@@ -10940,6 +12572,7 @@ export namespace Prisma {
     Created?: Date | string | null
     Modified?: Date | string | null
     meetingmember?: meetingmemberUncheckedCreateNestedManyWithoutStaffInput
+    actionitem?: actionitemUncheckedCreateNestedManyWithoutStaffInput
   }
 
   export type staffCreateOrConnectWithoutDepartmentInput = {
@@ -10991,6 +12624,7 @@ export namespace Prisma {
     IsCancelled?: boolean | null
     CancellationDateTime?: Date | string | null
     CancellationReason?: string | null
+    actionitem?: actionitemCreateNestedManyWithoutMeetingsInput
     meetingtype: meetingtypeCreateNestedOneWithoutMeetingsInput
     venue?: venueCreateNestedOneWithoutMeetingsInput
   }
@@ -11007,6 +12641,7 @@ export namespace Prisma {
     IsCancelled?: boolean | null
     CancellationDateTime?: Date | string | null
     CancellationReason?: string | null
+    actionitem?: actionitemUncheckedCreateNestedManyWithoutMeetingsInput
   }
 
   export type meetingsCreateOrConnectWithoutMeetingmemberInput = {
@@ -11022,6 +12657,7 @@ export namespace Prisma {
     Created?: Date | string | null
     Modified?: Date | string | null
     department?: departmentCreateNestedOneWithoutStaffInput
+    actionitem?: actionitemCreateNestedManyWithoutStaffInput
   }
 
   export type staffUncheckedCreateWithoutMeetingmemberInput = {
@@ -11033,6 +12669,7 @@ export namespace Prisma {
     Remarks?: string | null
     Created?: Date | string | null
     Modified?: Date | string | null
+    actionitem?: actionitemUncheckedCreateNestedManyWithoutStaffInput
   }
 
   export type staffCreateOrConnectWithoutMeetingmemberInput = {
@@ -11060,6 +12697,7 @@ export namespace Prisma {
     IsCancelled?: NullableBoolFieldUpdateOperationsInput | boolean | null
     CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    actionitem?: actionitemUpdateManyWithoutMeetingsNestedInput
     meetingtype?: meetingtypeUpdateOneRequiredWithoutMeetingsNestedInput
     venue?: venueUpdateOneWithoutMeetingsNestedInput
   }
@@ -11076,6 +12714,7 @@ export namespace Prisma {
     IsCancelled?: NullableBoolFieldUpdateOperationsInput | boolean | null
     CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    actionitem?: actionitemUncheckedUpdateManyWithoutMeetingsNestedInput
   }
 
   export type staffUpsertWithoutMeetingmemberInput = {
@@ -11097,6 +12736,7 @@ export namespace Prisma {
     Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     department?: departmentUpdateOneWithoutStaffNestedInput
+    actionitem?: actionitemUpdateManyWithoutStaffNestedInput
   }
 
   export type staffUncheckedUpdateWithoutMeetingmemberInput = {
@@ -11108,6 +12748,7 @@ export namespace Prisma {
     Remarks?: NullableStringFieldUpdateOperationsInput | string | null
     Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actionitem?: actionitemUncheckedUpdateManyWithoutStaffNestedInput
   }
 
   export type meetingmemberCreateWithoutMeetingsInput = {
@@ -11134,6 +12775,35 @@ export namespace Prisma {
 
   export type meetingmemberCreateManyMeetingsInputEnvelope = {
     data: meetingmemberCreateManyMeetingsInput | meetingmemberCreateManyMeetingsInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type actionitemCreateWithoutMeetingsInput = {
+    Description: string
+    Status?: $Enums.action_item_status
+    DueDate?: Date | string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+    staff?: staffCreateNestedOneWithoutActionitemInput
+  }
+
+  export type actionitemUncheckedCreateWithoutMeetingsInput = {
+    ActionItemID?: number
+    StaffID?: number | null
+    Description: string
+    Status?: $Enums.action_item_status
+    DueDate?: Date | string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+  }
+
+  export type actionitemCreateOrConnectWithoutMeetingsInput = {
+    where: actionitemWhereUniqueInput
+    create: XOR<actionitemCreateWithoutMeetingsInput, actionitemUncheckedCreateWithoutMeetingsInput>
+  }
+
+  export type actionitemCreateManyMeetingsInputEnvelope = {
+    data: actionitemCreateManyMeetingsInput | actionitemCreateManyMeetingsInput[]
     skipDuplicates?: boolean
   }
 
@@ -11208,6 +12878,36 @@ export namespace Prisma {
     Modified?: DateTimeNullableFilter<"meetingmember"> | Date | string | null
   }
 
+  export type actionitemUpsertWithWhereUniqueWithoutMeetingsInput = {
+    where: actionitemWhereUniqueInput
+    update: XOR<actionitemUpdateWithoutMeetingsInput, actionitemUncheckedUpdateWithoutMeetingsInput>
+    create: XOR<actionitemCreateWithoutMeetingsInput, actionitemUncheckedCreateWithoutMeetingsInput>
+  }
+
+  export type actionitemUpdateWithWhereUniqueWithoutMeetingsInput = {
+    where: actionitemWhereUniqueInput
+    data: XOR<actionitemUpdateWithoutMeetingsInput, actionitemUncheckedUpdateWithoutMeetingsInput>
+  }
+
+  export type actionitemUpdateManyWithWhereWithoutMeetingsInput = {
+    where: actionitemScalarWhereInput
+    data: XOR<actionitemUpdateManyMutationInput, actionitemUncheckedUpdateManyWithoutMeetingsInput>
+  }
+
+  export type actionitemScalarWhereInput = {
+    AND?: actionitemScalarWhereInput | actionitemScalarWhereInput[]
+    OR?: actionitemScalarWhereInput[]
+    NOT?: actionitemScalarWhereInput | actionitemScalarWhereInput[]
+    ActionItemID?: IntFilter<"actionitem"> | number
+    MeetingID?: IntNullableFilter<"actionitem"> | number | null
+    StaffID?: IntNullableFilter<"actionitem"> | number | null
+    Description?: StringFilter<"actionitem"> | string
+    Status?: Enumaction_item_statusFilter<"actionitem"> | $Enums.action_item_status
+    DueDate?: DateTimeNullableFilter<"actionitem"> | Date | string | null
+    Created?: DateTimeNullableFilter<"actionitem"> | Date | string | null
+    Modified?: DateTimeNullableFilter<"actionitem"> | Date | string | null
+  }
+
   export type meetingtypeUpsertWithoutMeetingsInput = {
     update: XOR<meetingtypeUpdateWithoutMeetingsInput, meetingtypeUncheckedUpdateWithoutMeetingsInput>
     create: XOR<meetingtypeCreateWithoutMeetingsInput, meetingtypeUncheckedCreateWithoutMeetingsInput>
@@ -11272,6 +12972,7 @@ export namespace Prisma {
     CancellationDateTime?: Date | string | null
     CancellationReason?: string | null
     meetingmember?: meetingmemberCreateNestedManyWithoutMeetingsInput
+    actionitem?: actionitemCreateNestedManyWithoutMeetingsInput
     venue?: venueCreateNestedOneWithoutMeetingsInput
   }
 
@@ -11287,6 +12988,7 @@ export namespace Prisma {
     CancellationDateTime?: Date | string | null
     CancellationReason?: string | null
     meetingmember?: meetingmemberUncheckedCreateNestedManyWithoutMeetingsInput
+    actionitem?: actionitemUncheckedCreateNestedManyWithoutMeetingsInput
   }
 
   export type meetingsCreateOrConnectWithoutMeetingtypeInput = {
@@ -11379,6 +13081,35 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type actionitemCreateWithoutStaffInput = {
+    Description: string
+    Status?: $Enums.action_item_status
+    DueDate?: Date | string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+    meetings?: meetingsCreateNestedOneWithoutActionitemInput
+  }
+
+  export type actionitemUncheckedCreateWithoutStaffInput = {
+    ActionItemID?: number
+    MeetingID?: number | null
+    Description: string
+    Status?: $Enums.action_item_status
+    DueDate?: Date | string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+  }
+
+  export type actionitemCreateOrConnectWithoutStaffInput = {
+    where: actionitemWhereUniqueInput
+    create: XOR<actionitemCreateWithoutStaffInput, actionitemUncheckedCreateWithoutStaffInput>
+  }
+
+  export type actionitemCreateManyStaffInputEnvelope = {
+    data: actionitemCreateManyStaffInput | actionitemCreateManyStaffInput[]
+    skipDuplicates?: boolean
+  }
+
   export type departmentUpsertWithoutStaffInput = {
     update: XOR<departmentUpdateWithoutStaffInput, departmentUncheckedUpdateWithoutStaffInput>
     create: XOR<departmentCreateWithoutStaffInput, departmentUncheckedCreateWithoutStaffInput>
@@ -11421,6 +13152,22 @@ export namespace Prisma {
     data: XOR<meetingmemberUpdateManyMutationInput, meetingmemberUncheckedUpdateManyWithoutStaffInput>
   }
 
+  export type actionitemUpsertWithWhereUniqueWithoutStaffInput = {
+    where: actionitemWhereUniqueInput
+    update: XOR<actionitemUpdateWithoutStaffInput, actionitemUncheckedUpdateWithoutStaffInput>
+    create: XOR<actionitemCreateWithoutStaffInput, actionitemUncheckedCreateWithoutStaffInput>
+  }
+
+  export type actionitemUpdateWithWhereUniqueWithoutStaffInput = {
+    where: actionitemWhereUniqueInput
+    data: XOR<actionitemUpdateWithoutStaffInput, actionitemUncheckedUpdateWithoutStaffInput>
+  }
+
+  export type actionitemUpdateManyWithWhereWithoutStaffInput = {
+    where: actionitemScalarWhereInput
+    data: XOR<actionitemUpdateManyMutationInput, actionitemUncheckedUpdateManyWithoutStaffInput>
+  }
+
   export type meetingsCreateWithoutVenueInput = {
     MeetingDate: Date | string
     MeetingDescription?: string | null
@@ -11431,6 +13178,7 @@ export namespace Prisma {
     CancellationDateTime?: Date | string | null
     CancellationReason?: string | null
     meetingmember?: meetingmemberCreateNestedManyWithoutMeetingsInput
+    actionitem?: actionitemCreateNestedManyWithoutMeetingsInput
     meetingtype: meetingtypeCreateNestedOneWithoutMeetingsInput
   }
 
@@ -11446,6 +13194,7 @@ export namespace Prisma {
     CancellationDateTime?: Date | string | null
     CancellationReason?: string | null
     meetingmember?: meetingmemberUncheckedCreateNestedManyWithoutMeetingsInput
+    actionitem?: actionitemUncheckedCreateNestedManyWithoutMeetingsInput
   }
 
   export type meetingsCreateOrConnectWithoutVenueInput = {
@@ -11474,6 +13223,142 @@ export namespace Prisma {
     data: XOR<meetingsUpdateManyMutationInput, meetingsUncheckedUpdateManyWithoutVenueInput>
   }
 
+  export type meetingsCreateWithoutActionitemInput = {
+    MeetingDate: Date | string
+    MeetingDescription?: string | null
+    DocumentPath?: string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+    IsCancelled?: boolean | null
+    CancellationDateTime?: Date | string | null
+    CancellationReason?: string | null
+    meetingmember?: meetingmemberCreateNestedManyWithoutMeetingsInput
+    meetingtype: meetingtypeCreateNestedOneWithoutMeetingsInput
+    venue?: venueCreateNestedOneWithoutMeetingsInput
+  }
+
+  export type meetingsUncheckedCreateWithoutActionitemInput = {
+    MeetingID?: number
+    MeetingDate: Date | string
+    MeetingTypeID: number
+    VenueID?: number | null
+    MeetingDescription?: string | null
+    DocumentPath?: string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+    IsCancelled?: boolean | null
+    CancellationDateTime?: Date | string | null
+    CancellationReason?: string | null
+    meetingmember?: meetingmemberUncheckedCreateNestedManyWithoutMeetingsInput
+  }
+
+  export type meetingsCreateOrConnectWithoutActionitemInput = {
+    where: meetingsWhereUniqueInput
+    create: XOR<meetingsCreateWithoutActionitemInput, meetingsUncheckedCreateWithoutActionitemInput>
+  }
+
+  export type staffCreateWithoutActionitemInput = {
+    StaffName: string
+    MobileNo?: string | null
+    EmailAddress?: string | null
+    Remarks?: string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+    department?: departmentCreateNestedOneWithoutStaffInput
+    meetingmember?: meetingmemberCreateNestedManyWithoutStaffInput
+  }
+
+  export type staffUncheckedCreateWithoutActionitemInput = {
+    StaffID?: number
+    StaffName: string
+    MobileNo?: string | null
+    EmailAddress?: string | null
+    DepartmentID?: number | null
+    Remarks?: string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+    meetingmember?: meetingmemberUncheckedCreateNestedManyWithoutStaffInput
+  }
+
+  export type staffCreateOrConnectWithoutActionitemInput = {
+    where: staffWhereUniqueInput
+    create: XOR<staffCreateWithoutActionitemInput, staffUncheckedCreateWithoutActionitemInput>
+  }
+
+  export type meetingsUpsertWithoutActionitemInput = {
+    update: XOR<meetingsUpdateWithoutActionitemInput, meetingsUncheckedUpdateWithoutActionitemInput>
+    create: XOR<meetingsCreateWithoutActionitemInput, meetingsUncheckedCreateWithoutActionitemInput>
+    where?: meetingsWhereInput
+  }
+
+  export type meetingsUpdateToOneWithWhereWithoutActionitemInput = {
+    where?: meetingsWhereInput
+    data: XOR<meetingsUpdateWithoutActionitemInput, meetingsUncheckedUpdateWithoutActionitemInput>
+  }
+
+  export type meetingsUpdateWithoutActionitemInput = {
+    MeetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    MeetingDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    DocumentPath?: NullableStringFieldUpdateOperationsInput | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    IsCancelled?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingmember?: meetingmemberUpdateManyWithoutMeetingsNestedInput
+    meetingtype?: meetingtypeUpdateOneRequiredWithoutMeetingsNestedInput
+    venue?: venueUpdateOneWithoutMeetingsNestedInput
+  }
+
+  export type meetingsUncheckedUpdateWithoutActionitemInput = {
+    MeetingID?: IntFieldUpdateOperationsInput | number
+    MeetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    MeetingTypeID?: IntFieldUpdateOperationsInput | number
+    VenueID?: NullableIntFieldUpdateOperationsInput | number | null
+    MeetingDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    DocumentPath?: NullableStringFieldUpdateOperationsInput | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    IsCancelled?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingmember?: meetingmemberUncheckedUpdateManyWithoutMeetingsNestedInput
+  }
+
+  export type staffUpsertWithoutActionitemInput = {
+    update: XOR<staffUpdateWithoutActionitemInput, staffUncheckedUpdateWithoutActionitemInput>
+    create: XOR<staffCreateWithoutActionitemInput, staffUncheckedCreateWithoutActionitemInput>
+    where?: staffWhereInput
+  }
+
+  export type staffUpdateToOneWithWhereWithoutActionitemInput = {
+    where?: staffWhereInput
+    data: XOR<staffUpdateWithoutActionitemInput, staffUncheckedUpdateWithoutActionitemInput>
+  }
+
+  export type staffUpdateWithoutActionitemInput = {
+    StaffName?: StringFieldUpdateOperationsInput | string
+    MobileNo?: NullableStringFieldUpdateOperationsInput | string | null
+    EmailAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    Remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    department?: departmentUpdateOneWithoutStaffNestedInput
+    meetingmember?: meetingmemberUpdateManyWithoutStaffNestedInput
+  }
+
+  export type staffUncheckedUpdateWithoutActionitemInput = {
+    StaffID?: IntFieldUpdateOperationsInput | number
+    StaffName?: StringFieldUpdateOperationsInput | string
+    MobileNo?: NullableStringFieldUpdateOperationsInput | string | null
+    EmailAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    DepartmentID?: NullableIntFieldUpdateOperationsInput | number | null
+    Remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    meetingmember?: meetingmemberUncheckedUpdateManyWithoutStaffNestedInput
+  }
+
   export type staffCreateManyDepartmentInput = {
     StaffID?: number
     StaffName: string
@@ -11492,6 +13377,7 @@ export namespace Prisma {
     Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     meetingmember?: meetingmemberUpdateManyWithoutStaffNestedInput
+    actionitem?: actionitemUpdateManyWithoutStaffNestedInput
   }
 
   export type staffUncheckedUpdateWithoutDepartmentInput = {
@@ -11503,6 +13389,7 @@ export namespace Prisma {
     Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     meetingmember?: meetingmemberUncheckedUpdateManyWithoutStaffNestedInput
+    actionitem?: actionitemUncheckedUpdateManyWithoutStaffNestedInput
   }
 
   export type staffUncheckedUpdateManyWithoutDepartmentInput = {
@@ -11520,6 +13407,16 @@ export namespace Prisma {
     StaffID: number
     IsPresent?: boolean | null
     Remarks?: string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+  }
+
+  export type actionitemCreateManyMeetingsInput = {
+    ActionItemID?: number
+    StaffID?: number | null
+    Description: string
+    Status?: $Enums.action_item_status
+    DueDate?: Date | string | null
     Created?: Date | string | null
     Modified?: Date | string | null
   }
@@ -11550,6 +13447,35 @@ export namespace Prisma {
     Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type actionitemUpdateWithoutMeetingsInput = {
+    Description?: StringFieldUpdateOperationsInput | string
+    Status?: Enumaction_item_statusFieldUpdateOperationsInput | $Enums.action_item_status
+    DueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    staff?: staffUpdateOneWithoutActionitemNestedInput
+  }
+
+  export type actionitemUncheckedUpdateWithoutMeetingsInput = {
+    ActionItemID?: IntFieldUpdateOperationsInput | number
+    StaffID?: NullableIntFieldUpdateOperationsInput | number | null
+    Description?: StringFieldUpdateOperationsInput | string
+    Status?: Enumaction_item_statusFieldUpdateOperationsInput | $Enums.action_item_status
+    DueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type actionitemUncheckedUpdateManyWithoutMeetingsInput = {
+    ActionItemID?: IntFieldUpdateOperationsInput | number
+    StaffID?: NullableIntFieldUpdateOperationsInput | number | null
+    Description?: StringFieldUpdateOperationsInput | string
+    Status?: Enumaction_item_statusFieldUpdateOperationsInput | $Enums.action_item_status
+    DueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type meetingsCreateManyMeetingtypeInput = {
     MeetingID?: number
     MeetingDate: Date | string
@@ -11573,6 +13499,7 @@ export namespace Prisma {
     CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingmember?: meetingmemberUpdateManyWithoutMeetingsNestedInput
+    actionitem?: actionitemUpdateManyWithoutMeetingsNestedInput
     venue?: venueUpdateOneWithoutMeetingsNestedInput
   }
 
@@ -11588,6 +13515,7 @@ export namespace Prisma {
     CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingmember?: meetingmemberUncheckedUpdateManyWithoutMeetingsNestedInput
+    actionitem?: actionitemUncheckedUpdateManyWithoutMeetingsNestedInput
   }
 
   export type meetingsUncheckedUpdateManyWithoutMeetingtypeInput = {
@@ -11608,6 +13536,16 @@ export namespace Prisma {
     MeetingID: number
     IsPresent?: boolean | null
     Remarks?: string | null
+    Created?: Date | string | null
+    Modified?: Date | string | null
+  }
+
+  export type actionitemCreateManyStaffInput = {
+    ActionItemID?: number
+    MeetingID?: number | null
+    Description: string
+    Status?: $Enums.action_item_status
+    DueDate?: Date | string | null
     Created?: Date | string | null
     Modified?: Date | string | null
   }
@@ -11638,6 +13576,35 @@ export namespace Prisma {
     Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type actionitemUpdateWithoutStaffInput = {
+    Description?: StringFieldUpdateOperationsInput | string
+    Status?: Enumaction_item_statusFieldUpdateOperationsInput | $Enums.action_item_status
+    DueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    meetings?: meetingsUpdateOneWithoutActionitemNestedInput
+  }
+
+  export type actionitemUncheckedUpdateWithoutStaffInput = {
+    ActionItemID?: IntFieldUpdateOperationsInput | number
+    MeetingID?: NullableIntFieldUpdateOperationsInput | number | null
+    Description?: StringFieldUpdateOperationsInput | string
+    Status?: Enumaction_item_statusFieldUpdateOperationsInput | $Enums.action_item_status
+    DueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type actionitemUncheckedUpdateManyWithoutStaffInput = {
+    ActionItemID?: IntFieldUpdateOperationsInput | number
+    MeetingID?: NullableIntFieldUpdateOperationsInput | number | null
+    Description?: StringFieldUpdateOperationsInput | string
+    Status?: Enumaction_item_statusFieldUpdateOperationsInput | $Enums.action_item_status
+    DueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Created?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    Modified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type meetingsCreateManyVenueInput = {
     MeetingID?: number
     MeetingDate: Date | string
@@ -11661,6 +13628,7 @@ export namespace Prisma {
     CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingmember?: meetingmemberUpdateManyWithoutMeetingsNestedInput
+    actionitem?: actionitemUpdateManyWithoutMeetingsNestedInput
     meetingtype?: meetingtypeUpdateOneRequiredWithoutMeetingsNestedInput
   }
 
@@ -11676,6 +13644,7 @@ export namespace Prisma {
     CancellationDateTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     CancellationReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingmember?: meetingmemberUncheckedUpdateManyWithoutMeetingsNestedInput
+    actionitem?: actionitemUncheckedUpdateManyWithoutMeetingsNestedInput
   }
 
   export type meetingsUncheckedUpdateManyWithoutVenueInput = {

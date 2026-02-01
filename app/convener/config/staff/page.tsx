@@ -162,7 +162,7 @@ export default function StaffPage() {
                                                 </div>
                                                 <div className="flex items-center gap-2 text-gray-400 text-[12px]">
                                                     <Phone size={12} className="text-slate-300" />
-                                                    {staff.StaffMobile || "No mobile"}
+                                                    {staff.MobileNo || "No mobile"}
                                                 </div>
                                             </div>
                                         </td>

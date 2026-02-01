@@ -18,6 +18,7 @@ import {
 import { motion } from "framer-motion";
 import { getDashboardStats } from "@/app/actions/dashboard";
 import { getMeetings } from "@/app/actions/meetings";
+import { getCurrentUser } from "@/app/actions/auth";
 
 export default function ReportsPage() {
     const [data, setData] = useState<any>(null);
@@ -27,12 +28,21 @@ export default function ReportsPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const currentUser = await getCurrentUser();
                 const [stats, m] = await Promise.all([
-                    getDashboardStats(),
+                    getDashboardStats(currentUser?.email),
                     getMeetings()
                 ]);
                 setData(stats);
-                setMeetings(m);
+
+                if (currentUser?.role === 'STAFF') {
+                    const filtered = m.filter((meeting: any) =>
+                        meeting.meetingmember?.some((mm: any) => mm.staff?.EmailAddress === currentUser.email)
+                    );
+                    setMeetings(filtered);
+                } else {
+                    setMeetings(m);
+                }
             } catch (err) {
                 console.error(err);
             } finally {

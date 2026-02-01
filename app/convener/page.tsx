@@ -14,16 +14,24 @@ import {
   Loader2
 } from "lucide-react";
 import { getDashboardStats } from "@/app/actions/dashboard";
+import { getActionItems } from "@/app/actions/action-items";
+import { useRouter } from "next/navigation";
 
 export default function ConvenerDashboard() {
+  const router = useRouter();
   const [data, setData] = useState<any>(null);
+  const [actionItems, setActionItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const stats = await getDashboardStats();
+        const [stats, actions] = await Promise.all([
+          getDashboardStats(),
+          getActionItems()
+        ]);
         setData(stats);
+        setActionItems(actions);
       } catch (err) {
         console.error("Failed to fetch dashboard stats:", err);
       } finally {
@@ -42,10 +50,15 @@ export default function ConvenerDashboard() {
     );
   }
 
+  const pendingCount = actionItems.filter(item => item.Status !== 'COMPLETED').length;
+  const completedActions = actionItems.filter(item => item.Status === 'COMPLETED').length;
+  const totalActions = actionItems.length;
+  const actionCompletionRate = totalActions > 0 ? Math.round((completedActions / totalActions) * 100) : 0;
+
   const statCards = [
     { label: "My Meetings", count: data?.stats.total || 0, icon: Calendar, color: "blue", border: "border-l-blue-500", bg: "bg-blue-50" },
     { label: "This Week", count: data?.stats.scheduled || 0, icon: Calendar, color: "sky", border: "border-l-sky-500", bg: "bg-sky-50" },
-    { label: "Pending Actions", count: 2, icon: ClipboardList, color: "orange", border: "border-l-orange-500", bg: "bg-orange-50" }, // Placeholder as per original
+    { label: "Pending Actions", count: pendingCount, icon: ClipboardList, color: "orange", border: "border-l-orange-500", bg: "bg-orange-50" },
     { label: "Completed", count: data?.stats.completed || 0, icon: CheckCircle, color: "green", border: "border-l-green-500", bg: "bg-green-50" },
   ];
 
@@ -61,7 +74,10 @@ export default function ConvenerDashboard() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Convener Dashboard</h1>
           <p className="text-gray-500 dark:text-gray-400">Manage your meetings and track action items</p>
         </div>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 shadow-lg shadow-blue-500/20 transition-all active:scale-95">
+        <button
+          onClick={() => router.push("/convener/meetings")}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 shadow-lg shadow-blue-500/20 transition-all active:scale-95"
+        >
           <Plus size={18} />
           Schedule Meeting
         </button>
@@ -100,10 +116,13 @@ export default function ConvenerDashboard() {
                   <p className="text-sm text-gray-500">Across all your meetings</p>
                 </div>
               </div>
-              <span className="text-2xl font-bold text-blue-600">88%</span>
+              <span className="text-2xl font-bold text-blue-600">{data?.stats.attendanceRate || 0}%</span>
             </div>
             <div className="relative h-2 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-slate-800">
-              <div className="h-full w-full flex-1 bg-blue-600 transition-all" style={{ transform: "translateX(-12%)" }}></div>
+              <div
+                className="h-full bg-blue-600 transition-all duration-1000"
+                style={{ width: `${data?.stats.attendanceRate || 0}%` }}
+              ></div>
             </div>
           </div>
         </div>
@@ -120,10 +139,13 @@ export default function ConvenerDashboard() {
                   <p className="text-sm text-gray-500">Items completed on time</p>
                 </div>
               </div>
-              <span className="text-2xl font-bold text-green-600">33%</span>
+              <span className="text-2xl font-bold text-green-600">{actionCompletionRate}%</span>
             </div>
             <div className="relative h-2 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-slate-800">
-              <div className="h-full w-full flex-1 bg-green-600 transition-all" style={{ transform: "translateX(-67%)" }}></div>
+              <div
+                className="h-full bg-green-600 transition-all duration-1000"
+                style={{ width: `${actionCompletionRate}%` }}
+              ></div>
             </div>
           </div>
         </div>
@@ -135,7 +157,12 @@ export default function ConvenerDashboard() {
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white">My Upcoming Meetings</h2>
-            <button className="text-sm text-gray-500 hover:text-gray-900 font-medium">View All →</button>
+            <button
+              onClick={() => router.push("/convener/meetings")}
+              className="text-sm text-gray-500 hover:text-gray-900 font-medium"
+            >
+              View All →
+            </button>
           </div>
 
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-950 divide-y divide-gray-100 dark:divide-gray-800">
@@ -183,7 +210,12 @@ export default function ConvenerDashboard() {
           <div className="pt-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-900 dark:text-white">My Recent MOMs</h2>
-              <button className="text-sm text-gray-500 hover:text-gray-900 font-medium">View Reports →</button>
+              <button
+                onClick={() => router.push("/convener/reports")}
+                className="text-sm text-gray-500 hover:text-gray-900 font-medium"
+              >
+                View Reports →
+              </button>
             </div>
             <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-950 divide-y divide-gray-100 dark:divide-gray-800">
               {data?.recentMoms.length === 0 ? (
@@ -217,27 +249,29 @@ export default function ConvenerDashboard() {
           <h2 className="text-lg font-bold text-gray-900 dark:text-white">Action Items</h2>
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-950">
             <div className="p-0">
-              <div className="p-4 border-b border-gray-100 dark:border-gray-800">
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-medium text-sm text-gray-900">Prepare Q1 budget forecast</h4>
-                  <div className="inline-flex items-center rounded-full border border-transparent px-1.5 py-0.5 text-[10px] font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 bg-orange-100 text-orange-700">pending</div>
+              {actionItems.length === 0 ? (
+                <div className="p-12 text-center text-slate-400 italic text-sm">No action items found.</div>
+              ) : actionItems.map((item, idx) => (
+                <div key={item.ActionItemID} className={`p-4 ${idx !== actionItems.length - 1 ? 'border-b border-gray-100 dark:border-gray-800' : ''}`}>
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-medium text-sm text-gray-900 dark:text-white">{item.Description}</h4>
+                    <div className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${item.Status === 'PENDING' ? 'bg-orange-100 text-orange-700' :
+                        item.Status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-700' :
+                          'bg-green-100 text-green-700'
+                      }`}>
+                      {item.Status.toLowerCase().replace('_', ' ')}
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center text-xs text-gray-500">
+                    <span className="flex items-center gap-1">
+                      <Users className="h-3 w-3" /> {item.staff?.StaffName || "Unassigned"}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" /> Due: {item.DueDate ? new Date(item.DueDate).toLocaleDateString() : 'TBD'}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center text-xs text-gray-500">
-                  <span className="flex items-center gap-1"><Users className="h-3 w-3" /> Sneha Gupta</span>
-                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> Due: Feb 3</span>
-                </div>
-              </div>
-
-              <div className="p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-medium text-sm text-gray-900">Complete performance reviews</h4>
-                  <div className="inline-flex items-center rounded-full border border-transparent px-1.5 py-0.5 text-[10px] font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 bg-blue-100 text-blue-700">in-progress</div>
-                </div>
-                <div className="flex justify-between items-center text-xs text-gray-500">
-                  <span className="flex items-center gap-1"><Users className="h-3 w-3" /> Amit Patel</span>
-                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> Due: Feb 10</span>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>

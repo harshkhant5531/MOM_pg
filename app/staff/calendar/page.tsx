@@ -12,6 +12,7 @@ import {
     Tag
 } from "lucide-react";
 import { getMeetings } from "@/app/actions/meetings";
+import { getCurrentUser } from "@/app/actions/auth";
 
 export default function CalendarPage() {
     const [meetings, setMeetings] = useState<any[]>([]);
@@ -21,8 +22,17 @@ export default function CalendarPage() {
     useEffect(() => {
         const fetch = async () => {
             try {
+                const currentUser = await getCurrentUser();
                 const data = await getMeetings();
-                setMeetings(data);
+
+                if (currentUser?.role === 'STAFF') {
+                    const filtered = data.filter((m: any) =>
+                        m.meetingmember?.some((mm: any) => mm.staff?.EmailAddress === currentUser.email)
+                    );
+                    setMeetings(filtered);
+                } else {
+                    setMeetings(data);
+                }
             } catch (err) {
                 console.error(err);
             } finally {

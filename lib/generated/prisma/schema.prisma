@@ -44,6 +44,7 @@ model meetings {
   CancellationDateTime DateTime?       @db.DateTime(0)
   CancellationReason   String?         @db.VarChar(500)
   meetingmember        meetingmember[]
+  actionitem           actionitem[]
   meetingtype          meetingtype     @relation(fields: [MeetingTypeID], references: [MeetingTypeID], map: "fk_meeting_type")
   venue                venue?          @relation(fields: [VenueID], references: [VenueID], map: "fk_meeting_venue")
 
@@ -71,6 +72,7 @@ model staff {
   Modified      DateTime?       @default(now()) @db.DateTime(0)
   department    department?     @relation(fields: [DepartmentID], references: [DepartmentID], map: "fk_staff_dept")
   meetingmember meetingmember[]
+  actionitem    actionitem[]
 
   @@index([DepartmentID], map: "fk_staff_dept")
 }
@@ -83,6 +85,28 @@ model venue {
   Created   DateTime?  @default(now()) @db.DateTime(0)
   Modified  DateTime?  @default(now()) @db.DateTime(0)
   meetings  meetings[]
+}
+
+model actionitem {
+  ActionItemID Int                @id @default(autoincrement())
+  MeetingID    Int?
+  StaffID      Int?
+  Description  String             @db.VarChar(500)
+  Status       action_item_status @default(PENDING)
+  DueDate      DateTime?          @db.DateTime(0)
+  Created      DateTime?          @default(now()) @db.DateTime(0)
+  Modified     DateTime?          @default(now()) @db.DateTime(0)
+  meetings     meetings?          @relation(fields: [MeetingID], references: [MeetingID], onDelete: SetNull, map: "fk_action_meeting")
+  staff        staff?             @relation(fields: [StaffID], references: [StaffID], onDelete: SetNull, map: "fk_action_staff")
+
+  @@index([MeetingID], map: "fk_action_meeting")
+  @@index([StaffID], map: "fk_action_staff")
+}
+
+enum action_item_status {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
 }
 
 model user {

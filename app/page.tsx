@@ -70,15 +70,16 @@ export default function GetStartedPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-10">
               <button
-                onClick={() => "/register"}
-                className="group px-8 py-4 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-all shadow-lg hover:shadow-xl hover:scale-105 flex items-center gap-2"
+                onClick={() => router.push("/login")}
+
+                className=" cursor-pointer group px-8 py-4 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-all shadow-lg hover:shadow-xl hover:scale-105 flex items-center gap-2"
               >
                 Start Free Trial
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
               <button
-                onClick={() => "/demo"}
-                className="px-8 py-4 bg-white text-slate-700 font-semibold rounded-xl border-2 border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition-all shadow-sm hover:shadow-md"
+                onClick={() => router.push("/demo")}
+                className=" cursor-pointer px-8 py-4 bg-white text-slate-700 font-semibold rounded-xl border-2 border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition-all shadow-sm hover:shadow-md"
               >
                 Watch Demo
               </button>
@@ -234,14 +235,14 @@ export default function GetStartedPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
-                  onClick={() => "/register"}
-                  className="px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                  onClick={() => router.push("/login")}
+                  className=" cursor-pointer px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition-all shadow-lg hover:shadow-xl hover:scale-105"
                 >
                   Start Free Trial
                 </button>
                 <button
-                  onClick={() => "/contact"}
-                  className="px-8 py-4 bg-indigo-700 text-white font-semibold rounded-xl hover:bg-indigo-800 transition-all border-2 border-indigo-500"
+                  onClick={() => router.push("/contact")}
+                  className="cursor-pointer px-8 py-4 bg-indigo-700 text-white font-semibold rounded-xl hover:bg-indigo-800 transition-all border-2 border-indigo-500"
                 >
                   Talk to Sales
                 </button>

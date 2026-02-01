@@ -16,21 +16,25 @@ import {
 import { motion } from "framer-motion";
 import { getDashboardStats } from "@/app/actions/dashboard";
 import { getMeetings } from "@/app/actions/meetings";
+import { getReportStats } from "@/app/actions/reports";
 
 export default function ReportsPage() {
     const [data, setData] = useState<any>(null);
+    const [reportData, setReportData] = useState<any>(null);
     const [meetings, setMeetings] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [stats, m] = await Promise.all([
+                const [stats, m, report] = await Promise.all([
                     getDashboardStats(),
-                    getMeetings()
+                    getMeetings(),
+                    getReportStats()
                 ]);
                 setData(stats);
                 setMeetings(m);
+                setReportData(report);
             } catch (err) {
                 console.error(err);
             } finally {
@@ -50,10 +54,10 @@ export default function ReportsPage() {
     }
 
     const reportCards = [
-        { label: "Total Sessions", value: data?.stats.total || 0, icon: FileText, color: "blue" },
-        { label: "Completion Rate", value: `${Math.round((data?.stats.completed / data?.stats.total) * 100) || 0}%`, icon: TrendingUp, color: "green" },
-        { label: "Total Upcoming", value: data?.stats.scheduled || 0, icon: Calendar, color: "indigo" },
-        { label: "Avg Attendance", value: "88%", icon: Users, color: "orange" },
+        { label: "Total Sessions", value: reportData?.summary.total || 0, icon: FileText, color: "blue" },
+        { label: "Completion Rate", value: `${Math.round((reportData?.summary.completed / reportData?.summary.total) * 100) || 0}%`, icon: TrendingUp, color: "green" },
+        { label: "Total Upcoming", value: reportData?.summary.scheduled || 0, icon: Calendar, color: "indigo" },
+        { label: "Avg Attendance", value: `${data?.stats.attendanceRate || 0}%`, icon: Users, color: "orange" },
     ];
 
     return (
@@ -104,20 +108,22 @@ export default function ReportsPage() {
                         <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Meeting Trend (Monthly)</h3>
                         <BarChart3 className="text-slate-300" size={24} />
                     </div>
-                    {/* Mock Chart */}
+                    {/* Dynamic Chart */}
                     <div className="h-64 flex items-end gap-3 px-4">
-                        {[40, 70, 45, 90, 65, 85, 55, 95, 75, 50, 80, 60].map((h, i) => (
-                            <div key={i} className="flex-1 bg-slate-100 dark:bg-gray-800 rounded-t-xl group relative cursor-pointer hover:bg-blue-500 transition-all" style={{ height: `${h}%` }}>
-                                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                    {h}
+                        {reportData?.monthlyTrends.map((item: any, i: number) => {
+                            const maxCount = Math.max(...reportData.monthlyTrends.map((t: any) => t.count), 1);
+                            const heightPercentage = (item.count / maxCount) * 100;
+                            return (
+                                <div key={i} className="flex-1 bg-slate-100 dark:bg-gray-800 rounded-t-xl group relative cursor-pointer hover:bg-blue-500 transition-all" style={{ height: `${Math.max(heightPercentage, 5)}%` }}>
+                                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                        {item.count} Sessions
+                                    </div>
+                                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-slate-400 uppercase">
+                                        {i % 2 === 0 ? item.month : ''}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="flex justify-between mt-6 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                        <span>Jan</span>
-                        <span>Jun</span>
-                        <span>Dec</span>
+                            );
+                        })}
                     </div>
                 </div>
 
@@ -128,35 +134,27 @@ export default function ReportsPage() {
                     </div>
                     <div className="relative h-64 flex items-center justify-center">
                         <div className="w-48 h-48 rounded-full border-[16px] border-slate-100 dark:border-gray-800 relative">
-                            <div className="absolute inset-0 rounded-full border-[16px] border-blue-500 border-t-transparent border-r-transparent rotate-45" />
+                            {/* Simple dynamic representation of the largest slice */}
+                            <div
+                                className="absolute inset-0 rounded-full border-[16px] border-blue-500 border-t-transparent border-r-transparent transition-all duration-1000"
+                                style={{ transform: `rotate(${(reportData?.statusDistribution[0]?.percentage || 0) * 3.6}deg)` }}
+                            />
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className="text-3xl font-black text-slate-900 dark:text-white">65%</span>
-                                <span className="text-[10px] font-black text-slate-400 uppercase">Completed</span>
+                                <span className="text-3xl font-black text-slate-900 dark:text-white">{reportData?.statusDistribution[0]?.percentage || 0}%</span>
+                                <span className="text-[10px] font-black text-slate-400 uppercase">{reportData?.statusDistribution[0]?.label}</span>
                             </div>
                         </div>
                     </div>
                     <div className="space-y-4 mt-8">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-blue-500" />
-                                <span className="text-xs font-bold text-slate-600 dark:text-gray-400">Completed</span>
+                        {reportData?.statusDistribution.map((status: any, idx: number) => (
+                            <div key={idx} className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <div className={`w-3 h-3 rounded-full ${status.color === 'blue' ? 'bg-blue-500' : status.color === 'indigo' ? 'bg-indigo-500' : 'bg-red-500'}`} />
+                                    <span className="text-xs font-bold text-slate-600 dark:text-gray-400">{status.label}</span>
+                                </div>
+                                <span className="text-xs font-black text-slate-900 dark:text-white">{status.percentage}%</span>
                             </div>
-                            <span className="text-xs font-black text-slate-900 dark:text-white">65%</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-indigo-500" />
-                                <span className="text-xs font-bold text-slate-600 dark:text-gray-400">Scheduled</span>
-                            </div>
-                            <span className="text-xs font-black text-slate-900 dark:text-white">25%</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-red-500" />
-                                <span className="text-xs font-bold text-slate-600 dark:text-gray-400">Cancelled</span>
-                            </div>
-                            <span className="text-xs font-black text-slate-900 dark:text-white">10%</span>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>
