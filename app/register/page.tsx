@@ -367,7 +367,7 @@ export default function RegisterPage() {
             <button
               onClick={handleSubmit}
               disabled={isLoading || !agreedToTerms}
-              className="group w-full h-12 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] flex items-center justify-center gap-2"
+              className="cursor-pointer group w-full h-12 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>

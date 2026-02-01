@@ -179,8 +179,8 @@ function Loginpage() {
                     <label
                       key={r}
                       className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all hover:scale-105 ${role === r
-                          ? "border-indigo-500 bg-indigo-50 shadow-md"
-                          : "border-slate-200 bg-white hover:border-slate-300"
+                        ? "border-indigo-500 bg-indigo-50 shadow-md"
+                        : "border-slate-200 bg-white hover:border-slate-300"
                         }`}
                     >
                       <input
@@ -206,7 +206,7 @@ function Loginpage() {
                 })}
               </div>
             </div>
-{error && (
+            {error && (
               <div className="p-4 rounded-lg bg-red-50 border border-red-200">
                 <p className="text-sm text-red-600 font-medium">{error}</p>
               </div>
@@ -215,7 +215,7 @@ function Loginpage() {
             <button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="group w-full h-12 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] flex items-center justify-center gap-2"
+              className="cursor-pointer group w-full h-12 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
