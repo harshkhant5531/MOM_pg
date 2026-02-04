@@ -17,6 +17,15 @@ import { getDashboardStats } from "@/app/actions/dashboard";
 import { getReportStats } from "@/app/actions/reports";
 import toast, { Toaster } from "react-hot-toast";
 
+// Extend jsPDF type to include autoTable properties
+declare module 'jspdf' {
+    interface jsPDF {
+        lastAutoTable: {
+            finalY: number;
+        };
+    }
+}
+
 export default function ReportsPage() {
     const [data, setData] = useState<any>(null);
     const [reportData, setReportData] = useState<any>(null);

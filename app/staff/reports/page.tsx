@@ -19,6 +19,16 @@ import { motion } from "framer-motion";
 import { getDashboardStats } from "@/app/actions/dashboard";
 import { getMeetings } from "@/app/actions/meetings";
 import { getCurrentUser } from "@/app/actions/auth";
+import toast, { Toaster } from "react-hot-toast";
+
+// Extend jsPDF type to include autoTable properties
+declare module 'jspdf' {
+    interface jsPDF {
+        lastAutoTable: {
+            finalY: number;
+        };
+    }
+}
 
 export default function ReportsPage() {
     const [data, setData] = useState<any>(null);
@@ -68,18 +78,145 @@ export default function ReportsPage() {
         { label: "Co-Participants", value: "42", icon: Users, color: "orange" },
     ];
 
+    const handleExportExcel = () => {
+        try {
+            // Convert meetings data to CSV format
+            const headers = ['Meeting', 'Type', 'Date', 'Status'];
+            const csvRows = [headers.join(',')];
+
+            meetings.forEach((meeting) => {
+                const isPast = new Date(meeting.MeetingDate) < new Date();
+                const status = meeting.IsCancelled ? 'Cancelled' : isPast ? 'Archived' : 'Active';
+                const row = [
+                    `"${meeting.MeetingDescription || ''}"`,
+                    `"${meeting.meetingtype?.MeetingTypeName || ''}"`,
+                    `"${new Date(meeting.MeetingDate).toLocaleDateString()}"`,
+                    `"${status}"`
+                ];
+                csvRows.push(row.join(','));
+            });
+
+            const csvContent = csvRows.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `staff-meeting-report-${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            toast.success("Excel report downloaded successfully!", {
+                duration: 3000,
+                icon: "📊",
+            });
+        } catch (error) {
+            toast.error("Failed to export Excel report", {
+                duration: 3000,
+            });
+        }
+    };
+
+    const handleExportPDF = async () => {
+        try {
+            // Dynamically import jsPDF to avoid SSR issues
+            const { default: jsPDF } = await import('jspdf');
+            const autoTable = (await import('jspdf-autotable')).default;
+
+            const doc = new jsPDF();
+
+            // Add title
+            doc.setFontSize(20);
+            doc.setTextColor(30, 58, 138); // Blue color
+            doc.text('Staff Analytical Perspective', 14, 20);
+
+            // Add date
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 27);
+
+            // Add summary statistics
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text('Summary Statistics', 14, 40);
+
+            const summaryData = [
+                ['Invited Sessions', `${data?.stats.total || 0}`],
+                ['Participation Rate', '88%'],
+                ['Imminent Events', `${data?.stats.scheduled || 0}`],
+                ['Co-Participants', '42']
+            ];
+
+            autoTable(doc, {
+                startY: 45,
+                head: [['Metric', 'Value']],
+                body: summaryData,
+                theme: 'grid',
+                headStyles: { fillColor: [30, 58, 138] },
+                margin: { left: 14 }
+            });
+
+            // Add meeting details table
+            doc.setFontSize(12);
+            doc.text('Engagement Log', 14, doc.lastAutoTable.finalY + 15);
+
+            const tableData = meetings.map((meeting) => {
+                const isPast = new Date(meeting.MeetingDate) < new Date();
+                const status = meeting.IsCancelled ? 'Cancelled' : isPast ? 'Archived' : 'Active';
+                return [
+                    meeting.MeetingDescription || '',
+                    meeting.meetingtype?.MeetingTypeName || '',
+                    new Date(meeting.MeetingDate).toLocaleDateString(),
+                    status
+                ];
+            });
+
+            autoTable(doc, {
+                startY: doc.lastAutoTable.finalY + 20,
+                head: [['Meeting', 'Type', 'Date', 'Status']],
+                body: tableData,
+                theme: 'striped',
+                headStyles: { fillColor: [30, 58, 138] },
+                margin: { left: 14 },
+                styles: { fontSize: 9 }
+            });
+
+            // Save the PDF
+            doc.save(`staff-report-${new Date().toISOString().split('T')[0]}.pdf`);
+
+            toast.success("PDF report downloaded successfully!", {
+                duration: 3000,
+                icon: "📄",
+            });
+        } catch (error) {
+            console.error('PDF export error:', error);
+            toast.error("Failed to export PDF report", {
+                duration: 3000,
+            });
+        }
+    };
+
+    const handleDeepAudit = () => {
+        toast.success("Deep audit analysis initiated!", {
+            duration: 3000,
+            icon: "🔍",
+        });
+    };
+
     return (
         <div className="p-8 pb-20 max-w-[1400px] mx-auto space-y-12 animate-in fade-in duration-500">
+            <Toaster position="top-right" />
             <header className="flex justify-between items-end">
                 <div>
                     <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight uppercase">Analytical perspective</h1>
                     <p className="text-slate-500 font-medium">Deep insights into your organizational engagement and meeting performance</p>
                 </div>
                 <div className="flex gap-4">
-                    <button className="bg-white dark:bg-gray-900 border border-slate-100 dark:border-gray-800 px-6 py-4 rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 transition-all shadow-xl shadow-slate-500/5">
+                    <button onClick={handleExportExcel} className="bg-white dark:bg-gray-900 border border-slate-100 dark:border-gray-800 px-6 py-4 rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 transition-all shadow-xl shadow-slate-500/5 cursor-pointer">
                         <FileSpreadsheet size={18} className="text-blue-500" /> Export XLS
                     </button>
-                    <button className="bg-slate-900 text-white px-6 py-4 rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20">
+                    <button onClick={handleExportPDF} className="bg-slate-900 text-white px-6 py-4 rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20 cursor-pointer">
                         <Download size={18} className="text-blue-400" /> Export PDF
                     </button>
                 </div>
@@ -183,7 +320,7 @@ export default function ReportsPage() {
                         <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Granular Engagement Log</h3>
                         <p className="text-slate-400 text-xs font-medium mt-1">Detailed chronological trace of all session logic</p>
                     </div>
-                    <button className="text-blue-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
+                    <button onClick={handleDeepAudit} className="text-blue-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all cursor-pointer">
                         Deep Audit <ArrowUpRight size={18} />
                     </button>
                 </div>

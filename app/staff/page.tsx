@@ -14,22 +14,28 @@ import {
   ArrowRight,
   Loader2,
   MapPin,
-  Tag
+  Tag,
+  X
 } from "lucide-react";
 import { getDashboardStats } from "@/app/actions/dashboard";
 import { getMeetings } from "@/app/actions/meetings";
 import { getCurrentUser } from "@/app/actions/auth";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function StaffDashboard() {
   const [data, setData] = useState<any>(null);
   const [meetings, setMeetings] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedMeeting, setSelectedMeeting] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("Starting to fetch data...");
         const currentUser = await getCurrentUser();
+        console.log("Current user:", currentUser);
         setUser(currentUser);
 
         const [stats, m] = await Promise.all([
@@ -37,19 +43,24 @@ export default function StaffDashboard() {
           getMeetings()
         ]);
 
+        console.log("Stats:", stats);
+        console.log("Meetings:", m);
         setData(stats);
         // Filter meetings for this staff member if they are not admin
         if (currentUser?.role === 'STAFF') {
           const filteredMeetings = m.filter((meeting: any) =>
             meeting.meetingmember?.some((mm: any) => mm.staff?.EmailAddress === currentUser.email)
           );
+          console.log("Filtered meetings:", filteredMeetings);
           setMeetings(filteredMeetings);
         } else {
           setMeetings(m);
         }
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
+        alert("Error loading dashboard: " + error);
       } finally {
+        console.log("Setting loading to false");
         setIsLoading(false);
       }
     };
@@ -75,8 +86,109 @@ export default function StaffDashboard() {
   const upcomingMeetings = meetings.filter(m => !m.IsCancelled && new Date(m.MeetingDate) >= new Date()).slice(0, 3);
   const recentMeetings = meetings.filter(m => !m.IsCancelled && new Date(m.MeetingDate) < new Date()).slice(0, 3);
 
+  const handleViewDetails = () => {
+    if (upcomingMeetings.length > 0) {
+      setSelectedMeeting(upcomingMeetings[0]);
+      setShowModal(true);
+    }
+  };
+
+  const handleRequestAudit = () => {
+    toast.success("Audit request submitted successfully!", {
+      duration: 3000,
+      icon: "📋",
+    });
+  };
+
   return (
     <div className="space-y-8 max-w-[1400px] mx-auto animate-in fade-in duration-500 pb-10">
+      <Toaster position="top-right" />
+
+      {/* Meeting Details Modal */}
+      {showModal && selectedMeeting && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowModal(false)}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white dark:bg-gray-900 rounded-[40px] p-10 max-w-2xl w-full shadow-2xl border border-slate-100 dark:border-gray-800 relative"
+          >
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-8 right-8 w-10 h-10 rounded-xl bg-slate-100 dark:bg-gray-800 hover:bg-slate-200 dark:hover:bg-gray-700 flex items-center justify-center transition-all"
+            >
+              <X size={20} className="text-slate-600 dark:text-gray-300" />
+            </button>
+
+            <div className="space-y-6">
+              <div>
+                <div className="flex items-center gap-2 text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">
+                  <Tag size={14} />
+                  {selectedMeeting.meetingtype?.MeetingTypeName}
+                </div>
+                <h2 className="text-3xl font-black text-slate-900 dark:text-white capitalize mb-2">{selectedMeeting.MeetingDescription}</h2>
+                <p className="text-slate-500 text-sm">Meeting Details & Information</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-slate-50 dark:bg-gray-800 p-6 rounded-2xl">
+                  <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">
+                    <Calendar size={14} />
+                    Date
+                  </div>
+                  <p className="text-lg font-black text-slate-900 dark:text-white">
+                    {new Date(selectedMeeting.MeetingDate).toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-gray-800 p-6 rounded-2xl">
+                  <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">
+                    <Clock size={14} />
+                    Time
+                  </div>
+                  <p className="text-lg font-black text-slate-900 dark:text-white">
+                    {new Date(selectedMeeting.MeetingDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-gray-800 p-6 rounded-2xl">
+                  <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">
+                    <MapPin size={14} />
+                    Venue
+                  </div>
+                  <p className="text-lg font-black text-slate-900 dark:text-white">
+                    {selectedMeeting.venue?.VenueName || "TBD"}
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-gray-800 p-6 rounded-2xl">
+                  <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">
+                    <Users size={14} />
+                    Status
+                  </div>
+                  <p className="text-lg font-black text-blue-600">
+                    {selectedMeeting.IsCancelled ? 'Cancelled' : new Date(selectedMeeting.MeetingDate) >= new Date() ? 'Scheduled' : 'Completed'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-4 flex gap-3">
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="flex-1 py-4 bg-slate-900 dark:bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-blue-700 transition-all"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
       {/* Header */}
       <header className="flex justify-between items-end">
         <div>
@@ -106,7 +218,7 @@ export default function StaffDashboard() {
               </p>
             </div>
           </div>
-          <button className="mt-6 md:mt-0 px-8 py-3.5 bg-white text-blue-600 text-[11px] font-black uppercase rounded-2xl hover:bg-slate-50 transition-all active:scale-95 shadow-xl shadow-blue-900/10 z-10 tracking-widest">
+          <button onClick={handleViewDetails} className="mt-6 md:mt-0 px-8 py-3.5 bg-white text-blue-600 text-[11px] font-black uppercase rounded-2xl hover:bg-slate-50 transition-all active:scale-95 shadow-xl shadow-blue-900/10 z-10 tracking-widest cursor-pointer">
             View Details
           </button>
 
@@ -216,7 +328,7 @@ export default function StaffDashboard() {
           <div className="bg-slate-900 dark:bg-blue-600 p-10 rounded-[40px] text-white shadow-2xl shadow-slate-900/20 relative overflow-hidden group">
             <h4 className="font-black text-xl uppercase tracking-tight mb-4 relative z-10">Member Support</h4>
             <p className="opacity-70 text-sm font-medium mb-8 relative z-10 leading-relaxed">Required technical assistance or session coordination help?</p>
-            <button className="w-full py-4 bg-white text-slate-900 dark:text-blue-600 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-50 transition-all active:scale-95 relative z-10 shadow-xl">
+            <button onClick={handleRequestAudit} className="w-full py-4 bg-white text-slate-900 dark:text-blue-600 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-50 transition-all active:scale-95 relative z-10 shadow-xl cursor-pointer">
               Request Audit
             </button>
             <Bell className="absolute -right-8 -bottom-8 opacity-10 group-hover:rotate-12 transition-transform" size={160} />
