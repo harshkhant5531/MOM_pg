@@ -1,12 +1,10 @@
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { signJwt } from "@/lib/auth/jwt";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 import { created, fail, serverError } from "@/lib/api/response";
 import { user_role } from "@/lib/generated/prisma";
-
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,7 +26,9 @@ export async function POST(req: NextRequest) {
       if (!user.role || user.role !== requestedRole) return fail(`Account exists but not as ${requestedRole}`, 403);
     }
 
-    const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: "1d" });
+    if (!user.role) return fail("User account has no role assigned", 403);
+
+    const token = await signJwt({ userId: user.id, email: user.email, role: user.role });
 
     const cookieStore = await cookies();
     cookieStore.set({
