@@ -46,9 +46,6 @@ export default function StaffConfigPage() {
                     <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Staff Registry</h1>
                     <p className="text-slate-500 font-medium">Consolidated directory of all organizational participants</p>
                 </div>
-                <button className="bg-slate-900 dark:bg-blue-600 text-white px-6 py-3.5 rounded-2xl font-bold text-sm flex items-center gap-2 hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 dark:shadow-blue-500/20 active:scale-95 uppercase tracking-widest">
-                    <Plus size={20} /> Register Entry
-                </button>
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-6 rounded-[32px] border border-slate-100 dark:border-gray-800 shadow-xl shadow-blue-500/5">
@@ -79,7 +76,6 @@ export default function StaffConfigPage() {
                                     <th className="px-10 py-6 text-[10px] font-black text-slate-400 tracking-[0.2em]">Digital Identity</th>
                                     <th className="px-10 py-6 text-[10px] font-black text-slate-400 tracking-[0.2em]">Mobile Comms</th>
                                     <th className="px-10 py-6 text-[10px] font-black text-slate-400 tracking-[0.2em]">Unit Allocation</th>
-                                    <th className="px-10 py-6 text-[10px] font-black text-slate-400 tracking-[0.2em] text-right">Operations</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50 dark:divide-gray-800">
@@ -100,16 +96,6 @@ export default function StaffConfigPage() {
                                         <td className="px-10 py-8">
                                             <div className="flex items-center gap-2 text-sm font-bold text-slate-600 dark:text-gray-400">
                                                 <Building size={16} className="text-blue-500" /> {s.department?.DepartmentName || "Floating"}
-                                            </div>
-                                        </td>
-                                        <td className="px-10 py-8">
-                                            <div className="flex items-center justify-end gap-3">
-                                                <button className="p-3 bg-slate-50 dark:bg-gray-800 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-2xl transition-all shadow-inner">
-                                                    <Pencil size={20} />
-                                                </button>
-                                                <button className="p-3 bg-slate-50 dark:bg-gray-800 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-2xl transition-all shadow-inner">
-                                                    <Trash2 size={20} />
-                                                </button>
                                             </div>
                                         </td>
                                     </tr>

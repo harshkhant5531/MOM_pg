@@ -17,13 +17,16 @@ import {
   Edit2,
   Trash2,
   CheckCircle2,
+  ChevronDown,
 } from "lucide-react";
+import { useRef, useEffect as useEffectHook } from "react";
 import {
   getMeetings,
   cancelMeeting,
   createMeeting,
   updateMeeting,
 } from "@/app/actions/meetings";
+import { useRouter } from "next/navigation";
 import {
   getVenues,
   getMeetingTypes,
@@ -31,6 +34,7 @@ import {
 } from "@/app/actions/master-config";
 
 export default function MeetingsPage() {
+  const router = useRouter();
   const [meetings, setMeetings] = useState<any[]>([]);
   const [venues, setVenues] = useState<any[]>([]);
   const [meetingTypes, setMeetingTypes] = useState<any[]>([]);
@@ -40,6 +44,21 @@ export default function MeetingsPage() {
   const [editingMeeting, setEditingMeeting] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  // Close filter dropdown on outside click
+  useEffectHook(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setIsFilterOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const [formData, setFormData] = useState({
     description: "",
@@ -131,13 +150,24 @@ export default function MeetingsPage() {
     }
   };
 
-  const filteredMeetings = meetings.filter(
-    (m) =>
+  const activeFilterCount = (statusFilter !== "all" ? 1 : 0) + (typeFilter !== "all" ? 1 : 0);
+
+  const filteredMeetings = meetings.filter((m) => {
+    // Search filter
+    const matchesSearch =
       m.MeetingDescription?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.meetingtype?.MeetingTypeName.toLowerCase().includes(
-        searchQuery.toLowerCase(),
-      ),
-  );
+      m.meetingtype?.MeetingTypeName.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Status filter
+    const isPast = new Date(m.MeetingDate) < new Date();
+    const meetingStatus = m.IsCancelled ? "cancelled" : isPast ? "completed" : "upcoming";
+    const matchesStatus = statusFilter === "all" || meetingStatus === statusFilter;
+
+    // Type filter
+    const matchesType = typeFilter === "all" || m.MeetingTypeID?.toString() === typeFilter;
+
+    return matchesSearch && matchesStatus && matchesType;
+  });
 
   return (
     <div className="space-y-6 max-w-[1400px] mx-auto pb-20">
@@ -221,11 +251,81 @@ export default function MeetingsPage() {
               className="w-full pl-11 pr-4 py-2 rounded-xl border border-slate-100 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/10 transition-all text-sm font-medium"
             />
           </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-slate-500 bg-white border border-slate-100 rounded-lg hover:bg-slate-50 transition-colors">
+          <div className="relative" ref={filterRef}>
+            <button
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className={`cursor-pointer flex items-center gap-2 px-3 py-1.5 text-xs font-bold border rounded-lg transition-colors ${
+                activeFilterCount > 0
+                  ? "bg-blue-50 text-blue-600 border-blue-200"
+                  : "text-slate-500 bg-white border-slate-100 hover:bg-slate-50"
+              }`}
+            >
               <Filter size={14} />
               Filter
+              {activeFilterCount > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 bg-blue-600 text-white text-[10px] font-black rounded-full leading-none">
+                  {activeFilterCount}
+                </span>
+              )}
+              <ChevronDown size={12} className={`transition-transform ${isFilterOpen ? "rotate-180" : ""}`} />
             </button>
+
+            {isFilterOpen && (
+              <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-slate-100 rounded-2xl shadow-xl shadow-slate-200/50 z-30 p-4 space-y-4">
+                {/* Status Filter */}
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Status</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {["all", "upcoming", "completed", "cancelled"].map((status) => (
+                      <button
+                        key={status}
+                        onClick={() => setStatusFilter(status)}
+                        className={`cursor-pointer px-3 py-1.5 rounded-lg text-[11px] font-bold capitalize transition-all ${
+                          statusFilter === status
+                            ? status === "upcoming" ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
+                            : status === "completed" ? "bg-emerald-600 text-white shadow-md shadow-emerald-500/20"
+                            : status === "cancelled" ? "bg-red-600 text-white shadow-md shadow-red-500/20"
+                            : "bg-slate-900 text-white"
+                            : "bg-slate-50 text-slate-500 hover:bg-slate-100"
+                        }`}
+                      >
+                        {status}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Meeting Type Filter */}
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Meeting Type</p>
+                  <select
+                    value={typeFilter}
+                    onChange={(e) => setTypeFilter(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border-none rounded-xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20 appearance-none cursor-pointer"
+                  >
+                    <option value="all">All Types</option>
+                    {meetingTypes.map((t) => (
+                      <option key={t.MeetingTypeID} value={t.MeetingTypeID}>
+                        {t.MeetingTypeName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Clear Filters */}
+                {activeFilterCount > 0 && (
+                  <button
+                    onClick={() => {
+                      setStatusFilter("all");
+                      setTypeFilter("all");
+                    }}
+                    className="cursor-pointer w-full py-2 text-[11px] font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                  >
+                    Clear All Filters
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -353,7 +453,11 @@ export default function MeetingsPage() {
                               </button>
                             </>
                           )}
-                          <button className="p-2 text-slate-300 hover:bg-slate-100 rounded-xl transition-all">
+                          <button
+                            onClick={() => router.push(`/admin/meetings/${meeting.MeetingID}`)}
+                            className="cursor-pointer p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                            title="View Details"
+                          >
                             <ChevronRight size={20} />
                           </button>
                         </div>

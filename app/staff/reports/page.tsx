@@ -13,8 +13,10 @@ import {
     PieChart,
     BarChart3,
     Activity,
-    FileSpreadsheet
+    FileSpreadsheet,
+    ArrowRight
 } from "lucide-react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { getDashboardStats } from "@/app/actions/dashboard";
 import { getMeetings } from "@/app/actions/meetings";
@@ -320,9 +322,9 @@ export default function ReportsPage() {
                         <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Granular Engagement Log</h3>
                         <p className="text-slate-400 text-xs font-medium mt-1">Detailed chronological trace of all session logic</p>
                     </div>
-                    <button onClick={handleDeepAudit} className="text-blue-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all cursor-pointer">
+                    <Link href="/staff/meetings" className="text-blue-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all cursor-pointer">
                         Deep Audit <ArrowUpRight size={18} />
-                    </button>
+                    </Link>
                 </div>
                 <div className="overflow-x-auto text-left">
                     <table className="w-full">

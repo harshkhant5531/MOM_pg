@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   FileText,
   Download,
@@ -17,6 +18,16 @@ import { motion } from "framer-motion";
 import { getDashboardStats } from "@/app/actions/dashboard";
 import { getMeetings } from "@/app/actions/meetings";
 import { getReportStats } from "@/app/actions/reports";
+import toast, { Toaster } from "react-hot-toast";
+
+// Extend jsPDF type to include autoTable properties
+declare module 'jspdf' {
+  interface jsPDF {
+    lastAutoTable: {
+      finalY: number;
+    };
+  }
+}
 
 export default function ReportsPage() {
   const [data, setData] = useState<any>(null);
@@ -55,6 +66,119 @@ export default function ReportsPage() {
     );
   }
 
+  const handleExportExcel = () => {
+    try {
+      const headers = ['Meeting', 'Type', 'Date', 'Status'];
+      const csvRows = [headers.join(',')];
+
+      meetings.forEach((meeting) => {
+        const isPast = new Date(meeting.MeetingDate) < new Date();
+        const status = meeting.IsCancelled ? 'Cancelled' : isPast ? 'Completed' : 'Scheduled';
+        const row = [
+          `"${meeting.MeetingDescription || ''}"`,
+          `"${meeting.meetingtype?.MeetingTypeName || ''}"`,
+          `"${new Date(meeting.MeetingDate).toLocaleDateString()}"`,
+          `"${status}"`
+        ];
+        csvRows.push(row.join(','));
+      });
+
+      const csvContent = csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `meeting-report-${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("Excel report downloaded successfully!", {
+        duration: 3000,
+        icon: "📊",
+      });
+    } catch (error) {
+      toast.error("Failed to export Excel report", { duration: 3000 });
+    }
+  };
+
+  const handleExportPDF = async () => {
+    try {
+      const { default: jsPDF } = await import('jspdf');
+      const autoTable = (await import('jspdf-autotable')).default;
+
+      const doc = new jsPDF();
+
+      // Title
+      doc.setFontSize(20);
+      doc.setTextColor(30, 58, 138);
+      doc.text('Meeting Reports & Analytics', 14, 20);
+
+      // Date
+      doc.setFontSize(10);
+      doc.setTextColor(100, 100, 100);
+      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 27);
+
+      // Summary statistics
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text('Summary Statistics', 14, 40);
+
+      const summaryData = [
+        ['Total Sessions', `${reportData?.summary.total || 0}`],
+        ['Completed', `${reportData?.summary.completed || 0}`],
+        ['Scheduled', `${reportData?.summary.scheduled || 0}`],
+        ['Cancelled', `${reportData?.summary.cancelled || 0}`],
+        ['Completion Rate', reportData?.summary.total > 0 ? `${Math.round((reportData.summary.completed / reportData.summary.total) * 100)}%` : '0%']
+      ];
+
+      autoTable(doc, {
+        startY: 45,
+        head: [['Metric', 'Value']],
+        body: summaryData,
+        theme: 'grid',
+        headStyles: { fillColor: [30, 58, 138] },
+        margin: { left: 14 }
+      });
+
+      // Meeting details table
+      doc.setFontSize(12);
+      doc.text('Meeting Details', 14, doc.lastAutoTable.finalY + 15);
+
+      const tableData = meetings.map((meeting) => {
+        const isPast = new Date(meeting.MeetingDate) < new Date();
+        const status = meeting.IsCancelled ? 'Cancelled' : isPast ? 'Completed' : 'Scheduled';
+        return [
+          meeting.MeetingDescription || '',
+          meeting.meetingtype?.MeetingTypeName || '',
+          new Date(meeting.MeetingDate).toLocaleDateString(),
+          status
+        ];
+      });
+
+      autoTable(doc, {
+        startY: doc.lastAutoTable.finalY + 20,
+        head: [['Meeting', 'Type', 'Date', 'Status']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: { fillColor: [30, 58, 138] },
+        margin: { left: 14 },
+        styles: { fontSize: 9 }
+      });
+
+      doc.save(`meeting-report-${new Date().toISOString().split('T')[0]}.pdf`);
+
+      toast.success("PDF report downloaded successfully!", {
+        duration: 3000,
+        icon: "📄",
+      });
+    } catch (error) {
+      console.error('PDF export error:', error);
+      toast.error("Failed to export PDF report", { duration: 3000 });
+    }
+  };
+
   const reportCards = [
     {
       label: "Total Sessions",
@@ -84,6 +208,7 @@ export default function ReportsPage() {
 
   return (
     <div className="p-8 pb-20 max-w-[1400px] mx-auto space-y-10 animate-in fade-in duration-500">
+      <Toaster position="top-right" />
       <header className="flex justify-between items-end">
         <div>
           <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight uppercase">
@@ -94,10 +219,16 @@ export default function ReportsPage() {
           </p>
         </div>
         <div className="flex gap-4">
-          <button className="cursor-pointer bg-white dark:bg-gray-900 border border-slate-100 dark:border-gray-800 px-6 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 hover:bg-slate-50 transition-all shadow-xl shadow-slate-500/5">
+          <button
+            onClick={handleExportExcel}
+            className="cursor-pointer bg-white dark:bg-gray-900 border border-slate-100 dark:border-gray-800 px-6 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 hover:bg-slate-50 transition-all shadow-xl shadow-slate-500/5 active:scale-95"
+          >
             <Download size={18} /> Export Excel
           </button>
-          <button className="cursor-pointer bg-slate-900 text-white px-6 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20">
+          <button
+            onClick={handleExportPDF}
+            className="cursor-pointer bg-slate-900 text-white px-6 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20 active:scale-95"
+          >
             <Download size={18} /> Export PDF
           </button>
         </div>
@@ -223,9 +354,9 @@ export default function ReportsPage() {
           <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
             Granular Session Report
           </h3>
-          <button className="cursor-pointer text-blue-600 text-xs font-black uppercase tracking-widest flex items-center gap-2">
+          <Link href="/convener/meetings" className="cursor-pointer text-blue-600 text-xs font-black uppercase tracking-widest flex items-center gap-2">
             Audit All <ArrowUpRight size={16} />
-          </button>
+          </Link>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">

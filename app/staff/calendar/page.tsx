@@ -62,10 +62,10 @@ export default function CalendarPage() {
                     </h1>
                 </div>
                 <div className="flex gap-4">
-                    <button onClick={prevMonth} className="p-4 bg-slate-50 dark:bg-gray-800 rounded-3xl hover:bg-slate-100 dark:hover:bg-gray-700 text-slate-600 dark:text-gray-300 transition-all active:scale-95 shadow-sm">
+                    <button onClick={prevMonth} className="p-4 bg-slate-50 dark:bg-gray-800 rounded-3xl hover:bg-slate-100 dark:hover:bg-gray-700 text-slate-600 dark:text-gray-300 transition-all active:scale-95 shadow-sm cursor-pointer">
                         <ChevronLeft size={28} />
                     </button>
-                    <button onClick={nextMonth} className="p-4 bg-slate-50 dark:bg-gray-800 rounded-3xl hover:bg-slate-100 dark:hover:bg-gray-700 text-slate-600 dark:text-gray-300 transition-all active:scale-95 shadow-sm">
+                    <button onClick={nextMonth} className="p-4 bg-slate-50 dark:bg-gray-800 rounded-3xl hover:bg-slate-100 dark:hover:bg-gray-700 text-slate-600 dark:text-gray-300 transition-all active:scale-95 shadow-sm cursor-pointer">
                         <ChevronRight size={28} />
                     </button>
                 </div>

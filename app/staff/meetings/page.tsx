@@ -83,7 +83,7 @@ export default function MeetingsPage() {
                     >
                         <button
                             onClick={() => setShowModal(false)}
-                            className="absolute top-8 right-8 w-10 h-10 rounded-xl bg-slate-100 dark:bg-gray-800 hover:bg-slate-200 dark:hover:bg-gray-700 flex items-center justify-center transition-all"
+                            className="absolute top-8 right-8 w-10 h-10 rounded-xl bg-slate-100 dark:bg-gray-800 hover:bg-slate-200 dark:hover:bg-gray-700 flex items-center justify-center transition-all cursor-pointer"
                         >
                             <X size={20} className="text-slate-600 dark:text-gray-300" />
                         </button>
@@ -148,7 +148,7 @@ export default function MeetingsPage() {
                             <div className="pt-4 flex gap-3">
                                 <button
                                     onClick={() => setShowModal(false)}
-                                    className="flex-1 py-4 bg-slate-900 dark:bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-blue-700 transition-all"
+                                    className="flex-1 py-4 bg-slate-900 dark:bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-blue-700 transition-all cursor-pointer"
                                 >
                                     Close
                                 </button>
@@ -163,9 +163,6 @@ export default function MeetingsPage() {
                     <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Meeting Register</h1>
                     <p className="text-slate-500 font-medium">Consolidated view of all sessions and coordinated obligations</p>
                 </div>
-                <button className="bg-slate-900 dark:bg-blue-600 text-white px-6 py-3.5 rounded-2xl font-bold text-sm flex items-center gap-2 hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 dark:shadow-blue-500/20 active:scale-95 uppercase tracking-widest">
-                    <Plus size={20} /> New Request
-                </button>
             </div>
 
             {/* Selection & Optimization Filters */}

@@ -15,6 +15,7 @@ import {
     MapPin,
     FileBarChart,
 } from "lucide-react";
+import { getUserProfile } from "@/app/actions/auth";
 
 const staffItems: SidebarItem[] = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/staff" },
@@ -37,16 +38,32 @@ const staffItems: SidebarItem[] = [
 
 export default function StaffLayout({ children }: { children: React.ReactNode }) {
     const [isMounted, setIsMounted] = useState(false);
+    const [user, setUser] = useState<{ name: string; role: string; avatarText: string }>({
+        name: "Staff Member",
+        role: "Staff",
+        avatarText: "SM"
+    });
 
     useEffect(() => {
         setIsMounted(true);
+        const fetchUser = async () => {
+            const profile = await getUserProfile();
+            if (profile) {
+                setUser({
+                    name: profile.fullName,
+                    role: profile.role || "Staff",
+                    avatarText: profile.fullName.substring(0, 2).toUpperCase()
+                });
+            }
+        };
+        fetchUser();
     }, []);
 
     return (
         <div className="flex min-h-screen bg-[#F8FAFC]">
             <Sidebar
                 items={staffItems}
-                user={{ name: "Staff Member", role: "Staff", avatarText: "SM" }}
+                user={user}
             />
             <main className="flex-1">
                 <div className="p-8">

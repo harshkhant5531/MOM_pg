@@ -16,6 +16,23 @@ export async function getMeetings() {
     });
 }
 
+export async function getMeetingById(id: number) {
+    return await prisma.meetings.findUnique({
+        where: { MeetingID: id },
+        include: {
+            meetingtype: true,
+            venue: true,
+            meetingmember: {
+                include: {
+                    staff: {
+                        include: { department: true }
+                    }
+                }
+            }
+        }
+    });
+}
+
 export async function createMeeting(data: any) {
     const meeting = await prisma.meetings.create({
         data: {

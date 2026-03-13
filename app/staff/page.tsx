@@ -17,6 +17,7 @@ import {
   Tag,
   X
 } from "lucide-react";
+import Link from "next/link";
 import { getDashboardStats } from "@/app/actions/dashboard";
 import { getMeetings } from "@/app/actions/meetings";
 import { getCurrentUser } from "@/app/actions/auth";
@@ -100,6 +101,13 @@ export default function StaffDashboard() {
     });
   };
 
+  const handleNotifications = () => {
+    toast.success("All systems clear. No new notifications.", {
+      duration: 3000,
+      icon: "🔔",
+    });
+  };
+
   return (
     <div className="space-y-8 max-w-[1400px] mx-auto animate-in fade-in duration-500 pb-10">
       <Toaster position="top-right" />
@@ -115,7 +123,7 @@ export default function StaffDashboard() {
           >
             <button
               onClick={() => setShowModal(false)}
-              className="absolute top-8 right-8 w-10 h-10 rounded-xl bg-slate-100 dark:bg-gray-800 hover:bg-slate-200 dark:hover:bg-gray-700 flex items-center justify-center transition-all"
+              className="absolute top-8 right-8 w-10 h-10 rounded-xl bg-slate-100 dark:bg-gray-800 hover:bg-slate-200 dark:hover:bg-gray-700 flex items-center justify-center transition-all cursor-pointer"
             >
               <X size={20} className="text-slate-600 dark:text-gray-300" />
             </button>
@@ -180,7 +188,7 @@ export default function StaffDashboard() {
               <div className="pt-4 flex gap-3">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="flex-1 py-4 bg-slate-900 dark:bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-blue-700 transition-all"
+                  className="flex-1 py-4 bg-slate-900 dark:bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-blue-700 transition-all cursor-pointer"
                 >
                   Close
                 </button>
@@ -195,9 +203,12 @@ export default function StaffDashboard() {
           <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight uppercase">My Perspective</h1>
           <p className="text-slate-500 font-medium">Welcome back! Review your curated meeting schedule and obligations.</p>
         </div>
-        <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-gray-800 flex items-center justify-center text-slate-400 border border-slate-100 dark:border-gray-700">
+        <button 
+          onClick={handleNotifications}
+          className="cursor-pointer w-12 h-12 rounded-2xl bg-slate-50 dark:bg-gray-800 flex items-center justify-center text-slate-400 border border-slate-100 dark:border-gray-700 hover:bg-slate-100 dark:hover:bg-gray-700 transition-all active:scale-95"
+        >
           <Bell size={24} />
-        </div>
+        </button>
       </header>
 
       {/* Alert Banner / Next Meeting */}
@@ -266,16 +277,23 @@ export default function StaffDashboard() {
         <div className="lg:col-span-2 bg-white dark:bg-gray-900 rounded-[40px] border border-slate-100 dark:border-gray-800 shadow-2xl shadow-blue-500/5 overflow-hidden">
           <div className="p-10 border-b border-slate-50 dark:border-gray-800 flex items-center justify-between">
             <h3 className="font-black text-slate-900 dark:text-white uppercase tracking-tight text-xl">Chronological Agenda</h3>
-            <button className="text-blue-600 text-[10px] font-black uppercase flex items-center gap-2 hover:gap-3 transition-all tracking-widest">
+            <Link href="/staff/calendar" className="text-blue-600 text-[10px] font-black uppercase flex items-center gap-2 hover:gap-3 transition-all tracking-widest">
               Full Calendar <ArrowUpRight size={16} />
-            </button>
+            </Link>
           </div>
           <div className="p-10 space-y-6">
             {upcomingMeetings.length === 0 ? (
               <div className="py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">No imminent engagements registered</div>
             ) : (
               upcomingMeetings.map((m, idx) => (
-                <div key={m.MeetingID} className="group p-6 rounded-3xl border border-slate-50 dark:border-gray-800 hover:border-blue-500/50 hover:bg-slate-50/50 dark:hover:bg-gray-800/50 transition-all flex items-center justify-between">
+                <button 
+                  key={m.MeetingID} 
+                  onClick={() => {
+                    setSelectedMeeting(m);
+                    setShowModal(true);
+                  }}
+                  className="w-full text-left group p-6 rounded-3xl border border-slate-50 dark:border-gray-800 hover:border-blue-500/50 hover:bg-slate-50/50 dark:hover:bg-gray-800/50 transition-all flex items-center justify-between cursor-pointer"
+                >
                   <div className="flex items-center gap-6">
                     <div className="flex flex-col items-center justify-center w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-2xl border border-blue-100 dark:border-blue-800 text-blue-600 dark:text-blue-400 font-black shadow-inner">
                       <span className="text-[10px] uppercase">{new Date(m.MeetingDate).toLocaleString('default', { month: 'short' })}</span>
@@ -294,11 +312,14 @@ export default function StaffDashboard() {
                         <span className="flex items-center gap-1.5 text-xs font-bold text-slate-400 uppercase tracking-tight">
                           <MapPin size={12} /> {m.venue?.VenueName || "TBD"}
                         </span>
+                        <span className="flex items-center gap-1.5 text-xs font-bold text-blue-500 uppercase tracking-tight">
+                          <Users size={12} /> {m.meetingmember?.length || 0}
+                        </span>
                       </div>
                     </div>
                   </div>
                   <ArrowRight className="text-slate-300 group-hover:text-blue-500 group-hover:translate-x-2 transition-all" size={24} />
-                </div>
+                </button>
               ))
             )}
           </div>
@@ -340,15 +361,54 @@ export default function StaffDashboard() {
       <div className="bg-white dark:bg-gray-900 rounded-[40px] border border-slate-100 dark:border-gray-800 shadow-2xl shadow-blue-500/5 overflow-hidden">
         <div className="p-10 border-b border-slate-50 dark:border-gray-800 flex items-center justify-between">
           <h3 className="font-black text-slate-900 dark:text-white uppercase tracking-tight text-xl">Historical Snapshot</h3>
-          <button className="text-slate-400 text-[10px] font-black uppercase flex items-center gap-2 hover:text-blue-600 transition-all tracking-widest">
+          <Link href="/staff/meetings" className="text-slate-400 text-[10px] font-black uppercase flex items-center gap-2 hover:text-blue-600 transition-all tracking-widest">
             View Archive <ArrowRight size={16} />
-          </button>
+          </Link>
         </div>
-        <div className="p-20 flex flex-col items-center justify-center text-center">
-          <div className="w-20 h-20 rounded-[28px] bg-slate-50 dark:bg-gray-800 flex items-center justify-center text-slate-200 dark:text-slate-700 mb-6 transition-transform hover:scale-110 shadow-inner">
-            <ClipboardList size={40} />
-          </div>
-          <p className="text-slate-400 font-black uppercase tracking-[0.3em] text-[10px]">No finalized historical records detected</p>
+        <div className="p-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {recentMeetings.length === 0 ? (
+            <div className="col-span-full py-10 flex flex-col items-center justify-center text-center">
+              <div className="w-20 h-20 rounded-[28px] bg-slate-50 dark:bg-gray-800 flex items-center justify-center text-slate-200 dark:text-slate-700 mb-6 transition-transform hover:scale-110 shadow-inner">
+                <ClipboardList size={40} />
+              </div>
+              <p className="text-slate-400 font-black uppercase tracking-[0.3em] text-[10px]">No finalized historical records detected</p>
+            </div>
+          ) : (
+            recentMeetings.map((m) => (
+              <button
+                key={m.MeetingID}
+                onClick={() => {
+                  setSelectedMeeting(m);
+                  setShowModal(true);
+                }}
+                className="text-left p-6 rounded-[32px] bg-slate-50/50 dark:bg-gray-800/30 border border-slate-100 dark:border-gray-800 hover:border-blue-500/30 transition-all group relative overflow-hidden cursor-pointer"
+              >
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-2 py-0.5 bg-white dark:bg-gray-800 text-slate-400 text-[9px] font-black rounded-lg uppercase tracking-wider border border-slate-100 dark:border-gray-700">
+                      {m.meetingtype?.MeetingTypeName}
+                    </span>
+                    {m.meetingmember?.some((mm: any) => mm.staff?.EmailAddress === user?.email && mm.IsPresent) ? (
+                      <span className="px-2 py-0.5 bg-green-50 text-green-600 text-[9px] font-black rounded-lg uppercase tracking-wider border border-green-100">
+                        Attended
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 bg-red-50 text-red-600 text-[9px] font-black rounded-lg uppercase tracking-wider border border-red-100">
+                        Absent
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="font-bold text-slate-900 dark:text-white truncate mb-1">{m.MeetingDescription}</h4>
+                  <p className="text-[11px] font-bold text-slate-400">
+                    {new Date(m.MeetingDate).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                  <CheckCircle2 size={48} className="text-slate-900 dark:text-white" />
+                </div>
+              </button>
+            ))
+          )}
         </div>
       </div>
     </div>

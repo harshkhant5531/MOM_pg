@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Calendar as CalendarIcon,
   Plus,
@@ -17,6 +17,7 @@ import {
   XCircle,
   Info,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -38,6 +39,21 @@ export default function MeetingsPage() {
   const [staff, setStaff] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  // Close filter dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setIsFilterOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -144,13 +160,21 @@ export default function MeetingsPage() {
     }));
   };
 
-  const filteredMeetings = meetings.filter(
-    (m) =>
+  const activeFilterCount = (statusFilter !== "all" ? 1 : 0) + (typeFilter !== "all" ? 1 : 0);
+
+  const filteredMeetings = meetings.filter((m) => {
+    const matchesSearch =
       m.MeetingDescription?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.meetingtype?.MeetingTypeName.toLowerCase().includes(
-        searchTerm.toLowerCase(),
-      ),
-  );
+      m.meetingtype?.MeetingTypeName.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const isPast = new Date(m.MeetingDate) < new Date();
+    const meetingStatus = m.IsCancelled ? "cancelled" : isPast ? "completed" : "upcoming";
+    const matchesStatus = statusFilter === "all" || meetingStatus === statusFilter;
+
+    const matchesType = typeFilter === "all" || m.MeetingTypeID?.toString() === typeFilter;
+
+    return matchesSearch && matchesStatus && matchesType;
+  });
 
   return (
     <div className="p-8 pb-20 max-w-[1400px] mx-auto">
@@ -186,10 +210,80 @@ export default function MeetingsPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex gap-3">
-          <button className=" cursor-pointer p-3.5 bg-white dark:bg-gray-900 border border-slate-100 dark:border-gray-800 rounded-2xl text-slate-400 hover:text-blue-600 transition-colors shadow-sm">
+        <div className="relative" ref={filterRef}>
+          <button
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className={`cursor-pointer flex items-center gap-2 p-3.5 border rounded-2xl transition-colors shadow-sm ${
+              activeFilterCount > 0
+                ? "bg-blue-50 text-blue-600 border-blue-200"
+                : "bg-white dark:bg-gray-900 border-slate-100 dark:border-gray-800 text-slate-400 hover:text-blue-600"
+            }`}
+          >
             <Filter size={20} />
+            {activeFilterCount > 0 && (
+              <span className="px-1.5 py-0.5 bg-blue-600 text-white text-[10px] font-black rounded-full leading-none">
+                {activeFilterCount}
+              </span>
+            )}
+            <ChevronDown size={14} className={`transition-transform ${isFilterOpen ? "rotate-180" : ""}`} />
           </button>
+
+          {isFilterOpen && (
+            <div className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-gray-900 border border-slate-100 dark:border-gray-800 rounded-2xl shadow-xl shadow-slate-200/50 z-30 p-4 space-y-4">
+              {/* Status Filter */}
+              <div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Status</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {["all", "upcoming", "completed", "cancelled"].map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => setStatusFilter(status)}
+                      className={`cursor-pointer px-3 py-1.5 rounded-lg text-[11px] font-bold capitalize transition-all ${
+                        statusFilter === status
+                          ? status === "upcoming" ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
+                          : status === "completed" ? "bg-emerald-600 text-white shadow-md shadow-emerald-500/20"
+                          : status === "cancelled" ? "bg-red-600 text-white shadow-md shadow-red-500/20"
+                          : "bg-slate-900 text-white"
+                          : "bg-slate-50 dark:bg-gray-800 text-slate-500 hover:bg-slate-100"
+                      }`}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Meeting Type Filter */}
+              <div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Meeting Type</p>
+                <select
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-gray-800 border-none rounded-xl text-sm font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500/20 appearance-none cursor-pointer"
+                >
+                  <option value="all">All Types</option>
+                  {types.map((t) => (
+                    <option key={t.MeetingTypeID} value={t.MeetingTypeID}>
+                      {t.MeetingTypeName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Clear Filters */}
+              {activeFilterCount > 0 && (
+                <button
+                  onClick={() => {
+                    setStatusFilter("all");
+                    setTypeFilter("all");
+                  }}
+                  className="cursor-pointer w-full py-2 text-[11px] font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                >
+                  Clear All Filters
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

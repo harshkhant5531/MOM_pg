@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   Users,
   Calendar,
@@ -130,9 +131,9 @@ export default function AdminDashboard() {
             <h3 className="font-black text-slate-800 uppercase tracking-tighter text-lg">
               Upcoming Sessions
             </h3>
-            <button className="text-blue-600 text-[12px] font-black uppercase flex items-center gap-1 hover:gap-2 transition-all">
+            <Link href="/admin/meetings" className="text-blue-600 text-[12px] font-black uppercase flex items-center gap-1 hover:gap-2 transition-all">
               View All <ArrowUpRight size={14} />
-            </button>
+            </Link>
           </div>
           <div className="divide-y divide-slate-50">
             {data?.upcomingMeetings.length === 0 ? (
@@ -218,9 +219,9 @@ export default function AdminDashboard() {
               ))
             )}
           </div>
-          <button className="cursor-pointer  w-full mt-10 py-3 bg-slate-900 text-white rounded-2xl font-bold text-sm hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200">
+          <Link href="/admin/reports" className="cursor-pointer block text-center w-full mt-10 py-3 bg-slate-900 text-white rounded-2xl font-bold text-sm hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200">
             Generate New Report
-          </button>
+          </Link>
         </div>
       </div>
     </div>

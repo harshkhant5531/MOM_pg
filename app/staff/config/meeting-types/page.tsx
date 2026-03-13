@@ -8,14 +8,18 @@ import {
     Tag,
     Loader2,
     Eye,
-    Zap
+    Zap,
+    X
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { getMeetingTypes } from "@/app/actions/master-config";
 
 export default function MeetingTypesPage() {
     const [types, setTypes] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [selectedType, setSelectedType] = useState<any>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetch = async () => {
@@ -42,10 +46,50 @@ export default function MeetingTypesPage() {
                     <h1 className="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Session Schema</h1>
                     <p className="text-slate-500 font-medium">Classifications and logical grouping of organizational collaborative efforts</p>
                 </div>
-                <button className="bg-indigo-600 text-white px-8 py-4 rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20 active:scale-95">
-                    <Plus size={20} /> New Category
-                </button>
             </header>
+
+            <AnimatePresence>
+                {isModalOpen && selectedType && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsModalOpen(false)}
+                            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="relative w-full max-w-lg bg-white dark:bg-gray-900 rounded-[40px] shadow-2xl overflow-hidden border border-slate-100 dark:border-gray-800"
+                        >
+                            <div className="p-10 border-b border-slate-50 dark:border-gray-800 flex items-center justify-between">
+                                <div>
+                                    <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Classification Detail</h2>
+                                    <p className="text-slate-500 text-sm font-medium">Protocol definition for {selectedType.MeetingTypeName}</p>
+                                </div>
+                                <button onClick={() => setIsModalOpen(false)} className="p-3 bg-slate-50 dark:bg-gray-800 rounded-2xl text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
+                                    <X size={20} />
+                                </button>
+                            </div>
+                            <div className="p-10 space-y-8">
+                                <div className="space-y-2">
+                                    <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">Protocol Designation</span>
+                                    <p className="text-xl font-bold text-slate-700 dark:text-slate-200">{selectedType.MeetingTypeName}</p>
+                                </div>
+                                <div className="space-y-2">
+                                    <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">System Architecture ID</span>
+                                    <p className="text-sm font-mono bg-slate-50 dark:bg-gray-800 p-4 rounded-2xl text-slate-500">MOM-CAT-LOGIC-{selectedType.MeetingTypeID}</p>
+                                </div>
+                                <button onClick={() => setIsModalOpen(false)} className="w-full py-5 bg-slate-900 dark:bg-indigo-600 text-white rounded-3xl font-black text-xs uppercase tracking-[0.3em] hover:opacity-90 transition-all cursor-pointer">
+                                    Close Deep Insight
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
 
             <div className="bg-white dark:bg-gray-900 p-8 rounded-[40px] border border-slate-100 dark:border-gray-800 shadow-2xl shadow-blue-500/5">
                 <div className="relative">
@@ -80,7 +124,13 @@ export default function MeetingTypesPage() {
                                 Logical ID: MOM-CAT-{t.MeetingTypeID}
                             </p>
                             <div className="pt-8 border-t border-slate-50 dark:border-gray-800 relative z-10">
-                                <button className="flex items-center gap-2 text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest hover:gap-4 transition-all">
+                                <button 
+                                    onClick={() => {
+                                        setSelectedType(t);
+                                        setIsModalOpen(true);
+                                    }}
+                                    className="flex items-center gap-2 text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest hover:gap-4 transition-all cursor-pointer"
+                                >
                                     View Protocol <Eye size={16} />
                                 </button>
                             </div>
