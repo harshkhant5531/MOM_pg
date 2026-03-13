@@ -136,7 +136,7 @@ export default function VenuesPage() {
                             <h3 className="text-2xl font-black text-slate-900 dark:text-white capitalize mb-2">{v.VenueName}</h3>
                             <p className="text-slate-400 text-sm font-bold italic mb-8">{v.VenueLocation}</p>
                             <div className="pt-8 border-t border-slate-50 dark:border-gray-800 flex justify-between items-center">
-                                <button 
+                                <button
                                     onClick={() => {
                                         setSelectedVenue(v);
                                         setIsModalOpen(true);
@@ -145,7 +145,7 @@ export default function VenuesPage() {
                                 >
                                     Available
                                 </button>
-                                <button 
+                                <button
                                     onClick={() => {
                                         setSelectedVenue(v);
                                         setIsModalOpen(true);
