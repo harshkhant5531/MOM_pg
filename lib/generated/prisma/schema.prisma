@@ -4,15 +4,15 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
 model department {
   DepartmentID   Int       @id @default(autoincrement())
   DepartmentName String    @db.VarChar(255)
   DepartmentCode String?   @db.VarChar(50)
-  Created        DateTime? @default(now()) @db.DateTime(0)
-  Modified       DateTime? @default(now()) @db.DateTime(0)
+  Created        DateTime? @default(now()) @db.Timestamp(0)
+  Modified       DateTime? @default(now()) @db.Timestamp(0)
   staff          staff[]
 }
 
@@ -22,42 +22,42 @@ model meetingmember {
   StaffID         Int
   IsPresent       Boolean?  @default(false)
   Remarks         String?   @db.VarChar(500)
-  Created         DateTime? @default(now()) @db.DateTime(0)
-  Modified        DateTime? @default(now()) @db.DateTime(0)
+  Created         DateTime? @default(now()) @db.Timestamp(0)
+  Modified        DateTime? @default(now()) @db.Timestamp(0)
   meetings        meetings  @relation(fields: [MeetingID], references: [MeetingID], onDelete: Cascade, map: "fk_mm_meeting")
   staff           staff     @relation(fields: [StaffID], references: [StaffID], onDelete: Cascade, map: "fk_mm_staff")
 
-  @@index([MeetingID], map: "fk_mm_meeting")
-  @@index([StaffID], map: "fk_mm_staff")
+  @@index([MeetingID], map: "idx_mm_meeting")
+  @@index([StaffID], map: "idx_mm_staff")
 }
 
 model meetings {
   MeetingID            Int             @id @default(autoincrement())
-  MeetingDate          DateTime        @db.DateTime(0)
+  MeetingDate          DateTime        @db.Timestamp(0)
   MeetingTypeID        Int
   VenueID              Int?
   MeetingDescription   String?         @db.VarChar(500)
   DocumentPath         String?         @db.VarChar(500)
-  Created              DateTime?       @default(now()) @db.DateTime(0)
-  Modified             DateTime?       @default(now()) @db.DateTime(0)
+  Created              DateTime?       @default(now()) @db.Timestamp(0)
+  Modified             DateTime?       @default(now()) @db.Timestamp(0)
   IsCancelled          Boolean?        @default(false)
-  CancellationDateTime DateTime?       @db.DateTime(0)
+  CancellationDateTime DateTime?       @db.Timestamp(0)
   CancellationReason   String?         @db.VarChar(500)
   meetingmember        meetingmember[]
   actionitem           actionitem[]
   meetingtype          meetingtype     @relation(fields: [MeetingTypeID], references: [MeetingTypeID], map: "fk_meeting_type")
   venue                venue?          @relation(fields: [VenueID], references: [VenueID], map: "fk_meeting_venue")
 
-  @@index([MeetingTypeID], map: "fk_meeting_type")
-  @@index([VenueID], map: "fk_meeting_venue")
+  @@index([MeetingTypeID], map: "idx_meeting_type")
+  @@index([VenueID], map: "idx_meeting_venue")
 }
 
 model meetingtype {
   MeetingTypeID   Int        @id @default(autoincrement())
   MeetingTypeName String     @db.VarChar(255)
   Remarks         String?    @db.VarChar(500)
-  Created         DateTime?  @default(now()) @db.DateTime(0)
-  Modified        DateTime?  @default(now()) @db.DateTime(0)
+  Created         DateTime?  @default(now()) @db.Timestamp(0)
+  Modified        DateTime?  @default(now()) @db.Timestamp(0)
   meetings        meetings[]
 }
 
@@ -68,13 +68,13 @@ model staff {
   EmailAddress  String?         @db.VarChar(255)
   DepartmentID  Int?
   Remarks       String?         @db.VarChar(500)
-  Created       DateTime?       @default(now()) @db.DateTime(0)
-  Modified      DateTime?       @default(now()) @db.DateTime(0)
+  Created       DateTime?       @default(now()) @db.Timestamp(0)
+  Modified      DateTime?       @default(now()) @db.Timestamp(0)
   department    department?     @relation(fields: [DepartmentID], references: [DepartmentID], map: "fk_staff_dept")
   meetingmember meetingmember[]
   actionitem    actionitem[]
 
-  @@index([DepartmentID], map: "fk_staff_dept")
+  @@index([DepartmentID], map: "idx_staff_dept")
 }
 
 model venue {
@@ -82,8 +82,8 @@ model venue {
   VenueName String     @db.VarChar(255)
   Location  String?    @db.VarChar(500)
   Capacity  Int?
-  Created   DateTime?  @default(now()) @db.DateTime(0)
-  Modified  DateTime?  @default(now()) @db.DateTime(0)
+  Created   DateTime?  @default(now()) @db.Timestamp(0)
+  Modified  DateTime?  @default(now()) @db.Timestamp(0)
   meetings  meetings[]
 }
 
@@ -93,14 +93,14 @@ model actionitem {
   StaffID      Int?
   Description  String             @db.VarChar(500)
   Status       action_item_status @default(PENDING)
-  DueDate      DateTime?          @db.DateTime(0)
-  Created      DateTime?          @default(now()) @db.DateTime(0)
-  Modified     DateTime?          @default(now()) @db.DateTime(0)
+  DueDate      DateTime?          @db.Timestamp(0)
+  Created      DateTime?          @default(now()) @db.Timestamp(0)
+  Modified     DateTime?          @default(now()) @db.Timestamp(0)
   meetings     meetings?          @relation(fields: [MeetingID], references: [MeetingID], onDelete: SetNull, map: "fk_action_meeting")
   staff        staff?             @relation(fields: [StaffID], references: [StaffID], onDelete: SetNull, map: "fk_action_staff")
 
-  @@index([MeetingID], map: "fk_action_meeting")
-  @@index([StaffID], map: "fk_action_staff")
+  @@index([MeetingID], map: "idx_action_meeting")
+  @@index([StaffID], map: "idx_action_staff")
 }
 
 enum action_item_status {
@@ -117,8 +117,8 @@ model user {
   organization String?    @db.VarChar(100)
   password     String     @db.VarChar(255)
   role         user_role? @default(STAFF)
-  createdAt    DateTime?  @default(now()) @db.DateTime(0)
-  updatedAt    DateTime?  @default(now()) @db.DateTime(0)
+  createdAt    DateTime?  @default(now()) @db.Timestamp(0)
+  updatedAt    DateTime?  @default(now()) @db.Timestamp(0)
 }
 
 enum user_role {

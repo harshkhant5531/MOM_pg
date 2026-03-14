@@ -31,51 +31,67 @@
 
 
 
-import { PrismaMariaDb } from "@prisma/adapter-mariadb";
-import { PrismaClient } from "./generated/prisma";
+// ---->Working Mysql
 
 
-const prismaClientSingleton = () => {
-    const databaseUrl = process.env.DATABASE_URL;
-
-    if (!databaseUrl) {
-        throw new Error("DATABASE_URL is not defined");
-    }
+// import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+// import { PrismaClient } from "./generated/prisma";
 
 
-    const url = new URL(databaseUrl);
-    const databaseName = url.pathname.slice(1);
+// const prismaClientSingleton = () => {
+//     const databaseUrl = process.env.DATABASE_URL;
 
-    const adapter = new PrismaMariaDb({
-        host: url.hostname,
-        port: parseInt(url.port) || 3306,
-        user: decodeURIComponent(url.username),
-        password: decodeURIComponent(url.password),
-        connectionLimit: 10,
-        allowPublicKeyRetrieval: true
-    }, {
-        database: decodeURIComponent(databaseName)
-    });
+//     if (!databaseUrl) {
+//         throw new Error("DATABASE_URL is not defined");
+//     }
 
 
-    return new PrismaClient({
-        adapter,
-        log: ["error", "warn"],
-    });
-};
+//     const url = new URL(databaseUrl);
+//     const databaseName = url.pathname.slice(1);
+
+//     const adapter = new PrismaMariaDb({
+//         host: url.hostname,
+//         port: parseInt(url.port) || 3306,
+//         user: decodeURIComponent(url.username),
+//         password: decodeURIComponent(url.password),
+//         connectionLimit: 10,
+//         allowPublicKeyRetrieval: true
+//     }, {
+//         database: decodeURIComponent(databaseName)
+//     });
 
 
-type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;
+//     return new PrismaClient({
+//         adapter,
+//         log: ["error", "warn"],
+//     });
+// };
 
-declare global {
-    var prisma_v3: PrismaClientSingleton | undefined;
-}
 
-const prisma = globalThis.prisma_v3 ?? prismaClientSingleton();
+// type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;
 
-if (process.env.NODE_ENV !== "production") {
-    globalThis.prisma_v3 = prisma;
-}
+// declare global {
+//     var prisma_v3: PrismaClientSingleton | undefined;
+// }
+
+// const prisma = globalThis.prisma_v3 ?? prismaClientSingleton();
+
+// if (process.env.NODE_ENV !== "production") {
+//     globalThis.prisma_v3 = prisma;
+// }
+
+// export default prisma;
+
+
+// ----->postgresql
+
+import "dotenv/config";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "../lib/generated/prisma/client";
+
+const connectionString = `${process.env.DATABASE_URL}`;
+
+const adapter = new PrismaPg({ connectionString });
+const prisma = new PrismaClient({ adapter });
 
 export default prisma;
-
