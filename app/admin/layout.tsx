@@ -42,7 +42,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }, []);
 
     return (
-        <div className="flex min-h-screen bg-[#F8FAFC]">
+        <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
             <Sidebar
                 items={adminItems}
                 user={{ name: "Administrator", role: "Admin", avatarText: "AD" }}

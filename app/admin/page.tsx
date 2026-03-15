@@ -74,10 +74,10 @@ export default function AdminDashboard() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <header className="flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             System Overview
           </h1>
-          <p className="text-slate-500 font-medium">
+          <p className="text-slate-500 dark:text-slate-400 font-medium">
             Monitoring and analytics for meet operations
           </p>
         </div>
@@ -97,7 +97,7 @@ export default function AdminDashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl shadow-blue-500/5 group hover:border-blue-200 transition-all cursor-default"
+            className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl shadow-blue-500/5 group hover:border-blue-200 transition-all cursor-default"
           >
             <div
               className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${
@@ -116,7 +116,7 @@ export default function AdminDashboard() {
               {stat.label}
             </p>
             <div className="flex items-baseline gap-2">
-              <h3 className="text-3xl font-black text-slate-900">
+              <h3 className="text-3xl font-black text-slate-900 dark:text-white">
                 {stat.count}
               </h3>
             </div>
@@ -128,7 +128,7 @@ export default function AdminDashboard() {
         {/* Upcoming Meetings */}
         <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-blue-500/5 overflow-hidden">
           <div className="p-6 border-b border-slate-50 flex items-center justify-between">
-            <h3 className="font-black text-slate-800 uppercase tracking-tighter text-lg">
+            <h3 className="font-black text-slate-800 dark:text-white uppercase tracking-tighter text-lg">
               Upcoming Sessions
             </h3>
             <Link href="/admin/meetings" className="text-blue-600 text-[12px] font-black uppercase flex items-center gap-1 hover:gap-2 transition-all">

@@ -15,9 +15,10 @@ import {
   Loader2,
   MapPin,
   Tag,
-  X
 } from "lucide-react";
 import Link from "next/link";
+import Dialog from "@/components/ui/Dialog";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { getDashboardStats } from "@/app/actions/dashboard";
 import { getMeetings } from "@/app/actions/meetings";
 import { getCurrentUser } from "@/app/actions/auth";
@@ -30,6 +31,9 @@ export default function StaffDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedMeeting, setSelectedMeeting] = useState<any>(null);
+  
+  // Dialog State for errors
+  const [errorDialog, setErrorDialog] = useState({ isOpen: false, message: "" });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,9 +61,9 @@ export default function StaffDashboard() {
         } else {
           setMeetings(m);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Failed to fetch dashboard data:", error);
-        alert("Error loading dashboard: " + error);
+        setErrorDialog({ isOpen: true, message: "Critical failure while synchronizing dashboard telemetry: " + error.message });
       } finally {
         console.log("Setting loading to false");
         setIsLoading(false);
@@ -112,91 +116,91 @@ export default function StaffDashboard() {
     <div className="space-y-8 max-w-[1400px] mx-auto animate-in fade-in duration-500 pb-10">
       <Toaster position="top-right" />
 
-      {/* Meeting Details Modal */}
-      {showModal && selectedMeeting && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowModal(false)}>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            onClick={(e) => e.stopPropagation()}
-            className="bg-white dark:bg-gray-900 rounded-[40px] p-10 max-w-2xl w-full shadow-2xl border border-slate-100 dark:border-gray-800 relative"
-          >
-            <button
-              onClick={() => setShowModal(false)}
-              className="absolute top-8 right-8 w-10 h-10 rounded-xl bg-slate-100 dark:bg-gray-800 hover:bg-slate-200 dark:hover:bg-gray-700 flex items-center justify-center transition-all cursor-pointer"
-            >
-              <X size={20} className="text-slate-600 dark:text-gray-300" />
-            </button>
+      {/* Meeting Details Dialog */}
+      <Dialog
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        maxWidth="max-w-2xl"
+      >
+        {selectedMeeting && (
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-center gap-2 text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">
+                <Tag size={14} />
+                {selectedMeeting.meetingtype?.MeetingTypeName}
+              </div>
+              <h2 className="text-3xl font-black text-slate-900 dark:text-white capitalize mb-2">{selectedMeeting.MeetingDescription}</h2>
+              <p className="text-slate-500 text-sm">Meeting Details & Information</p>
+            </div>
 
-            <div className="space-y-6">
-              <div>
-                <div className="flex items-center gap-2 text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">
-                  <Tag size={14} />
-                  {selectedMeeting.meetingtype?.MeetingTypeName}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-slate-50 dark:bg-gray-800 p-6 rounded-2xl">
+                <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">
+                  <Calendar size={14} />
+                  Date
                 </div>
-                <h2 className="text-3xl font-black text-slate-900 dark:text-white capitalize mb-2">{selectedMeeting.MeetingDescription}</h2>
-                <p className="text-slate-500 text-sm">Meeting Details & Information</p>
+                <p className="text-lg font-black text-slate-900 dark:text-white">
+                  {new Date(selectedMeeting.MeetingDate).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-50 dark:bg-gray-800 p-6 rounded-2xl">
-                  <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">
-                    <Calendar size={14} />
-                    Date
-                  </div>
-                  <p className="text-lg font-black text-slate-900 dark:text-white">
-                    {new Date(selectedMeeting.MeetingDate).toLocaleDateString('en-US', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </p>
+              <div className="bg-slate-50 dark:bg-gray-800 p-6 rounded-2xl">
+                <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">
+                  <Clock size={14} />
+                  Time
                 </div>
-
-                <div className="bg-slate-50 dark:bg-gray-800 p-6 rounded-2xl">
-                  <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">
-                    <Clock size={14} />
-                    Time
-                  </div>
-                  <p className="text-lg font-black text-slate-900 dark:text-white">
-                    {new Date(selectedMeeting.MeetingDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </div>
-
-                <div className="bg-slate-50 dark:bg-gray-800 p-6 rounded-2xl">
-                  <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">
-                    <MapPin size={14} />
-                    Venue
-                  </div>
-                  <p className="text-lg font-black text-slate-900 dark:text-white">
-                    {selectedMeeting.venue?.VenueName || "TBD"}
-                  </p>
-                </div>
-
-                <div className="bg-slate-50 dark:bg-gray-800 p-6 rounded-2xl">
-                  <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">
-                    <Users size={14} />
-                    Status
-                  </div>
-                  <p className="text-lg font-black text-blue-600">
-                    {selectedMeeting.IsCancelled ? 'Cancelled' : new Date(selectedMeeting.MeetingDate) >= new Date() ? 'Scheduled' : 'Completed'}
-                  </p>
-                </div>
+                <p className="text-lg font-black text-slate-900 dark:text-white">
+                  {new Date(selectedMeeting.MeetingDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </p>
               </div>
 
-              <div className="pt-4 flex gap-3">
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="flex-1 py-4 bg-slate-900 dark:bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-blue-700 transition-all cursor-pointer"
-                >
-                  Close
-                </button>
+              <div className="bg-slate-50 dark:bg-gray-800 p-6 rounded-2xl">
+                <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">
+                  <MapPin size={14} />
+                  Venue
+                </div>
+                <p className="text-lg font-black text-slate-900 dark:text-white">
+                  {selectedMeeting.venue?.VenueName || "TBD"}
+                </p>
+              </div>
+
+              <div className="bg-slate-50 dark:bg-gray-800 p-6 rounded-2xl">
+                <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">
+                  <Users size={14} />
+                  Status
+                </div>
+                <p className="text-lg font-black text-blue-600">
+                  {selectedMeeting.IsCancelled ? 'Cancelled' : new Date(selectedMeeting.MeetingDate) >= new Date() ? 'Scheduled' : 'Completed'}
+                </p>
               </div>
             </div>
-          </motion.div>
-        </div>
-      )}
+
+            <div className="pt-4 flex gap-3">
+              <button
+                onClick={() => setShowModal(false)}
+                className="flex-1 py-4 bg-slate-900 dark:bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-blue-700 transition-all cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </Dialog>
+
+      <ConfirmDialog
+        isOpen={errorDialog.isOpen}
+        onClose={() => setErrorDialog({ ...errorDialog, isOpen: false })}
+        onConfirm={() => setErrorDialog({ ...errorDialog, isOpen: false })}
+        title="Diagnostic Alert"
+        message={errorDialog.message}
+        type="danger"
+        confirmText="Acknowledge"
+      />
       {/* Header */}
       <header className="flex justify-between items-end">
         <div>

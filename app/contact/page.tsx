@@ -10,9 +10,13 @@ import {
     MapPin,
     CheckCircle2,
     Lock,
-    Globe
+    Globe,
+    AlertCircle
 } from "lucide-react";
 import { motion } from "framer-motion";
+
+import { sendSalesEmail } from "@/app/actions/sendSalesEmail";
+import { toast } from "react-hot-toast";
 
 export default function ContactPage() {
     const router = useRouter();
@@ -24,14 +28,29 @@ export default function ContactPage() {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setIsSubmitting(false);
-        setIsSuccess(true);
+        setError(null);
+
+        try {
+            const result = await sendSalesEmail(formData);
+            
+            if (result.success) {
+                setIsSuccess(true);
+                toast.success("Message sent successfully!");
+            } else {
+                setError(result.message || "Failed to send email");
+                toast.error(result.message || "Failed to send email");
+            }
+        } catch (err) {
+            setError("Something went wrong. Please try again later.");
+            toast.error("An unexpected error occurred");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -144,6 +163,12 @@ export default function ContactPage() {
                             </div>
                         ) : (
                             <form onSubmit={handleSubmit} className="space-y-6">
+                                {error && (
+                                    <div className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 text-sm font-medium">
+                                        <AlertCircle size={18} />
+                                        {error}
+                                    </div>
+                                )}
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Full Name</label>

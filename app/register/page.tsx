@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { registerUser } from "@/app/actions/register";
+import Dialog from "@/components/ui/Dialog";
 
 // ... (imports remain the same)
 
@@ -30,6 +31,8 @@ export default function RegisterPage() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
 
   const handleSubmit = async () => {
     if (!agreedToTerms) {
@@ -354,11 +357,19 @@ export default function RegisterPage() {
                 className="text-sm text-slate-600 cursor-pointer"
               >
                 I agree to the{" "}
-                <button className="text-indigo-600 hover:text-indigo-700 font-medium">
+                <button 
+                  type="button"
+                  onClick={() => setTermsOpen(true)}
+                  className="text-indigo-600 hover:text-indigo-700 font-medium cursor-pointer"
+                >
                   Terms of Service
                 </button>{" "}
                 and{" "}
-                <button className="text-indigo-600 hover:text-indigo-700 font-medium">
+                <button 
+                  type="button"
+                  onClick={() => setPrivacyOpen(true)}
+                  className="text-indigo-600 hover:text-indigo-700 font-medium cursor-pointer"
+                >
                   Privacy Policy
                 </button>
               </label>
@@ -415,6 +426,50 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
+
+      <Dialog 
+          isOpen={privacyOpen} 
+          onClose={() => setPrivacyOpen(false)} 
+          title="Privacy Policy"
+          description="Last updated: March 15, 2026"
+      >
+          <div className="space-y-6 text-slate-600">
+              <section>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">1. Information We Collect</h3>
+                  <p>We collect information you provide directly to us when you create an account, such as your name, email address, and department details. We also collect meeting metadata and minutes you record using our service.</p>
+              </section>
+              <section>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">2. How We Use Information</h3>
+                  <p>We use the collected information to provide, maintain, and improve our services, including scheduling meetings and managing minutes.</p>
+              </section>
+              <section>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">3. Data Security</h3>
+                  <p>We implement enterprise-grade security measures including 256-bit encryption to protect your data from unauthorized access.</p>
+              </section>
+          </div>
+      </Dialog>
+
+      <Dialog 
+          isOpen={termsOpen} 
+          onClose={() => setTermsOpen(false)} 
+          title="Terms of Service"
+          description="Last updated: March 15, 2026"
+      >
+          <div className="space-y-6 text-slate-600">
+              <section>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">1. Acceptance of Terms</h3>
+                  <p>By accessing or using the MOM System, you agree to be bound by these Terms of Service and all applicable laws and regulations.</p>
+              </section>
+              <section>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">2. User Accounts</h3>
+                  <p>You are responsible for safeguarding the password that you use to access the service and for any activities or actions under your account.</p>
+              </section>
+              <section>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">3. Intellectual Property</h3>
+                  <p>The MOM System and its original content, features, and functionality are and will remain the exclusive property of MOM Management.</p>
+              </section>
+          </div>
+      </Dialog>
     </div>
   );
 }

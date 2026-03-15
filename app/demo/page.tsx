@@ -15,10 +15,12 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import SalesDialog from "@/components/ui/SalesDialog";
 
 export default function DemoPage() {
   const router = useRouter();
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isSalesOpen, setIsSalesOpen] = useState(false);
 
   const demoFeatures = [
     {
@@ -234,7 +236,7 @@ export default function DemoPage() {
                 <ArrowRight size={18} />
               </button>
               <button
-                onClick={() => router.push("/contact")}
+                onClick={() => setIsSalesOpen(true)}
                 className="cursor-pointer px-10 py-5 bg-white text-slate-700 font-black rounded-2xl border-2 border-slate-200 hover:border-indigo-600 hover:text-indigo-600 transition-all uppercase tracking-widest text-xs"
               >
                 Talk to Sales
@@ -254,6 +256,7 @@ export default function DemoPage() {
           </div>
         </motion.div>
       </main>
+      <SalesDialog isOpen={isSalesOpen} onClose={() => setIsSalesOpen(false)} />
 
       <footer className="relative z-10 max-w-7xl mx-auto w-full px-6 py-12 text-center text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mt-auto">
         © 2026 MOM Management. Optimized for Enterprise Performance.

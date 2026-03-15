@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Mail, Lock, User, ArrowRight, Shield } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { loginUser } from "../actions/login";
+import LegalDialogs from "@/components/ui/LegalDialogs";
 
 function Loginpage() {
   const router = useRouter();
@@ -44,7 +45,7 @@ function Loginpage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-50">
+    <div className="min-h-screen flex bg-slate-50 dark:bg-slate-950 transition-colors">
       <div className="hidden lg:flex lg:w-1/2 bg-indigo-600 items-center justify-center p-12 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-20 w-64 h-64 bg-white rounded-full blur-3xl"></div>
@@ -111,16 +112,16 @@ function Loginpage() {
                 />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-slate-900">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
               MOM Management
             </h2>
           </div>
 
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-slate-900 mb-2">
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
               Welcome back
             </h2>
-            <p className="text-slate-600">
+            <p className="text-slate-600 dark:text-slate-400">
               Sign in to your account to continue
             </p>
           </div>
@@ -259,6 +260,7 @@ function Loginpage() {
                 Sign up for free
               </button>
             </p>
+            <LegalDialogs />
           </div>
         </div>
       </div>

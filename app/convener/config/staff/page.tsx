@@ -14,14 +14,15 @@ import {
   Briefcase,
   AlignLeft,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   getStaff,
-  deleteStaff,
+  getDepartments,
   createStaff,
   updateStaff,
-  getDepartments,
+  deleteStaff,
 } from "@/app/actions/master-config";
+import Dialog from "@/components/ui/Dialog";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 export default function StaffPage() {
   const [staffList, setStaffList] = useState<any[]>([]);
@@ -31,6 +32,10 @@ export default function StaffPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStaff, setEditingStaff] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Dialog States
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, id: 0 });
+  const [alertDialog, setAlertDialog] = useState({ isOpen: false, message: "" });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -57,11 +62,15 @@ export default function StaffPage() {
     fetchData();
   }, []);
 
-  const handleDelete = async (id: number) => {
-    if (confirm("Are you sure you want to delete this staff member?")) {
-      await deleteStaff(id);
-      fetchData();
-    }
+  const handleDeleteClick = (id: number) => {
+    setConfirmDialog({ isOpen: true, id });
+  };
+
+  const onConfirmDelete = async () => {
+    const id = confirmDialog.id;
+    setConfirmDialog({ ...confirmDialog, isOpen: false });
+    await deleteStaff(id);
+    fetchData();
   };
 
   const handleOpenModal = (staff: any = null) => {
@@ -70,7 +79,7 @@ export default function StaffPage() {
       setFormData({
         name: staff.StaffName,
         email: staff.EmailAddress || "",
-        mobile: staff.StaffMobile || "",
+        mobile: staff.MobileNo || "",
         departmentId: staff.DepartmentID?.toString() || "",
         remarks: staff.Remarks || "",
       });
@@ -99,7 +108,7 @@ export default function StaffPage() {
       setIsModalOpen(false);
       fetchData();
     } catch (error) {
-      alert("Failed to save staff member.");
+       setAlertDialog({ isOpen: true, message: "Operational failure: Could not commit staff records to the database." });
     } finally {
       setIsSubmitting(false);
     }
@@ -206,7 +215,7 @@ export default function StaffPage() {
                           <Edit2 size={16} />
                         </button>
                         <button
-                          onClick={() => handleDelete(staff.StaffID)}
+                          onClick={() => handleDeleteClick(staff.StaffID)}
                           className=" cursor-pointer p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
                         >
                           <Trash2 size={16} />
@@ -221,182 +230,174 @@ export default function StaffPage() {
         )}
       </div>
 
-      {/* Modal */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+      {/* Staff Form Dialog */}
+      <Dialog
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        maxWidth="max-w-lg"
+        title={editingStaff ? "Edit Staff Details" : "Register New Staff"}
+        description="Fill in the professional details below to maintain accurate records."
+        footer={
+          <>
+            <button
+              type="button"
               onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden"
+              className="cursor-pointer px-6 py-3 text-sm font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-2xl transition-colors"
             >
-              <div className="p-8 border-b border-slate-50 dark:border-gray-800 flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                    {editingStaff ? "Edit Staff Details" : "Register New Staff"}
-                  </h2>
-                  <p className="text-slate-500 text-sm">
-                    Fill in the professional details below
-                  </p>
-                </div>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="p-2 hover:bg-slate-50 dark:hover:bg-gray-800 rounded-xl text-slate-400"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              <form onSubmit={handleSubmit} className="p-8 space-y-5">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
-                    Full Name
-                  </label>
-                  <div className="relative">
-                    <User
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                      size={16}
-                    />
-                    <input
-                      required
-                      type="text"
-                      className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500/20 transition-all"
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
-                      Email
-                    </label>
-                    <div className="relative">
-                      <Mail
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                        size={16}
-                      />
-                      <input
-                        type="email"
-                        className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500/20 transition-all"
-                        value={formData.email}
-                        onChange={(e) =>
-                          setFormData({ ...formData, email: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
-                      Mobile
-                    </label>
-                    <div className="relative">
-                      <Phone
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                        size={16}
-                      />
-                      <input
-                        type="text"
-                        className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500/20 transition-all"
-                        value={formData.mobile}
-                        onChange={(e) =>
-                          setFormData({ ...formData, mobile: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
-                    Department
-                  </label>
-                  <div className="relative">
-                    <Briefcase
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                      size={16}
-                    />
-                    <select
-                      required
-                      className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500/20 appearance-none cursor-pointer"
-                      value={formData.departmentId}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          departmentId: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="">Select Department</option>
-                      {departments.map((dept) => (
-                        <option
-                          key={dept.DepartmentID}
-                          value={dept.DepartmentID}
-                        >
-                          {dept.DepartmentName}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
-                    Remarks
-                  </label>
-                  <div className="relative">
-                    <AlignLeft
-                      className="absolute left-4 top-3 text-slate-400"
-                      size={16}
-                    />
-                    <textarea
-                      rows={2}
-                      className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
-                      value={formData.remarks}
-                      onChange={(e) =>
-                        setFormData({ ...formData, remarks: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-4 flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(false)}
-                    className=" cursor-pointer flex-1 py-3 text-sm font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-2xl transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="cursor-pointer flex-[2] py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold text-sm shadow-xl shadow-blue-500/20 transition-all active:scale-95 flex items-center justify-center gap-2"
-                  >
-                    {isSubmitting ? (
-                      <Loader2 size={18} className="animate-spin" />
-                    ) : (
-                      <Plus size={18} />
-                    )}
-                    {editingStaff ? "Update Staff" : "Add Staff Member"}
-                  </button>
-                </div>
-              </form>
-            </motion.div>
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="cursor-pointer flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold text-sm shadow-xl shadow-blue-500/20 transition-all active:scale-95 flex items-center justify-center gap-2"
+            >
+              {isSubmitting ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <Plus size={18} />
+              )}
+              {editingStaff ? "Update Staff" : "Add Staff Member"}
+            </button>
+          </>
+        }
+      >
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-1.5">
+            <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
+              Full Name
+            </label>
+            <div className="relative">
+              <User
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                size={16}
+              />
+              <input
+                required
+                type="text"
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500/20 transition-all"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
+            </div>
           </div>
-        )}
-      </AnimatePresence>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                Email
+              </label>
+              <div className="relative">
+                <Mail
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                  size={16}
+                />
+                <input
+                  type="email"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                Mobile
+              </label>
+              <div className="relative">
+                <Phone
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                  size={16}
+                />
+                <input
+                  type="text"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  value={formData.mobile}
+                  onChange={(e) =>
+                    setFormData({ ...formData, mobile: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
+              Department
+            </label>
+            <div className="relative">
+              <Briefcase
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                size={16}
+              />
+              <select
+                required
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500/20 appearance-none cursor-pointer"
+                value={formData.departmentId}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    departmentId: e.target.value,
+                  })
+                }
+              >
+                <option value="">Select Department</option>
+                {departments.map((dept) => (
+                  <option
+                    key={dept.DepartmentID}
+                    value={dept.DepartmentID}
+                  >
+                    {dept.DepartmentName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
+              Remarks
+            </label>
+            <div className="relative">
+              <AlignLeft
+                className="absolute left-4 top-3 text-slate-400"
+                size={16}
+              />
+              <textarea
+                rows={2}
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
+                value={formData.remarks}
+                onChange={(e) =>
+                  setFormData({ ...formData, remarks: e.target.value })
+                }
+              />
+            </div>
+          </div>
+        </form>
+      </Dialog>
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
+        onConfirm={onConfirmDelete}
+        title="Sanitize Record"
+        message="Are you sure you want to permanently erase this staff member from the system? This action is irreversible."
+        type="danger"
+        confirmText="Erase Record"
+      />
+
+      <ConfirmDialog
+        isOpen={alertDialog.isOpen}
+        onClose={() => setAlertDialog({ ...alertDialog, isOpen: false })}
+        onConfirm={() => setAlertDialog({ ...alertDialog, isOpen: false })}
+        title="System Notice"
+        message={alertDialog.message}
+        confirmText="Understood"
+        type="info"
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -12,14 +13,17 @@ import {
   Lock,
   Zap,
 } from "lucide-react";
+import LegalDialogs from "@/components/ui/LegalDialogs";
+import SalesDialog from "@/components/ui/SalesDialog";
 
 export default function GetStartedPage() {
   const router = useRouter();
+  const [isSalesOpen, setIsSalesOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 relative overflow-hidden transition-colors">
       <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100 rounded-full filter blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-100 rounded-full filter blur-3xl"></div>
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100/50 dark:bg-blue-900/20 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-100/50 dark:bg-indigo-900/20 rounded-full filter blur-3xl"></div>
       </div>
 
       <div className="relative z-10">
@@ -241,7 +245,7 @@ export default function GetStartedPage() {
                   Start Free Trial
                 </button>
                 <button
-                  onClick={() => router.push("/contact")}
+                  onClick={() => setIsSalesOpen(true)}
                   className="cursor-pointer px-8 py-4 bg-indigo-700 text-white font-semibold rounded-xl hover:bg-indigo-800 transition-all border-2 border-indigo-500"
                 >
                   Talk to Sales
@@ -251,9 +255,11 @@ export default function GetStartedPage() {
           </div>
         </section>
 
-        <footer className="max-w-7xl mx-auto px-6 pb-12 text-center text-slate-500 text-sm">
-          <p>© 2026 MOM Management. All rights reserved.</p>
+        <footer className="max-w-7xl mx-auto px-6 pb-12 text-center">
+          <p className="text-slate-500 text-sm">© 2026 MOM Management. All rights reserved.</p>
+          <LegalDialogs />
         </footer>
+        <SalesDialog isOpen={isSalesOpen} onClose={() => setIsSalesOpen(false)} />
       </div>
     </div>
   );

@@ -26,6 +26,17 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  color: inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--foreground);
+  }
+}
+
+
 main {
   margin-left: var(--sidebar-width, 0px);
   transition: margin-left 0.3s ease-in-out;
@@ -36,4 +47,14 @@ main {
   main {
     margin-left: 0 !important;
   }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out 0s 2;
 }

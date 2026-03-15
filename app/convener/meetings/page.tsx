@@ -19,7 +19,10 @@ import {
   ChevronRight,
   ChevronDown,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import Dialog from "@/components/ui/Dialog";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import PromptDialog from "@/components/ui/PromptDialog";
 import {
   getMeetings,
   createMeeting,
@@ -43,6 +46,11 @@ export default function MeetingsPage() {
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
+
+  // Dialog States
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, id: 0 });
+  const [promptDialog, setPromptDialog] = useState({ isOpen: false, id: 0 });
+  const [alertDialog, setAlertDialog] = useState({ isOpen: false, message: "" });
 
   // Close filter dropdown on outside click
   useEffect(() => {
@@ -137,18 +145,27 @@ export default function MeetingsPage() {
       setIsModalOpen(false);
       fetchData();
     } catch (error) {
-      alert("Failed to save meeting.");
+      setAlertDialog({ isOpen: true, message: "Failed to save meeting records. Please check all inputs." });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleCancel = async (id: number) => {
-    const reason = prompt("Enter cancellation reason:");
-    if (reason !== null) {
-      await cancelMeeting(id, reason);
-      fetchData();
-    }
+  const handleCancelClick = (id: number) => {
+    setConfirmDialog({ isOpen: true, id });
+  };
+
+  const onConfirmCancel = () => {
+    const id = confirmDialog.id;
+    setConfirmDialog({ ...confirmDialog, isOpen: false });
+    setPromptDialog({ isOpen: true, id });
+  };
+
+  const onPromptSubmit = async (reason: string) => {
+    const id = promptDialog.id;
+    setPromptDialog({ ...promptDialog, isOpen: false });
+    await cancelMeeting(id, reason || "Cancelled by convener");
+    fetchData();
   };
 
   const toggleParticipant = (staffId: number) => {
@@ -401,7 +418,7 @@ export default function MeetingsPage() {
                               <Edit2 size={18} />
                             </button>
                             <button
-                              onClick={() => handleCancel(meeting.MeetingID)}
+                              onClick={() => handleCancelClick(meeting.MeetingID)}
                               className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
                             >
                               <Trash2 size={18} />
@@ -417,211 +434,206 @@ export default function MeetingsPage() {
         )}
       </div>
 
-      {/* Modal */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+      {/* Meeting Form Dialog */}
+      <Dialog
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        maxWidth="max-w-4xl"
+        title={editingMeeting ? "Reconfigure Session" : "Schedule New Session"}
+        description="Coordinate participants, time, and logistics for this collaborative event."
+        footer={
+          <>
+            <button
+              type="button"
               onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-4xl bg-white dark:bg-gray-900 rounded-[40px] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+              className="px-6 py-3 text-sm font-black text-slate-400 hover:text-slate-600 hover:bg-slate-50 dark:hover:bg-gray-800 rounded-2xl transition-all uppercase tracking-widest"
             >
-              <div className="p-10 border-b border-slate-50 dark:border-gray-800 flex items-center justify-between bg-slate-50/50 dark:bg-gray-800/50">
-                <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30">
-                    <Plus size={28} />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                      {editingMeeting
-                        ? "Reconfigure Session"
-                        : "Schedule New Session"}
-                    </h2>
-                    <p className="text-slate-500 font-medium">
-                      Coordinate participants, time, and logistics
-                    </p>
-                  </div>
+              Discard
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-3xl font-black text-sm shadow-2xl shadow-blue-500/40 transition-all active:scale-[0.98] flex items-center justify-center gap-3 uppercase tracking-widest"
+            >
+              {isSubmitting ? (
+                <Loader2 size={20} className="animate-spin" />
+              ) : editingMeeting ? (
+                "Apply Changes"
+              ) : (
+                "Confirm Schedule"
+              )}
+            </button>
+          </>
+        }
+      >
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-10"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="space-y-8">
+              <div className="space-y-3">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <CalendarIcon size={14} className="text-blue-500" />{" "}
+                  Date & Time
+                </label>
+                <div className="flex gap-4">
+                  <input
+                    required
+                    type="date"
+                    className="flex-1 px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all"
+                    value={formData.date}
+                    onChange={(e) =>
+                      setFormData({ ...formData, date: e.target.value })
+                    }
+                  />
+                  <input
+                    required
+                    type="time"
+                    className="w-32 px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all"
+                    value={formData.time}
+                    onChange={(e) =>
+                      setFormData({ ...formData, time: e.target.value })
+                    }
+                  />
                 </div>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="p-3 hover:bg-white dark:hover:bg-gray-700 rounded-2xl text-slate-400 shadow-sm transition-all"
-                >
-                  <X size={24} />
-                </button>
               </div>
 
-              <form
-                onSubmit={handleSubmit}
-                className="flex-1 overflow-y-auto p-10 space-y-10 custom-scrollbar"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <div className="space-y-8">
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                        <CalendarIcon size={14} className="text-blue-500" />{" "}
-                        Date & Time
-                      </label>
-                      <div className="flex gap-4">
-                        <input
-                          required
-                          type="date"
-                          className="flex-1 px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all"
-                          value={formData.date}
-                          onChange={(e) =>
-                            setFormData({ ...formData, date: e.target.value })
-                          }
-                        />
-                        <input
-                          required
-                          type="time"
-                          className="w-32 px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all"
-                          value={formData.time}
-                          onChange={(e) =>
-                            setFormData({ ...formData, time: e.target.value })
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                        <Info size={14} className="text-blue-500" /> Category &
-                        Venue
-                      </label>
-                      <div className="grid grid-cols-1 gap-4">
-                        <select
-                          required
-                          className="w-full px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all appearance-none"
-                          value={formData.typeId}
-                          onChange={(e) =>
-                            setFormData({ ...formData, typeId: e.target.value })
-                          }
-                        >
-                          <option value="">Select Meeting Type</option>
-                          {types.map((t) => (
-                            <option
-                              key={t.MeetingTypeID}
-                              value={t.MeetingTypeID}
-                            >
-                              {t.MeetingTypeName}
-                            </option>
-                          ))}
-                        </select>
-                        <select
-                          required
-                          className="w-full px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all appearance-none"
-                          value={formData.venueId}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              venueId: e.target.value,
-                            })
-                          }
-                        >
-                          <option value="">Select Venue</option>
-                          {venues.map((v) => (
-                            <option key={v.VenueID} value={v.VenueID}>
-                              {v.VenueName} (Cap: {v.Capacity})
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
-                        Topic/Description
-                      </label>
-                      <textarea
-                        required
-                        rows={4}
-                        className="w-full px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all resize-none"
-                        placeholder="What is the objective of this meeting?"
-                        value={formData.description}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            description: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-3 flex flex-col h-full">
-                    <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center justify-between">
-                      Participants
-                      <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md text-[10px]">
-                        {formData.participants.length} selected
-                      </span>
-                    </label>
-                    <div className="flex-1 bg-slate-50 dark:bg-gray-800 rounded-3xl p-6 overflow-y-auto space-y-2 border border-slate-100 dark:border-gray-700">
-                      {staff.map((member) => (
-                        <button
-                          key={member.StaffID}
-                          type="button"
-                          onClick={() => toggleParticipant(member.StaffID)}
-                          className={`w-full flex items-center justify-between p-3.5 rounded-2xl transition-all ${formData.participants.includes(member.StaffID) ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20" : "bg-white dark:bg-gray-900 text-slate-700 dark:text-gray-300 hover:bg-blue-50 group"}`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black ${formData.participants.includes(member.StaffID) ? "bg-blue-500 text-white" : "bg-slate-100 text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-600"}`}
-                            >
-                              {member.StaffName.charAt(0)}
-                            </div>
-                            <span className="text-xs font-bold">
-                              {member.StaffName}
-                            </span>
-                          </div>
-                          <ChevronRight
-                            size={14}
-                            className={
-                              formData.participants.includes(member.StaffID)
-                                ? "opacity-100"
-                                : "opacity-0"
-                            }
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+              <div className="space-y-3">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <Info size={14} className="text-blue-500" /> Category &
+                  Venue
+                </label>
+                <div className="grid grid-cols-1 gap-4">
+                  <select
+                    required
+                    className="w-full px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all appearance-none"
+                    value={formData.typeId}
+                    onChange={(e) =>
+                      setFormData({ ...formData, typeId: e.target.value })
+                    }
+                  >
+                    <option value="">Select Meeting Type</option>
+                    {types.map((t) => (
+                      <option
+                        key={t.MeetingTypeID}
+                        value={t.MeetingTypeID}
+                      >
+                        {t.MeetingTypeName}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    required
+                    className="w-full px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all appearance-none"
+                    value={formData.venueId}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        venueId: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">Select Venue</option>
+                    {venues.map((v) => (
+                      <option key={v.VenueID} value={v.VenueID}>
+                        {v.VenueName} (Cap: {v.Capacity})
+                      </option>
+                    ))}
+                  </select>
                 </div>
+              </div>
 
-                <div className="pt-6 flex gap-4">
+              <div className="space-y-3">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
+                  Topic/Description
+                </label>
+                <textarea
+                  required
+                  rows={4}
+                  className="w-full px-5 py-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold text-slate-700 dark:text-white focus:ring-4 focus:ring-blue-500/5 transition-all resize-none"
+                  placeholder="What is the objective of this meeting?"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      description: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3 flex flex-col h-full">
+              <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center justify-between">
+                Participants
+                <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md text-[10px]">
+                  {formData.participants.length} selected
+                </span>
+              </label>
+              <div className="flex-1 bg-slate-50 dark:bg-gray-800/50 rounded-3xl p-6 overflow-y-auto space-y-2 border border-slate-100 dark:border-gray-800">
+                {staff.map((member) => (
                   <button
+                    key={member.StaffID}
                     type="button"
-                    onClick={() => setIsModalOpen(false)}
-                    className="flex-1 py-4 text-sm font-black text-slate-400 hover:text-slate-600 hover:bg-slate-50 dark:hover:bg-gray-800 rounded-2xl transition-all uppercase tracking-widest"
+                    onClick={() => toggleParticipant(member.StaffID)}
+                    className={`w-full flex items-center justify-between p-3.5 rounded-2xl transition-all ${formData.participants.includes(member.StaffID) ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20" : "bg-white dark:bg-gray-900 text-slate-700 dark:text-gray-300 hover:bg-blue-50 group"}`}
                   >
-                    Discard
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black ${formData.participants.includes(member.StaffID) ? "bg-blue-500 text-white" : "bg-slate-100 dark:bg-gray-800 text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-600"}`}
+                      >
+                        {member.StaffName.charAt(0)}
+                      </div>
+                      <span className="text-xs font-bold">
+                        {member.StaffName}
+                      </span>
+                    </div>
+                    <ChevronRight
+                      size={14}
+                      className={
+                        formData.participants.includes(member.StaffID)
+                          ? "opacity-100"
+                          : "opacity-0"
+                      }
+                    />
                   </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="flex-[2] py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-3xl font-black text-sm shadow-2xl shadow-blue-500/40 transition-all active:scale-[0.98] flex items-center justify-center gap-3 uppercase tracking-widest"
-                  >
-                    {isSubmitting ? (
-                      <Loader2 size={20} className="animate-spin" />
-                    ) : editingMeeting ? (
-                      "Apply Changes"
-                    ) : (
-                      "Confirm Schedule"
-                    )}
-                  </button>
-                </div>
-              </form>
-            </motion.div>
+                ))}
+              </div>
+            </div>
           </div>
-        )}
-      </AnimatePresence>
+        </form>
+      </Dialog>
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
+        onConfirm={onConfirmCancel}
+        type="warning"
+        title="Cancel Session"
+        message="Are you sure you want to nullify this scheduled meeting? This action will be logged and participants will be informed."
+        confirmText="Yes, Cancel"
+      />
+
+      <PromptDialog
+        isOpen={promptDialog.isOpen}
+        onClose={() => setPromptDialog({ ...promptDialog, isOpen: false })}
+        onConfirm={onPromptSubmit}
+        title="Cancellation Logic"
+        message="Please input the reasoning for this cancellation for organizational records."
+        placeholder="Enter reason..."
+        defaultValue="Cancelled by convener"
+      />
+
+      <ConfirmDialog
+        isOpen={alertDialog.isOpen}
+        onClose={() => setAlertDialog({ ...alertDialog, isOpen: false })}
+        onConfirm={() => setAlertDialog({ ...alertDialog, isOpen: false })}
+        title="Protocol Alert"
+        message={alertDialog.message}
+        confirmText="Acknowledge"
+        type="info"
+      />
     </div>
   );
 }

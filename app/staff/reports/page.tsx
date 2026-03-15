@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { getDashboardStats } from "@/app/actions/dashboard";
+import { getReportStats } from "@/app/actions/reportStats";
 import { getMeetings } from "@/app/actions/meetings";
 import { getCurrentUser } from "@/app/actions/auth";
 import toast, { Toaster } from "react-hot-toast";
@@ -42,7 +42,7 @@ export default function ReportsPage() {
             try {
                 const currentUser = await getCurrentUser();
                 const [stats, m] = await Promise.all([
-                    getDashboardStats(currentUser?.email),
+                    getReportStats(currentUser?.email || undefined),
                     getMeetings()
                 ]);
                 setData(stats);
@@ -75,9 +75,9 @@ export default function ReportsPage() {
 
     const reportCards = [
         { label: "Invited Sessions", value: data?.stats.total || 0, icon: FileText, color: "blue" },
-        { label: "Participation Rate", value: "88%", icon: Activity, color: "green" },
+        { label: "Participation Rate", value: `${data?.stats.attendanceRate || 0}%`, icon: Activity, color: "green" },
         { label: "Imminent Events", value: data?.stats.scheduled || 0, icon: Calendar, color: "indigo" },
-        { label: "Co-Participants", value: "42", icon: Users, color: "orange" },
+        { label: "Co-Participants", value: data?.stats.coParticipantsCount || 0, icon: Users, color: "orange" },
     ];
 
     const handleExportExcel = () => {
@@ -145,9 +145,9 @@ export default function ReportsPage() {
 
             const summaryData = [
                 ['Invited Sessions', `${data?.stats.total || 0}`],
-                ['Participation Rate', '88%'],
+                ['Participation Rate', `${data?.stats.attendanceRate || 0}%`],
                 ['Imminent Events', `${data?.stats.scheduled || 0}`],
-                ['Co-Participants', '42']
+                ['Co-Participants', `${data?.stats.coParticipantsCount || 0}`]
             ];
 
             autoTable(doc, {
@@ -264,22 +264,33 @@ export default function ReportsPage() {
                             </div>
                         </div>
                     </div>
-                    {/* Mock Chart */}
+                    {/* Dynamic Chart */}
                     <div className="h-64 flex items-end gap-3 px-4 relative">
-                        <div className="absolute inset-x-0 top-0 h-px bg-slate-50 dark:bg-gray-800" />
-                        <div className="absolute inset-x-0 top-1/2 h-px bg-slate-50 dark:bg-gray-800" />
-                        {[30, 60, 40, 80, 55, 75, 50, 90, 70, 45, 85, 65].map((h, i) => (
-                            <div key={i} className="flex-1 flex flex-col items-center justify-end h-full gap-1">
-                                <div className="w-full bg-green-500 rounded-lg group relative hover:bg-green-600 transition-all shadow-lg shadow-green-500/10" style={{ height: `${h - 15}%` }} />
-                                <div className="w-full bg-blue-100 dark:bg-gray-800 rounded-lg h-3" />
-                            </div>
-                        ))}
+                        <div className="absolute inset-x-0 top-0 h-px bg-slate-50 dark:bg-gray-800 opacity-50" />
+                        <div className="absolute inset-x-0 top-1/2 h-px bg-slate-50 dark:bg-gray-800 opacity-50" />
+                        {data?.engagementTrend?.map((item: any, i: number) => {
+                            const maxVal = Math.max(...(data?.engagementTrend?.map((t: any) => t.invited) || [1]));
+                            const hInvited = (item.invited / maxVal) * 100;
+                            const hAttended = item.invited > 0 ? (item.attended / maxVal) * 100 : 0;
+                            
+                            return (
+                                <div key={i} className="flex-1 flex flex-col items-center justify-end h-full gap-1 group relative">
+                                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[8px] py-1.5 px-2.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-xl pointer-events-none">
+                                        <div className="font-black mb-0.5">{item.month}</div>
+                                        <div>Invited: {item.invited}</div>
+                                        <div>Attended: {item.attended}</div>
+                                    </div>
+                                    <div className="w-full bg-green-500 rounded-t-lg group relative hover:bg-green-600 transition-all shadow-lg shadow-green-500/10" style={{ height: `${hAttended}%` }} />
+                                    <div className="w-full bg-blue-100 dark:bg-gray-800 rounded-b-lg" style={{ height: `${Math.max(0, hInvited - hAttended)}%`, minHeight: item.invited > item.attended ? '4px' : '0' }} />
+                                    {item.invited === 0 && <div className="w-full bg-slate-50 dark:bg-gray-800/20 rounded-lg h-1" />}
+                                </div>
+                            );
+                        })}
                     </div>
                     <div className="flex justify-between mt-8 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                        <span>Jan</span>
-                        <span>May</span>
-                        <span>Sep</span>
-                        <span>Dec</span>
+                        {data?.engagementTrend?.filter((_: any, i: number) => i % 3 === 0).map((item: any, i: number) => (
+                            <span key={i}>{item.month}</span>
+                        ))}
                     </div>
                 </div>
 
@@ -292,7 +303,7 @@ export default function ReportsPage() {
                         <div className="w-52 h-52 rounded-full border-[20px] border-slate-50 dark:border-gray-800 relative shadow-inner">
                             <div className="absolute inset-0 rounded-full border-[20px] border-blue-500 border-t-transparent border-r-transparent rotate-45" />
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className="text-4xl font-black text-slate-900 dark:text-white">72%</span>
+                                <span className="text-4xl font-black text-slate-900 dark:text-white">{data?.statusProportions.efficiency || 0}%</span>
                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Efficiency</span>
                             </div>
                         </div>
@@ -303,14 +314,14 @@ export default function ReportsPage() {
                                 <div className="w-3 h-3 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50" />
                                 <span className="text-xs font-bold text-slate-600 dark:text-gray-300">Upcoming Obligations</span>
                             </div>
-                            <span className="text-xs font-black text-slate-900 dark:text-white">28%</span>
+                            <span className="text-xs font-black text-slate-900 dark:text-white">{data?.statusProportions.upcoming || 0}%</span>
                         </div>
                         <div className="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-gray-800/50 rounded-2xl">
                             <div className="flex items-center gap-3">
                                 <div className="w-3 h-3 rounded-full bg-indigo-500 shadow-lg shadow-indigo-500/50" />
                                 <span className="text-xs font-bold text-slate-600 dark:text-gray-300">Finalized Archive</span>
                             </div>
-                            <span className="text-xs font-black text-slate-900 dark:text-white">62%</span>
+                            <span className="text-xs font-black text-slate-900 dark:text-white">{data?.statusProportions.archived || 0}%</span>
                         </div>
                     </div>
                 </div>
